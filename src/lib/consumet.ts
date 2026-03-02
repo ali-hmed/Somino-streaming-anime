@@ -1,6 +1,6 @@
 import { AnimeInfo, SearchResult, RecentAnime } from '@/types/anime';
 
-const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
 
 export const mapCustomToAnime = (item: any): any => ({
     ...item,
@@ -48,15 +48,25 @@ export const mapCustomToAnime = (item: any): any => ({
 
 export const fetchAnimeInfo = async (id: string): Promise<AnimeInfo | null> => {
     try {
+        if (!id || id === 'undefined') {
+            console.error('fetchAnimeInfo: Invalid ID passed');
+            return null;
+        }
+
         const res = await fetch(`${BASE_URL}/anime/${id}`);
-        if (!res.ok) throw new Error('Failed to fetch anime info');
+
+        if (!res.ok) {
+            console.error(`fetchAnimeInfo Error [${res.status}] for ID: ${id}. URL: ${BASE_URL}/anime/${id}`);
+            return null;
+        }
+
         const json = await res.json();
         const anime = json.data;
+        if (!anime) return null;
 
         // Fetch episodes
         let episodes: any[] = [];
         try {
-            // Note: episode fetching with custom backend
             const epRes = await fetch(`${BASE_URL}/episodes/${id}`);
             const epJson = await epRes.json();
             if (epJson.success) {
