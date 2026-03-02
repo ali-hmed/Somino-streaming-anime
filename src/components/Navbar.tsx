@@ -100,10 +100,10 @@ const Navbar = () => {
         { label: 'Genre', hasDropdown: true, href: '#' },
         { label: 'Movies', hasDropdown: false, href: '/animes/movie' },
         { label: 'Popular', hasDropdown: false, href: '/animes/most-popular' },
+        { label: 'Sub Anime', hasDropdown: false, href: '/animes/subbed-anime' },
+        { label: 'Dub Anime', hasDropdown: false, href: '/animes/dubbed-anime' },
         { label: 'Top Airing', hasDropdown: false, href: '/animes/top-airing' },
         { label: 'Upcoming', hasDropdown: false, href: '/animes/top-upcoming' },
-        { label: 'Schedule', hasDropdown: false, href: '/schedule' },
-        { label: 'Random', hasDropdown: false, href: '/random' },
         // { label: 'A-Z List', hasDropdown: false, href: '/animes/az-list/a' },
     ];
 

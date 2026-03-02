@@ -387,14 +387,28 @@ export const fetchAnimeCategory = async (category: string, query?: string, page:
 
 export const fetchRandomAnime = async (): Promise<any> => {
     try {
-        const res = await fetch(`${BASE_URL}/home`);
+        const res = await fetch(`${BASE_URL}/home`, { cache: 'no-store' });
         const json = await res.json();
-        const spotlight = json.data?.spotlight || [];
-        if (spotlight.length > 0) {
-            return mapCustomToAnime(spotlight[Math.floor(Math.random() * spotlight.length)]);
+        const data = json.data || {};
+
+        const pool = [
+            ...(data.topAiring || []),
+            ...(data.mostFavorite || []),
+            ...(data.latestCompleted || []),
+            ...(data.latestEpisode || []),
+            ...(data.newAdded || []),
+            ...(data.topUpcoming || [])
+        ];
+
+        if (pool.length > 0) {
+            // Unique-ify by ID to avoid bias towards show that appear in multiple sections
+            const uniquePool = Array.from(new Map(pool.map(item => [item.id, item])).values());
+            const randomItem = uniquePool[Math.floor(Math.random() * uniquePool.length)];
+            return mapCustomToAnime(randomItem);
         }
         return null;
     } catch (error) {
+        console.error('fetchRandomAnime Error:', error);
         return null;
     }
 };

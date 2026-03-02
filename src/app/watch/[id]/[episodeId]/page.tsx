@@ -138,7 +138,7 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
 
                                     {/* badges */}
                                     <div className="flex flex-wrap items-center justify-center gap-1.5 mb-5">
-                                        <span className={`px-1.5 py-0.5 rounded-[2px] ${String(anime.rating ||'').includes('R') || String(anime.rating || '').includes('18') ? 'bg-[#FF4B12] text-white shadow-lg' : 'bg-[#FF4F18]/10 border border-[#FF4F18]/30 text-[#FF4F18]'} text-[8px] font-black lowercase tracking-tighter`}>
+                                        <span className={`px-1.5 py-0.5 rounded-[2px] ${String(anime.rating || '').includes('R') || String(anime.rating || '').includes('18') ? 'bg-[#FF4B12] text-white shadow-lg' : 'bg-[#FF4F18]/10 border border-[#FF4F18]/30 text-[#FF4F18]'} text-[8px] font-black lowercase tracking-tighter`}>
                                             {(() => {
                                                 const r = String(anime.rating || '');
                                                 if (r.includes('R') || r.includes('18')) return '18+';
@@ -198,7 +198,7 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
                                         const score = anime.score || 0;
                                         const ratingOutof5 = Math.round(score / 2);
                                         return (
-                                            <Star key={i} size={22} className={`${i <= ratingOutof5 ?'text-[#FF4F18] fill-[#FF4F18]' : 'text-white/5 fill-white/5'} transition-transform hover:scale-110 cursor-pointer`} />
+                                            <Star key={i} size={22} className={`${i <= ratingOutof5 ? 'text-[#FF4F18] fill-[#FF4F18]' : 'text-white/5 fill-white/5'} transition-transform hover:scale-110 cursor-pointer`} />
                                         );
                                     })}
                                 </div>
@@ -227,6 +227,8 @@ export default async function PlayerPage({ params }: { params: Promise<{ id: str
                                 id={id}
                                 episodeId={episodeId}
                                 animeId={id}
+                                animeTitle={title}
+                                animeImage={anime.image}
                                 episodeNumber={anime.episodes.find((e: Episode) => e.id === episodeId)?.number || 1}
                                 animeStatus={anime.status}
                                 broadcastString={anime.broadcast?.string}

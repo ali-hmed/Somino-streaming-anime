@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Play, ChevronRight, RotateCcw } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import ContinueWatching from '@/components/ContinueWatching';
 import AnimeCard from '@/components/AnimeCard';
 import TopTrending from '@/components/TopTrending';
 import Schedule from '@/components/Schedule';
@@ -53,25 +54,7 @@ export default async function Home() {
           {/* Left Column */}
           <div className="lg:w-3/4 space-y-12 md:space-y-16">
 
-            {/* Continue Watching */}
-            <section className="relative hidden md:block">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <RotateCcw className="text-primary" size={24} />
-                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
-                    Continue Watching
-                  </h2>
-                </div>
-                <Link href="#" className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-primary transition-colors tracking-widest">
-                  view more <ChevronRight size={14} />
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
-                {(recentUpdates.length > 0 ? recentUpdates : trendingAnime).slice(0, 4).map((item: any, i: number) => (
-                  <AnimeCard key={`cw-${item.id}-${i}`} anime={item} variant="continue" />
-                ))}
-              </div>
-            </section>
+            <ContinueWatching />
 
             {/* Latest Episodes */}
             <section className="mt-16">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import VideoPlayer from './VideoPlayer';
 import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Heart, Flag } from 'lucide-react';
+import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 
 interface WatchControlsProps {
     id: string;
@@ -16,6 +17,8 @@ interface WatchControlsProps {
     nextEpId?: string;
     animeId: string;
     dubEpisodes?: number;
+    animeTitle: string;
+    animeImage: string;
 }
 
 const WatchControls: React.FC<WatchControlsProps> = ({
@@ -28,12 +31,49 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     nextEpId,
     animeId,
     dubEpisodes = 0,
+    animeTitle,
+    animeImage,
 }) => {
     const router = useRouter();
     const [server, setServer] = useState<'megaPlay' | 'vidWish'>('megaPlay');
     const [category, setCategory] = useState<'sub' | 'dub'>('sub');
     const [autoNext, setAutoNext] = useState(true);
     const [autoPlay, setAutoPlay] = useState(true);
+
+    // Resume Logic
+    const [initialTime, setInitialTime] = useState(0);
+    const [sessionStartTime] = useState(Date.now());
+    const [hasLoadedProgress, setHasLoadedProgress] = useState(false);
+
+    useEffect(() => {
+        const progress = getAnimeProgress(animeId);
+        if (progress && progress.episodeId === episodeId) {
+            setInitialTime(progress.currentTime || 0);
+        }
+        setHasLoadedProgress(true);
+    }, [animeId, episodeId]);
+
+    // Save progress periodically
+    useEffect(() => {
+        if (!hasLoadedProgress) return;
+
+        const save = () => {
+            const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+            saveWatchProgress({
+                animeId,
+                animeTitle,
+                animeImage,
+                episodeId,
+                episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
+                currentTime: initialTime + elapsed,
+                duration: 1440 // Mock duration if unknown (24 mins)
+            });
+        };
+
+        const interval = setInterval(save, 15000); // Save every 15s for better accuracy
+        save(); // Initial save
+        return () => clearInterval(interval);
+    }, [hasLoadedProgress, animeId, episodeId, initialTime, sessionStartTime, animeTitle, animeImage, episodeNumber]);
 
     // Watch for messages from the iframe (some players send 'ended' or 'finished')
     useEffect(() => {
@@ -75,14 +115,17 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     return (
         <>
             {/* Video Player — self-contained 16:9 aspect ratio, no buttons inside */}
-            <VideoPlayer
-                id={id}
-                episodeId={episodeId}
-                streamUrl={null}
-                server={server}
-                category={category}
-                autoPlay={autoPlay}
-            />
+            {hasLoadedProgress && (
+                <VideoPlayer
+                    id={id}
+                    episodeId={episodeId}
+                    streamUrl={null}
+                    server={server}
+                    category={category}
+                    autoPlay={autoPlay}
+                    startTime={initialTime}
+                />
+            )}
 
             {/* ── Actions bar (Prev / Next / AutoNext etc.) ───── */}
             <div className="px-4 py-2 bg-[#0b0c10]/60 border-b border-white/[0.03] flex items-center justify-between md:justify-center gap-4 md:gap-7 overflow-x-auto no-scrollbar shrink-0">
@@ -94,15 +137,15 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 </button>
                 <button
                     onClick={() => setAutoNext(!autoNext)}
-                    className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ?'text-[#FF6331]' : 'text-white/20 hover:text-white/40'}`}
+                    className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-[#FF6331]' : 'text-white/20 hover:text-white/40'}`}
                 >
-                    <FastForward size={14} className={autoNext ?'fill-current' : ''} strokeWidth={2.5} /> AutoNext
+                    <FastForward size={14} className={autoNext ? 'fill-current' : ''} strokeWidth={2.5} /> AutoNext
                 </button>
                 <button
                     onClick={() => setAutoPlay(!autoPlay)}
-                    className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ?'text-primary' : 'text-white/20 hover:text-white/40'}`}
+                    className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
                 >
-                    <PlayCircle size={13} className={autoPlay ?'fill-current' : ''} strokeWidth={2.5} /> AutoPlay
+                    <PlayCircle size={13} className={autoPlay ? 'fill-current' : ''} strokeWidth={2.5} /> AutoPlay
                 </button>
                 <div className="hidden md:block w-px h-3 bg-white/5 mx-1" />
                 {prevEpId ? (
@@ -148,23 +191,23 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setCategory('sub')}
-                                className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category ==='sub'
+                                className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category === 'sub'
                                     ? 'bg-primary/15 border border-primary/40 text-primary'
                                     : 'bg-white/[0.03] border border-white/5 text-white/20 hover:text-white/50'
                                     }`}
                             >
-                                <div className={`w-1.5 h-1.5 rounded-full ${category ==='sub' ? 'bg-primary' : 'bg-white/10'}`} />
+                                <div className={`w-1.5 h-1.5 rounded-full ${category === 'sub' ? 'bg-primary' : 'bg-white/10'}`} />
                                 sub
                             </button>
                             {dubEpisodes > 0 && (
                                 <button
                                     onClick={() => setCategory('dub')}
-                                    className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category ==='dub'
+                                    className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category === 'dub'
                                         ? 'bg-[#53CCB8]/15 border border-[#53CCB8]/40 text-[#53CCB8]'
                                         : 'bg-white/[0.03] border border-white/5 text-white/20 hover:text-white/50'
                                         }`}
                                 >
-                                    <div className={`w-1.5 h-1.5 rounded-full ${category ==='dub' ? 'bg-[#53CCB8]' : 'bg-white/10'}`} />
+                                    <div className={`w-1.5 h-1.5 rounded-full ${category === 'dub' ? 'bg-[#53CCB8]' : 'bg-white/10'}`} />
                                     dub
                                 </button>
                             )}
@@ -173,7 +216,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setServer('megaPlay')}
-                                className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all shadow-lg active:scale-95 ${server ==='megaPlay'
+                                className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all shadow-lg active:scale-95 ${server === 'megaPlay'
                                     ? 'bg-[#53CCB8] text-[#0b0c10] shadow-[#53CCB8]/20'
                                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
                                     }`}
@@ -182,7 +225,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             </button>
                             <button
                                 onClick={() => setServer('vidWish')}
-                                className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all active:scale-95 ${server ==='vidWish'
+                                className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all active:scale-95 ${server === 'vidWish'
                                     ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/20'
                                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
                                     }`}
@@ -199,7 +242,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setCategory('sub')}
-                            className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category ==='sub'
+                            className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category === 'sub'
                                 ? 'bg-primary/10 border-primary/40 text-primary'
                                 : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white'
                                 }`}
@@ -210,12 +253,12 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         {dubEpisodes > 0 && (
                             <button
                                 onClick={() => setCategory('dub')}
-                                className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category ==='dub'
+                                className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category === 'dub'
                                     ? 'bg-[#53CCB8]/10 border-[#53CCB8]/40 text-[#53CCB8]'
                                     : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white'
                                     }`}
                             >
-                                <Mic size={9} className={category ==='dub' ? 'text-[#53CCB8]' : 'text-[#53CCB8]/60'} />
+                                <Mic size={9} className={category === 'dub' ? 'text-[#53CCB8]' : 'text-[#53CCB8]/60'} />
                                 dub
                             </button>
                         )}
@@ -224,7 +267,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     <div className="flex items-center justify-center gap-2 w-full max-w-[280px]">
                         <button
                             onClick={() => setServer('megaPlay')}
-                            className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server ==='megaPlay'
+                            className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'megaPlay'
                                 ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/10'
                                 : 'bg-white/5 text-white/40 border border-white/5'
                                 }`}
@@ -233,7 +276,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         </button>
                         <button
                             onClick={() => setServer('vidWish')}
-                            className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server ==='vidWish'
+                            className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'vidWish'
                                 ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/10'
                                 : 'bg-white/5 text-white/40 border border-white/5'
                                 }`}
