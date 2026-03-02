@@ -58,8 +58,8 @@ export default async function Home() {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                   <RotateCcw className="text-primary" size={24} />
-                  <h2 className="text-xl md:text-2xl font-display font-black text-white tracking-tight">
-                    continue watching
+                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                    Continue Watching
                   </h2>
                 </div>
                 <Link href="#" className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-primary transition-colors tracking-widest">
@@ -77,8 +77,8 @@ export default async function Home() {
             <section className="mt-16">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl md:text-2xl font-display font-black tracking-tighter text-white">
-                    latest episodes
+                  <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white">
+                    Latest Episodes
                   </h2>
                 </div>
                 <div className="flex items-center gap-6">
@@ -98,8 +98,8 @@ export default async function Home() {
             <section className="mt-16">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl md:text-2xl font-display font-black tracking-tighter text-white">
-                    newly added
+                  <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white">
+                    Newly Added
                   </h2>
                 </div>
                 <div className="flex items-center gap-6">
@@ -119,8 +119,8 @@ export default async function Home() {
             <section className="mt-16">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl md:text-2xl font-display font-black tracking-tighter text-white">
-                    top upcoming
+                  <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white">
+                    Top Upcoming
                   </h2>
                 </div>
                 <div className="flex items-center gap-6">

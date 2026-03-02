@@ -29,7 +29,7 @@ const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending'
             {/* Section Header */}
             <div className="flex items-center justify-between mb-4">
                 <h2
-                    className="font-display font-black text-lg md:text-xl tracking-tight text-white"
+                    className="font-black text-lg md:text-xl tracking-tight text-white"
                 >
                     {title}
                 </h2>
