@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+:root {
+  /* ── Core Palette (matches detail page) ── */
+  --background: #161618;
+  /* unified site bg */
+  --surface: #1e1e22;
+  /* cards, panels, sidebars */
+  --surface-raised: #252529;
+  /* hover states, tooltips */
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+
+  /* ── Text ── */
+  --foreground: #F1F1F2;
+  --text-muted: #8a8a9a;
+  --text-faint: rgba(255, 255, 255, 0.25);
+
+  /* ── Accent / Primary ── */
+  --primary: #53CCB8;
+  --primary-hover: #3EB8A4;
+  --primary-rgb: 83, 204, 184;
+  --accent: #53CCB8;
+
+  /* ── Status colors ── */
+  --green: #2ECC71;
+  --pink: #FF6E9F;
+  --gold: #FFB941;
+
+  /* ── Aliases for component classes ── */
+  --card-bg: var(--surface);
+  --sidebar-bg: var(--surface);
+  --glass: rgba(22, 22, 24, 0.92);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --font-display: var(--font-outfit), sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-card: var(--surface);
+  --color-sidebar: var(--surface);
+  --color-muted: var(--text-muted);
+  --color-surface: var(--surface);
+
+  --shadow-neon: none;
+  --shadow-neon-pink: none;
+}
+
+
+/* ─────────────────────────────────────────
+   Base
+───────────────────────────────────────── */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  font-family: var(--font-inter), sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+
+/* ─────────────────────────────────────────
+   Scrollbar
+───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e2e34;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+/* ─────────────────────────────────────────
+   Navbar / Glass
+───────────────────────────────────────── */
+.glass-navbar {
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  border-bottom: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* ─────────────────────────────────────────
+   Panel / Card surface
+───────────────────────────────────────── */
+.panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.sidebar-container {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────
+   Section heading accent bar
+───────────────────────────────────────── */
+.section-title {
+  font-size: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1.1em;
+  background: var(--primary);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────
+   Badges
+───────────────────────────────────────── */
+.tag-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tag-badge-primary {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: rgba(83, 204, 184, 0.12);
+  border: 1px solid rgba(83, 204, 184, 0.25);
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tag-badge-status-airing {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  border-radius: 0.3rem;
+  background-color: rgba(46, 204, 113, 0.12);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  color: var(--green);
+}
+
+/* ─────────────────────────────────────────
+   Hero gradients (updated to new bg)
+───────────────────────────────────────── */
+.hero-gradient {
+  background: linear-gradient(90deg,
+      #161618 0%,
+      rgba(22, 22, 24, 0.7) 55%,
+      rgba(22, 22, 24, 0) 100%);
+}
+
+.hero-bottom-gradient {
+  background: linear-gradient(0deg, #161618 0%, rgba(22, 22, 24, 0) 100%);
+}
+
+.anime-card-gradient {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.88) 100%);
+}
+
+/* ─────────────────────────────────────────
+   Search input
+───────────────────────────────────────── */
+.search-input {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.375rem 1rem;
+  font-size: 0.875rem;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.search-input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(83, 204, 184, 0.4);
+}
+
+/* ─────────────────────────────────────────
+   Custom scrollbar utility class
+───────────────────────────────────────── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #2e2e34;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
