@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import VideoPlayer from './VideoPlayer';
-import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Heart, Flag } from 'lucide-react';
+import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Heart, Flag, MessageSquare } from 'lucide-react';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 
 interface WatchControlsProps {
@@ -42,38 +42,94 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
     // Resume Logic
     const [initialTime, setInitialTime] = useState(0);
-    const [sessionStartTime] = useState(Date.now());
+    const [currentTime, setCurrentTime] = useState(0);
     const [hasLoadedProgress, setHasLoadedProgress] = useState(false);
+
+    // Use a ref for the exact current time to avoid stale closures in save intervals
+    const currentProgressRef = useRef(0);
 
     useEffect(() => {
         const progress = getAnimeProgress(animeId);
         if (progress && progress.episodeId === episodeId) {
-            setInitialTime(progress.currentTime || 0);
+            const savedTime = progress.currentTime || 0;
+            setInitialTime(savedTime || 0.1); // Small offset to avoid 0 check issues
+            setCurrentTime(savedTime);
+            currentProgressRef.current = savedTime;
+        } else {
+            setInitialTime(0);
+            setCurrentTime(0);
+            currentProgressRef.current = 0;
         }
         setHasLoadedProgress(true);
     }, [animeId, episodeId]);
 
-    // Save progress periodically
+    // Timer to estimate progress (one source of truth: local state synced with player)
     useEffect(() => {
         if (!hasLoadedProgress) return;
 
-        const save = () => {
-            const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+        const interval = setInterval(() => {
+            setCurrentTime(prev => {
+                const updated = prev + 1;
+                currentProgressRef.current = updated;
+                return updated;
+            });
+        }, 1000);
+
+        // Periodically save to localStorage
+        const saveInterval = setInterval(() => {
             saveWatchProgress({
                 animeId,
                 animeTitle,
                 animeImage,
                 episodeId,
                 episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
-                currentTime: initialTime + elapsed,
-                duration: 1440 // Mock duration if unknown (24 mins)
+                currentTime: currentProgressRef.current,
+                duration: 1440 // 24 mins fallback
+            });
+        }, 5000);
+
+        return () => {
+            clearInterval(interval);
+            clearInterval(saveInterval);
+            // Final save on unmount or navigation
+            saveWatchProgress({
+                animeId,
+                animeTitle,
+                animeImage,
+                episodeId,
+                episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
+                currentTime: currentProgressRef.current,
+                duration: 1440
             });
         };
+    }, [hasLoadedProgress, animeId, episodeId, animeTitle, animeImage, episodeNumber]);
 
-        const interval = setInterval(save, 15000); // Save every 15s for better accuracy
-        save(); // Initial save
-        return () => clearInterval(interval);
-    }, [hasLoadedProgress, animeId, episodeId, initialTime, sessionStartTime, animeTitle, animeImage, episodeNumber]);
+    // Handle incoming time updates from the player (skips, seeks, etc.)
+    // Handle incoming time updates from the player (skips, seeks, etc.)
+    const handleProgress = (newTime: number, duration: number) => {
+        // PREVENTION: Don't let an initial '0' from the iframe clobber our resume point!
+        // We only trust '0' if we genuinely have no previous progress OR if the video has played/jumped.
+        if (newTime === 0 && currentProgressRef.current > 5) {
+            // Likely an initial status message from the player starting up.
+            return;
+        }
+
+        if (newTime >= 0) {
+            setCurrentTime(newTime);
+            currentProgressRef.current = newTime;
+
+            // Immediate save on player update to ensure skips are caught
+            saveWatchProgress({
+                animeId,
+                animeTitle,
+                animeImage,
+                episodeId,
+                episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
+                currentTime: newTime,
+                duration: duration || 1440
+            });
+        }
+    };
 
     // Watch for messages from the iframe (some players send 'ended' or 'finished')
     useEffect(() => {
@@ -85,12 +141,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
             if (typeof data === 'string') {
                 const lower = data.toLowerCase();
-                // Check common keywords or JSON strings
                 if (lower.includes('end') || lower.includes('finish') || lower.includes('complete') || lower.includes('done')) {
                     isEnded = true;
                 }
             } else if (typeof data === 'object' && data !== null) {
-                // Check all values in the object for 'ended' keywords
                 try {
                     const vals = Object.values(data).map(v => String(v).toLowerCase());
                     if (vals.some(v => v.includes('end') || v.includes('finish') || v.includes('complete') || v.includes('done'))) {
@@ -100,17 +154,15 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             }
 
             if (isEnded && autoNext && nextEpId) {
-                // Short timeout to ensure player is truly done
                 setTimeout(() => {
-                    // Force a hard reload to ensure autoplay triggers correctly on next page
-                    window.location.href = `/watch/${animeId}/${nextEpId}`;
+                    router.push(`/watch/${animeId}/${nextEpId}`);
                 }, 1000);
             }
         };
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [autoNext, nextEpId, animeId]);
+    }, [autoNext, nextEpId, animeId, router]);
 
     return (
         <>
@@ -124,6 +176,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     category={category}
                     autoPlay={autoPlay}
                     startTime={initialTime}
+                    onProgress={handleProgress}
                 />
             )}
 
@@ -174,7 +227,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 </button>
             </div>
 
-
             {/* ── Desktop Controls Footer ─────────────────────────────── */}
             <div className="bg-[#0b0c10]/20">
                 <div className="hidden md:flex p-6 items-center justify-between gap-6">
@@ -187,7 +239,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         </p>
                     </div>
                     <div className="flex flex-col items-end gap-3.5 shrink-0">
-                        {/* Sub / Dub toggles */}
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setCategory('sub')}
@@ -212,7 +263,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 </button>
                             )}
                         </div>
-                        {/* Server toggles */}
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setServer('megaPlay')}
@@ -238,7 +288,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
                 {/* ── Mobile Controls Footer ──────────────────────────── */}
                 <div className="flex md:hidden flex-col items-center p-4 px-5 gap-4">
-                    {/* Sub / Dub toggles */}
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setCategory('sub')}
@@ -263,7 +312,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             </button>
                         )}
                     </div>
-                    {/* Server toggles */}
                     <div className="flex items-center justify-center gap-2 w-full max-w-[280px]">
                         <button
                             onClick={() => setServer('megaPlay')}
@@ -293,7 +341,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         </p>
                     </div>
 
-                    {/* Next Episode Banner */}
                     {animeStatus?.toLowerCase() === 'currently airing' && (
                         <div className="w-full mt-2 p-3 rounded-[10px] bg-gradient-to-br from-[#53CCB8]/10 via-[#53CCB8]/5 to-transparent border border-[#53CCB8]/10 flex flex-col items-center justify-center text-center">
                             <p className="text-[9px] font-bold text-white/30 mb-0.5 tracking-[0.1em] leading-none">

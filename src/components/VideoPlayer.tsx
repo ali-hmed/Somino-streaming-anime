@@ -10,15 +10,46 @@ interface VideoPlayerProps {
     category?: 'sub' | 'dub';
     autoPlay?: boolean;
     startTime?: number; // in seconds
+    onProgress?: (currentTime: number, duration: number) => void;
 }
 
 const VideoPlayer = ({
+    id,
     episodeId,
     server = 'megaPlay',
     category = 'sub',
     autoPlay = true,
     startTime = 0,
+    onProgress,
 }: VideoPlayerProps) => {
+    // Listen for messages from the iframe player
+    React.useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            const data = event.data;
+            if (!data) return;
+
+            // Handle common player message formats (e.g. from MegaPlay/VidWish if they send progress)
+            // Most players send objects like { event: 'timeupdate', data: { currentTime: 10, duration: 100 } }
+            // or { type: 'video:timeupdate', currentTime: 10, duration: 100 }
+
+            let currentTime: number | null = null;
+            let duration: number | null = null;
+
+            if (typeof data === 'object') {
+                // Try to find currentTime and duration in various common spots
+                currentTime = data.currentTime ?? data.time ?? data.seconds ?? data.data?.currentTime ?? data.data?.time;
+                duration = data.duration ?? data.totalTime ?? data.data?.duration ?? data.data?.totalTime;
+
+                // If it's a "seeked" or "timeupdate" event, we extract the values
+                if (currentTime !== null && onProgress) {
+                    onProgress(Number(currentTime), Number(duration || 0));
+                }
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, [onProgress]);
     // Extract hash from current episodeId (handles both "ID::ep=number" and raw hash IDs)
     const decodedEpisodeId = decodeURIComponent(episodeId);
     let epHash = decodedEpisodeId.includes('ep=')
