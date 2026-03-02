@@ -29,7 +29,21 @@ export default function SchedulePage() {
         const loadSchedule = async () => {
             setLoading(true);
             try {
-                const data = await fetchSchedule(selectedDay);
+                // Convert day name to date string
+                const dayIndex = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].indexOf(selectedDay);
+                const now = new Date();
+                const currentDayIndex = now.getDay();
+
+                const diff = dayIndex - currentDayIndex;
+                const targetDate = new Date();
+                targetDate.setDate(now.getDate() + diff);
+
+                const y = targetDate.getFullYear();
+                const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+                const d = String(targetDate.getDate()).padStart(2, '0');
+                const dateStr = `${y}-${m}-${d}`;
+
+                const data = await fetchSchedule(dateStr);
                 setAnimeList(data);
             } catch (error) {
                 console.error('Failed to load schedule:', error);
@@ -76,7 +90,7 @@ export default function SchedulePage() {
                         <button
                             key={day.id}
                             onClick={() => setSelectedDay(day.id)}
-                            className={`px-6 py-3.5 rounded-xl font-black text-[10px] md:text-xs tracking-[0.15em] transition-all flex-shrink-0 border ${selectedDay === day.id ?'bg-primary border-primary text-white shadow-neon scale-105 z-10'
+                            className={`px-6 py-3.5 rounded-xl font-black text-[10px] md:text-xs tracking-[0.15em] transition-all flex-shrink-0 border ${selectedDay === day.id ? 'bg-primary border-primary text-white shadow-neon scale-105 z-10'
                                 : 'bg-white/5 border-white/5 text-muted hover:border-white/10 hover:text-white'
                                 }`}
                         >

@@ -1,17 +1,20 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { getTitle } from '@/types/anime';
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { fetchSchedule } from '@/lib/consumet';
 
 interface ScheduleProps {
     scheduleList?: any[];
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ scheduleList }) => {
+const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
     const [currentTime, setCurrentTime] = useState('');
     const [isExpanded, setIsExpanded] = useState(false);
-    const list = scheduleList && scheduleList.length > 0 ? scheduleList : [];
+    const [list, setList] = useState<any[]>(initialList || []);
+    const [loading, setLoading] = useState(false);
+    const [selectedDateIndex, setSelectedDateIndex] = useState(1); // Index 1 is TODAY in our generateDays
 
     const INITIAL_COUNT = 8;
     const EXPANDED_COUNT = 14;
@@ -34,19 +37,22 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList }) => {
         return () => clearInterval(interval);
     }, []);
 
-    // Generate dynamic dates around today
+    // Generate dynamic dates: Yesterday, Today, Tomorrow, +3 more
     const generateDays = () => {
         const days = [];
         const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-        const today = new Date();
 
-        // Show yesterday, today, and tomorrow-forward to match UI style
-        for (let i = -1; i <= 3; i++) {
+        for (let i = -1; i <= 4; i++) {
             const d = new Date();
-            d.setDate(today.getDate() + i);
+            d.setDate(d.getDate() + i);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const dayNum = String(d.getDate()).padStart(2, '0');
+
             days.push({
                 name: dayNames[d.getDay()],
                 date: d.getDate().toString(),
+                fullDate: `${year}-${month}-${dayNum}`,
                 active: i === 0,
             });
         }
@@ -55,38 +61,81 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList }) => {
 
     const days = generateDays();
 
+    // Fetch schedule when selected day changes
+    useEffect(() => {
+        // Skip first load if we already have initialList and it's today
+        if (selectedDateIndex === 1 && initialList && list === initialList) return;
+
+        const loadDaySchedule = async () => {
+            setLoading(true);
+            try {
+                const data = await fetchSchedule(days[selectedDateIndex].fullDate);
+                setList(data);
+            } catch (error) {
+                console.error('Failed to load schedule for day:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadDaySchedule();
+    }, [selectedDateIndex]);
+
     return (
         <div className="bg-[#111114] border border-white/5 rounded-[4px] overflow-hidden shadow-2xl">
             {/* Day Selector Header */}
             <div className="p-3 pb-4 flex items-center justify-between bg-white/[0.01]">
-                <button className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/20 hover:text-white hover:bg-white/10 transition-all">
+                <button
+                    onClick={() => setSelectedDateIndex(prev => Math.max(0, prev - 1))}
+                    disabled={selectedDateIndex === 0}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${selectedDateIndex === 0 ? 'text-white/5 cursor-not-allowed' : 'bg-white/5 text-white/20 hover:text-white hover:bg-white/10'}`}
+                >
                     <ChevronLeft size={16} />
                 </button>
 
                 <div className="flex items-center gap-4">
-                    {days.slice(1, 4).map((day) => (
-                        <div key={day.name} className="flex flex-col items-center gap-2">
-                            <span className={`text-[10px] font-black tracking-widest ${day.active ?'text-white' : 'text-white/40'}`}>
-                                {day.name}
-                            </span>
-                            <div className={`w-11 h-9 rounded-xl flex items-center justify-center text-[12px] font-black transition-all ${day.active ?'bg-primary text-white' : 'bg-[#1e1e21] text-white/30'}`}>
-                                {day.date}
-                            </div>
-                        </div>
-                    ))}
+                    {days.slice(Math.max(0, selectedDateIndex - 1), Math.min(days.length, selectedDateIndex + 2)).map((day, idx) => {
+                        const actualIdx = days.findIndex(d => d.fullDate === day.fullDate);
+                        const isActive = actualIdx === selectedDateIndex;
+                        return (
+                            <button
+                                key={day.fullDate}
+                                onClick={() => setSelectedDateIndex(actualIdx)}
+                                className="flex flex-col items-center gap-2 outline-none group"
+                            >
+                                <span className={`text-[10px] font-black tracking-widest transition-colors ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>
+                                    {day.name}
+                                </span>
+                                <div className={`w-11 h-9 rounded-xl flex items-center justify-center text-[12px] font-black transition-all ${isActive ? 'bg-primary text-white shadow-neon' : 'bg-[#1e1e21] text-white/30 group-hover:bg-[#252529]'}`}>
+                                    {day.date}
+                                </div>
+                            </button>
+                        );
+                    })}
                 </div>
 
-                <button className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/20 hover:text-white hover:bg-white/10 transition-all">
+                <button
+                    onClick={() => setSelectedDateIndex(prev => Math.min(days.length - 1, prev + 1))}
+                    disabled={selectedDateIndex === days.length - 1}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${selectedDateIndex === days.length - 1 ? 'text-white/5 cursor-not-allowed' : 'bg-white/5 text-white/20 hover:text-white hover:bg-white/10'}`}
+                >
                     <ChevronRight size={16} />
                 </button>
             </div>
 
             {/* Schedule List */}
-            <div className="flex flex-col bg-[#161618]/30">
+            <div className="flex flex-col bg-[#161618]/30 min-h-[300px] relative">
+                {loading && (
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-10 flex items-center justify-center">
+                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                )}
+
                 {list.length > 0 ? (
                     list.slice(0, displayCount).map((item, i) => {
                         const title = getTitle(item.title);
-                        const broadcastTime = item.broadcast?.time || `${String(5 + i).padStart(2, '0')}:00`;
+                        const broadcastTime = item.time || `${String(5 + i).padStart(2, '0')}:00`;
+                        const epNum = item.episode || (10 + i);
 
                         return (
                             <Link
@@ -101,15 +150,19 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList }) => {
                                     {title}
                                 </h5>
                                 <span className="text-[10px] font-bold text-white/20 group-hover:text-white/40 tracking-widest text-right min-w-[40px]">
-                                    EP {item.episodeNumber || (10 + i)}
+                                    EP {epNum}
                                 </span>
                             </Link>
                         );
                     })
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center p-12 opacity-20">
-                        <div className="w-12 h-12 rounded-full border-2 border-dashed border-white mb-4 animate-[spin_10s_linear_infinite]" />
-                        <p className="text-[10px] font-black tracking-[0.2em]">Updating Schedule...</p>
+                        {loading ? null : (
+                            <>
+                                <div className="w-12 h-12 rounded-full border-2 border-dashed border-white mb-4 animate-[spin_10s_linear_infinite]" />
+                                <p className="text-[10px] font-black tracking-[0.2em]">No Schedule Found</p>
+                            </>
+                        )}
                     </div>
                 )}
             </div>
@@ -126,7 +179,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList }) => {
                         className="text-[12px] font-bold text-white/40 hover:text-white transition-all flex items-center gap-1.5 group"
                     >
                         {isExpanded ? 'Less' : 'More'}
-                        <ChevronDown size={15} className={`transition-transform duration-300 ${isExpanded ?'rotate-180' : ''} opacity-40 group-hover:opacity-100`} />
+                        <ChevronDown size={15} className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''} opacity-40 group-hover:opacity-100`} />
                     </button>
                 )}
             </div>

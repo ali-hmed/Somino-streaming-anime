@@ -121,12 +121,13 @@ export const fetchAnimeVideos = async (id: string | number) => {
     return { data: [] };
 };
 
-export const fetchSchedule = async (day?: string): Promise<any[]> => {
+export const fetchSchedule = async (date?: string): Promise<any[]> => {
     try {
-        const res = await fetch(`${BASE_URL}/schadule`);
+        const url = date ? `${BASE_URL}/schadule?date=${date}` : `${BASE_URL}/schadule`;
+        const res = await fetch(url);
         if (!res.ok) throw new Error('schedule failed');
         const json = await res.json();
-        return (json.data || []).map(mapCustomToAnime);
+        return (json.data?.response || []).map(mapCustomToAnime);
     } catch (err) {
         return [];
     }
