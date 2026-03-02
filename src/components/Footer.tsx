@@ -86,7 +86,7 @@ const Footer = () => {
                     <div className="flex flex-col items-end pb-1 pr-1">
                         <Link href="/" className="flex items-center opacity-90 hover:opacity-100 transition-all cursor-pointer group">
                             <img
-                                src="/somino-lg.png"
+                                src="/Somino-lg.png"
                                 alt="Somino Logo"
                                 className="h-8 md:h-10 w-auto object-contain"
                             />

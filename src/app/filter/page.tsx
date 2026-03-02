@@ -25,7 +25,8 @@ async function fetchFiltered(params: Record<string, string | undefined>, page: n
         Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined).map(([k, v]) => [k, String(v)]))
     ).toString();
 
-    const res = await fetch(`http://localhost:3030/api/v1/filter?${qStr}`, {
+    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+    const res = await fetch(`${BASE_URL}/filter?${qStr}`, {
         next: { revalidate: 60 },
         headers: { Accept: 'application/json' },
     });
@@ -191,7 +192,7 @@ export default async function FilterPage({
                                                 <Link
                                                     key={`page-${p}`}
                                                     href={buildUrl(params, p)}
-                                                    className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === p ?'bg-primary text-white shadow-lg'
+                                                    className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === p ? 'bg-primary text-white shadow-lg'
                                                         : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                                         }`}
                                                 >

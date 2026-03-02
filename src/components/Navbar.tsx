@@ -56,7 +56,8 @@ const Navbar = () => {
             }
             setIsSearching(true);
             try {
-                const res = await fetch(`http://localhost:3030/api/v1/search?keyword=${encodeURIComponent(query.trim())}&page=1`);
+                const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+                const res = await fetch(`${BASE_URL}/search?keyword=${encodeURIComponent(query.trim())}&page=1`);
                 if (!res.ok) throw new Error('API Error');
                 const json = await res.json();
 
@@ -123,7 +124,7 @@ const Navbar = () => {
 
                         <Link href="/" className="flex items-center group shrink-0">
                             <img
-                                src="/somino-lg.png"
+                                src="/Somino-lg.png"
                                 alt="Somino Logo"
                                 className="h-6 md:h-8 w-auto object-contain"
                             />
@@ -147,7 +148,7 @@ const Navbar = () => {
                                     {item.hasDropdown && (
                                         <ChevronRight
                                             size={14}
-                                            className={`transition-transform duration-300 ${isGenresOpen ?'rotate-90' : ''} opacity-40`}
+                                            className={`transition-transform duration-300 ${isGenresOpen ? 'rotate-90' : ''} opacity-40`}
                                         />
                                     )}
                                 </Link>
@@ -331,7 +332,7 @@ const Navbar = () => {
                                                     <span className="text-[14px] font-semibold tracking-wide flex-1">
                                                         {item.label}
                                                     </span>
-                                                    <ChevronRight size={14} className={`transition-transform duration-300 ${isMobileGenresOpen ?'rotate-90' : ''} opacity-20`} />
+                                                    <ChevronRight size={14} className={`transition-transform duration-300 ${isMobileGenresOpen ? 'rotate-90' : ''} opacity-20`} />
                                                 </button>
                                                 <AnimatePresence>
                                                     {isMobileGenresOpen && (
