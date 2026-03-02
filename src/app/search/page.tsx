@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ChevronRight, Search as SearchIcon } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import AnimeCard from '@/components/AnimeCard';
 import { searchAnime } from '@/lib/consumet';
@@ -66,7 +66,7 @@ export default async function SearchPage({
                                         <Link
                                             key={`page-${page}`}
                                             href={`/search?q=${encodeURIComponent(query)}&page=${page}`}
-                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ?'bg-primary text-white shadow-lg'
+                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ? 'bg-primary text-white shadow-lg'
                                                 : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                                 }`}
                                         >
@@ -89,10 +89,10 @@ export default async function SearchPage({
                         )}
                     </>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-40 bg-white/5 border border-dashed border-white/10">
-                        <SearchIcon size={48} className="text-white/10 mb-6" />
-                        <h3 className="text-xl font-black text-white/40 tracking-widest">No Series Found</h3>
-                        <p className="text-[10px] font-bold text-muted mt-2 tracking-widest">Try searching with a different title or keyword</p>
+                    <div className="flex flex-col items-center justify-center py-24 bg-white/5 border border-dashed border-white/10 rounded-2xl">
+                        <img src="/miku-not-found.png" alt="No Results" className="w-40 h-40 object-contain mb-2 opacity-90 select-none" draggable={false} />
+                        <h3 className="text-xl font-black text-white/40 tracking-widest uppercase">No Series Found</h3>
+                        <p className="text-[10px] font-bold text-muted mt-2 tracking-widest uppercase opacity-60">Try searching with a different title or keyword</p>
                     </div>
                 )}
             </div>

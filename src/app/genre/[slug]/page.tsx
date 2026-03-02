@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ChevronRight, LayoutGrid } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import AnimeCard from '@/components/AnimeCard';
 import { fetchAnimeByGenre, fetchGenresList, fetchAnimeByType, fetchPopularAnime } from '@/lib/consumet';
@@ -69,7 +69,7 @@ export default async function GenrePage({
             <main className="min-h-screen bg-background text-foreground pb-20">
                 <Navbar />
                 <div className="container mx-auto px-4 pt-40 flex flex-col items-center justify-center text-center">
-                    <LayoutGrid size={64} className="text-white/10 mb-6" />
+                    <img src="/miku-not-found.png" alt="Not Found" className="w-40 h-40 object-contain mb-2 opacity-90 select-none" draggable={false} />
                     <h1 className="text-2xl font-black text-white/40">Genre Not Found</h1>
                     <p className="text-sm text-muted mt-2 max-w-sm">We couldn't find the category "{slug}". Please try another one.</p>
                     <Link href="/" className="mt-8 px-8 py-3 bg-primary text-white font-bold tracking-widest text-xs rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
@@ -151,7 +151,7 @@ export default async function GenrePage({
                                         <Link
                                             key={`page-${page}`}
                                             href={`/genre/${slug}?page=${page}`}
-                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ?'bg-primary text-white shadow-lg'
+                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ? 'bg-primary text-white shadow-lg'
                                                 : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                                 }`}
                                         >
@@ -174,9 +174,9 @@ export default async function GenrePage({
                         )}
                     </>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-40 bg-white/5 border border-dashed border-white/10 rounded-2xl">
-                        <LayoutGrid size={48} className="text-white/10 mb-6" />
-                        <h3 className="text-xl font-black text-white/40 tracking-widest">No Series Found yet</h3>
+                    <div className="flex flex-col items-center justify-center py-24 bg-white/5 border border-dashed border-white/10 rounded-2xl">
+                        <img src="/miku-not-found.png" alt="No Results" className="w-36 h-36 object-contain mb-2 opacity-90 select-none" draggable={false} />
+                        <h3 className="text-xl font-black text-white/40 tracking-widest">No Series Found</h3>
                         <p className="text-[10px] font-bold text-muted mt-2 tracking-widest">No anime found in this category.</p>
                     </div>
                 )}

@@ -21,9 +21,10 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
     if (!anime) {
         return (
-            <div className="min-h-screen bg-[#161618] flex flex-col items-center justify-center p-4">
-                <h1 className="text-2xl font-bold mb-4 text-primary">Anime Not Found</h1>
-                <p className="text-white/50 text-sm mb-6">The series you&apos;re looking for might have been moved or doesn&apos;t exist.</p>
+            <div className="min-h-screen bg-[#161618] flex flex-col items-center justify-center p-4 text-center">
+                <img src="/miku-not-found.png" alt="Not Found" className="w-44 h-44 object-contain mb-2 opacity-90 select-none" draggable={false} />
+                <h1 className="text-2xl font-bold mb-2 text-white/40">Anime Not Found</h1>
+                <p className="text-white/30 text-sm mb-6">The series you&apos;re looking for might have been moved or doesn&apos;t exist.</p>
                 <Link href="/" className="bg-primary px-8 py-3 rounded-lg font-bold text-sm hover:opacity-90 transition-all">Go back home</Link>
             </div>
         );
@@ -358,7 +359,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     {anime.moreSeasons.map((season: any, i: number) => {
                                         const seasonTitle = getTitle(season.title);
                                         return (
-                                            <Link key={i} href={`/watch/${season.id}`} className={`flex flex-col gap-2 p-3 rounded-lg border border-white/5 transition-all hover:bg-white/5 ${season.isActive ?"bg-white/10 border-primary/50 pointer-events-none" : "bg-[#0b0c10]/40"}`}>
+                                            <Link key={i} href={`/watch/${season.id}`} className={`flex flex-col gap-2 p-3 rounded-lg border border-white/5 transition-all hover:bg-white/5 ${season.isActive ? "bg-white/10 border-primary/50 pointer-events-none" : "bg-[#0b0c10]/40"}`}>
                                                 <div className="relative aspect-video rounded-md overflow-hidden bg-white/5">
                                                     {season.image ? <img src={season.image} className="w-full h-full object-cover" /> : null}
                                                     {season.isActive && <div className="absolute inset-0 bg-primary/20 flex items-center justify-center backdrop-blur-sm"><Play size={20} className="text-white drop-shadow-lg" /></div>}

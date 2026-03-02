@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import AnimeCard from '@/components/AnimeCard';
 import { fetchSchedule } from '@/lib/consumet';
-import { Calendar, Clock, ChevronRight, Filter } from 'lucide-react';
+import { Clock, ChevronRight, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DAYS = [
@@ -133,11 +133,11 @@ export default function SchedulePage() {
                             key="empty"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-center py-40 bg-white/5 rounded-3xl border border-dashed border-white/10"
+                            className="text-center py-24 bg-white/5 rounded-3xl border border-dashed border-white/10"
                         >
-                            <Calendar size={48} className="mx-auto text-white/10 mb-6" />
-                            <h3 className="text-xl font-black text-white/40 tracking-widest">No Broadcasts Found</h3>
-                            <p className="text-[10px] font-bold text-muted mt-2 tracking-widest">Check back later or try another day.</p>
+                            <img src="/miku-not-found.png" alt="No Broadcasts" className="mx-auto w-44 h-44 object-contain mb-2 opacity-90 select-none" draggable={false} />
+                            <h3 className="text-xl font-black text-white/40 tracking-widest uppercase">No Broadcasts Found</h3>
+                            <p className="text-[10px] font-bold text-muted mt-2 tracking-widest uppercase opacity-60">Check back later or try another day.</p>
                         </motion.div>
                     )}
                 </AnimatePresence>
