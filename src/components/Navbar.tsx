@@ -100,12 +100,10 @@ const Navbar = () => {
         { label: 'Genre', hasDropdown: true, href: '#' },
         { label: 'Movies', hasDropdown: false, href: '/animes/movie' },
         { label: 'Popular', hasDropdown: false, href: '/animes/most-popular' },
-        { label: 'Sub Anime', hasDropdown: false, href: '/animes/subbed-anime' },
-        { label: 'Dub Anime', hasDropdown: false, href: '/animes/dubbed-anime' },
         { label: 'Top Airing', hasDropdown: false, href: '/animes/top-airing' },
-        { label: 'Completed', hasDropdown: false, href: '/animes/completed' },
-        { label: 'Recently Added', hasDropdown: false, href: '/animes/recently-added' },
         { label: 'Upcoming', hasDropdown: false, href: '/animes/top-upcoming' },
+        { label: 'Schedule', hasDropdown: false, href: '/schedule' },
+        { label: 'Random', hasDropdown: false, href: '/random' },
         // { label: 'A-Z List', hasDropdown: false, href: '/animes/az-list/a' },
     ];
 
@@ -178,6 +176,12 @@ const Navbar = () => {
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-5">
+                        <Link
+                            href="/random"
+                            className="p-2 text-white/80 hover:text-white transition-colors"
+                        >
+                            <Shuffle size={20} strokeWidth={2.5} />
+                        </Link>
                         <button
                             onClick={() => setIsSearchOpen(true)}
                             className="p-2 text-white/80 hover:text-white transition-colors"
