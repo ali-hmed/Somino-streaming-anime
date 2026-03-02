@@ -62,7 +62,7 @@ export default function CharacterSection({ characters }: CharacterSectionProps) 
                     </button>
                 )}
             </div>
-            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-2 ${expanded ?'max-h-[600px] overflow-y-auto pr-2 custom-scrollbar' : ''}`}>
+            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-2 ${expanded ? 'max-h-[600px] overflow-y-auto pr-2 custom-scrollbar' : ''}`}>
                 {hasCharacters ? (
                     displayed.map((char, i) => (
                         <CharacterCard key={`${char.id || i}-${i}`} char={char} />
@@ -74,21 +74,6 @@ export default function CharacterSection({ characters }: CharacterSectionProps) 
                 )}
             </div>
 
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.02);
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(255, 255, 255, 0.1);
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: var(--primary);
-                }
-            `}</style>
         </section>
     );
 }
