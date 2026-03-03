@@ -85,11 +85,11 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
             {/* Blurred Background Hero */}
             <div className="relative w-full">
-                <div className="absolute inset-0 h-72 overflow-hidden">
+                <div className="absolute inset-0 h-[490px] overflow-hidden">
                     <img
                         src={anime.cover || anime.image}
                         alt=""
-                        className="w-full h-full object-cover blur-[60px] scale-110 opacity-25"
+                        className="w-full h-full object-cover blur-[8px] scale-125 opacity-40"
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-[#161618]/60 via-[#161618]/80 to-[#161618]" />
                 </div>
