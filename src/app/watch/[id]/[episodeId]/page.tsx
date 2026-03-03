@@ -14,9 +14,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const { id } = await params;
     const anime = await fetchAnimeInfo(id);
     if (!anime) return { title: 'Somino - Streaming' };
-    
+
     const title = getTitle(anime.title);
-    
+
     return {
         title: `Watching ${title} - Somino`,
         description: `Stream ${title} on Somino. High quality anime streaming for free.`,
@@ -26,12 +26,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function WatchPage({ params }: { params: Promise<{ id: string, episodeId: string }> }) {
     const { id, episodeId } = await params;
 
-    // Fetch all necessary data on the server
-    const [anime, relatedAnime, animeRelations] = await Promise.all([
-        fetchAnimeInfo(id),
-        fetchRelatedAnime(id),
-        fetchAnimeRelations(id)
-    ]);
+    // Fetch primary anime info (this includes related and recommended lists)
+    const anime = await fetchAnimeInfo(id);
 
     if (!anime) {
         return (
@@ -44,17 +40,24 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         );
     }
 
-    // Prepare sidebar data
-    const sidebarRelations = animeRelations?.map((rel: any) => ({
-        ...rel,
-        name: rel.title?.english || rel.title?.romaji || rel.title || 'Unknown',
-        image: rel.image || anime.image
-    })).slice(0, 6) || [];
+    // 1. Prepare Sidebar Relations (from anime.relations which has structural types)
+    const sidebarRelations = (anime.relations || []).map((rel: any) => ({
+        id: rel.entry.mal_id?.toString(),
+        name: rel.entry.name,
+        image: rel.entry.image,
+        type: rel.entry.type,
+        relationType: rel.relation || 'Related',
+        subEpisodes: rel.entry.subEpisodes || rel.entry.episodes || 0
+    })).slice(0, 10);
 
-    const recommended = relatedAnime || [];
+    // 2. Prepare Recommended (deduplicated against relations)
+    const relationIds = new Set(sidebarRelations.map(r => r.id));
+    const recommended = (anime.recommended || [])
+        .filter((rec: any) => rec.id !== id && !relationIds.has(rec.id))
+        .slice(0, 10);
 
     return (
-        <main className="min-h-screen bg-[#0b0b0c] text-white/90 font-sans selection:bg-primary/30">
+        <main className="min-h-screen bg-[#0b0c0c] text-white/90 font-sans selection:bg-primary/30">
             <Navbar />
 
             {/* main content container */}

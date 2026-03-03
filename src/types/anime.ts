@@ -41,8 +41,11 @@ export interface AnimeInfo {
             mal_id: number;
             type: string;
             name: string;
-            url: string;
-        }[];
+            image: string;
+            episodes: number;
+            subEpisodes: number;
+            dubEpisodes: number;
+        };
     }[];
     moreSeasons?: any[];
     recommended?: any[];

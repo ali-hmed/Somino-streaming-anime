@@ -7,17 +7,16 @@ import { Star, BookmarkPlus, ChevronRight, Play } from 'lucide-react';
 import Link from 'next/link';
 import CharacterSection from '@/components/CharacterSection';
 import WatchComments from '@/components/WatchComments';
+import Relations from '@/components/Relations';
 
 export default async function WatchPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
-    const [anime, videosData, recommended, characters, themeSongs, relations] = await Promise.all([
+    const [anime, videosData, characters, themeSongs] = await Promise.all([
         fetchAnimeInfo(id),
         fetchAnimeVideos(id).catch(() => null),
-        fetchRelatedAnime(id),
         fetchAnimeCharacters(id),
         fetchAnimeThemes(id),
-        fetchAnimeRelations(id),
     ]);
 
     if (!anime) {
@@ -70,6 +69,15 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
     const members = animeRaw.members;
     const favorites = animeRaw.favorites;
     const demographics = animeRaw.demographics?.map((d: any) => d.name) || [];
+
+    // Deduplicate recommendations against relations and more seasons
+    const relationIds = new Set([
+        ...(anime.relations || []).map((r: any) => r.entry.mal_id?.toString()),
+        ...(anime.moreSeasons || []).map((s: any) => s.id?.toString())
+    ]);
+    const cleanRecommended = (anime.recommended || [])
+        .filter((rec: any) => rec.id !== id && !relationIds.has(rec.id))
+        .slice(0, 10);
 
     return (
         <main className="min-h-screen bg-[#161618] text-white pb-20">
@@ -375,13 +383,20 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                 </div>
                             </section>
                         )}
+                        {/* Relations Section */}
+                        {anime.relations && anime.relations.length > 0 && (
+                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                                <Relations relations={anime.relations} />
+                            </section>
+                        )}
+
                         {/* Characters (Mobile) */}
                         <section className="lg:hidden bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
                             <CharacterSection characters={characters || []} />
                         </section>
 
                         {/* Recommended Section */}
-                        {anime.recommended && anime.recommended.length > 0 && (
+                        {cleanRecommended.length > 0 && (
                             <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Recommendations</h2>
@@ -390,7 +405,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     </span>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
-                                    {anime.recommended.slice(0, 10).map((item: any, i: number) => (
+                                    {cleanRecommended.map((item: any, i: number) => (
                                         <AnimeCard key={`rec-${item.id}-${i}`} anime={item} variant="portrait" />
                                     ))}
                                 </div>

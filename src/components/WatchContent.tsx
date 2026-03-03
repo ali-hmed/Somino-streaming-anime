@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import WatchControls from './WatchControls';
 import EpisodeList from './EpisodeList';
 import WatchComments from './WatchComments';
-import { Mic, MessageSquare, Star, Home } from 'lucide-react';
+import { Mic, MessageSquare, Star, Home, ChevronRight, GitBranch } from 'lucide-react';
 import { Episode, getTitle } from '@/types/anime';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -20,6 +20,7 @@ interface WatchContentProps {
 const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime, recommended, sidebarRelations }) => {
     const [currentEpisodeId, setCurrentEpisodeId] = useState(initialEpisodeId);
     const [isChanging, setIsChanging] = useState(false);
+    const [showAllRelations, setShowAllRelations] = useState(false);
     const router = useRouter();
 
     const episodes = anime.episodes || [];
@@ -149,8 +150,8 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                 <span className="text-primary">{anime.type || 'TV'}</span>
                                 <span className="opacity-20 text-[12px] font-light">/</span>
                                 <span className="text-white/40 truncate max-w-[200px] lg:max-w-[400px]">{title}</span>
-                                
-                               
+
+
                             </div>
                         </div>
 
@@ -199,34 +200,53 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                 <aside className="w-full lg:w-[320px] shrink-0 space-y-10">
                     {/* 1. relations sidebar */}
                     {sidebarRelations && sidebarRelations.length > 0 && (
-                        <section className="space-y-5">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-[13px] font-black text-white tracking-tight border-l-3 border-primary pl-2.5">relations</h3>
+                        <section className="rounded-2xl bg-[#0c0d10] border border-white/[0.05] overflow-hidden shadow-xl">
+                            <div className="flex items-center justify-between p-5 pb-3">
+                                <div className="flex items-center gap-2">
+                                    <GitBranch size={16} className="text-primary" />
+                                    <h3 className="text-[13px] font-black text-white tracking-widest uppercase">relations</h3>
+                                </div>
+                                {sidebarRelations.length > 3 && (
+                                    <button
+                                        onClick={() => setShowAllRelations(!showAllRelations)}
+                                        className="flex items-center gap-1 px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-white/40 transition-colors uppercase hover:text-primary"
+                                    >
+                                        {showAllRelations ? 'less' : `all (${sidebarRelations.length})`}
+                                        <ChevronRight size={12} className={`ml-1 transition-transform ${showAllRelations ? 'rotate-[-90deg]' : 'rotate-90'}`} />
+                                    </button>
+                                )}
                             </div>
-                            <div className="space-y-3">
-                                {sidebarRelations.map((rel: any, i: number) => (
+                            <div className="flex flex-col gap-2 p-2">
+                                {(showAllRelations ? sidebarRelations : sidebarRelations.slice(0, 3)).map((rel: any, i: number) => (
                                     <Link
                                         key={i}
                                         href={`/watch/${rel.id}`}
-                                        className="group flex gap-3 h-16 bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.03] rounded-[6px] overflow-hidden transition-all duration-300"
+                                        className="group relative flex h-[76px] bg-[#0c0d10] hover:bg-white/[0.03] border border-white/[0.05] rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
                                     >
-                                        <div className="w-12 h-full shrink-0 overflow-hidden relative">
-                                            <img src={rel.image} className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" alt="" />
-                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-1">
-                                                <span className="text-[7px] font-black text-white/60 block text-center truncate group-hover:text-white transition-colors">
-                                                    {rel.type || 'tv'}
-                                                </span>
+                                        {/* Left Content */}
+                                        <div className="relative z-10 flex flex-col justify-center pl-4 pr-2 w-[70%] h-full">
+                                            <h4 className="text-[13px] font-bold text-white leading-tight truncate mb-2 group-hover:text-primary transition-colors">
+                                                {rel.name}
+                                            </h4>
+
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#FF6E9F]/30 bg-[#FF6E9F]/10">
+                                                    <span className="text-[8px] font-black text-[#FF6E9F] uppercase">cc</span>
+                                                    <span className="text-[9px] font-black text-[#FF6E9F]">{rel.subEpisodes || rel.episodes || '?'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#53CCB8]/30 bg-[#53CCB8]/10">
+                                                    <svg className="w-2 h-2 text-[#53CCB8] fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" /><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" /></svg>
+                                                    <span className="text-[9px] font-black text-[#53CCB8]">{rel.subEpisodes || rel.episodes || '?'}</span>
+                                                </div>
+                                                <span className="text-[10px] font-bold text-white/30 lowercase">{rel.type || 'tv'}</span>
+                                                <span className="text-[9px] font-black text-white/40 lowercase truncate">{rel.relationType}</span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col justify-center pr-4 min-w-0">
-                                            <p className="text-[11px] font-bold text-white leading-tight truncate mb-1 group-hover:text-primary transition-colors">
-                                                {rel.name}
-                                            </p>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-[9px] font-black text-primary">{rel.relationType}</span>
-                                                <div className="w-1 h-1 rounded-full bg-white/10" />
-                                                <span className="text-[9px] font-bold text-white/30">{rel.subEpisodes || rel.episodes || '?'} sub</span>
-                                            </div>
+
+                                        {/* Right Image Overlay */}
+                                        <div className="absolute top-0 right-0 w-[45%] h-full">
+                                            <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#0c0d10] via-[#0c0d10]/60 to-transparent" />
+                                            <img src={rel.image} className="w-full h-full object-cover transition-all duration-700 opacity-60 group-hover:opacity-100" alt="" />
                                         </div>
                                     </Link>
                                 ))}
@@ -236,32 +256,44 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                     {/* 2. recommended */}
                     {recommended && recommended.length > 0 && (
-                        <section className="space-y-5">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-[13px] font-black text-white tracking-tight border-l-3 border-primary pl-2.5">recommended</h3>
+                        <section className="rounded-2xl bg-[#0c0d10] border border-white/[0.05] overflow-hidden shadow-xl">
+                            <div className="p-5 pb-3">
+                                <h3 className="text-[13px] font-black text-white tracking-widest uppercase">recommended</h3>
                             </div>
-                            <div className="space-y-3">
-                                {recommended.slice(0, 4).map((rec: any, i: number) => (
+                            <div className="flex flex-col gap-2 p-2">
+                                {recommended.slice(0, 6).map((rec: any, i: number) => (
                                     <Link
                                         key={i}
                                         href={`/watch/${rec.id}`}
-                                        className="group flex gap-3 h-16 bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.03] rounded-[6px] overflow-hidden transition-all duration-300"
+                                        className="group relative flex h-[76px] bg-[#0c0d10] hover:bg-white/[0.03] border border-white/[0.05] rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
                                     >
-                                        <div className="w-12 h-full shrink-0 overflow-hidden relative">
-                                            <img src={rec.image} className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" alt="" />
-                                        </div>
-                                        <div className="flex flex-col justify-center pr-4 min-w-0">
-                                            <p className="text-[10px] font-bold text-white leading-tight truncate mb-1 group-hover:text-primary transition-colors">
+                                        {/* Left Content */}
+                                        <div className="relative z-10 flex flex-col justify-center pl-5 pr-2 w-[70%] h-full">
+                                            <h4 className="text-[13px] font-bold text-white leading-tight truncate mb-2 group-hover:text-primary transition-colors">
                                                 {getTitle(rec.title)}
-                                            </p>
+                                            </h4>
+
                                             <div className="flex items-center gap-2">
-                                                <div className="flex items-center gap-1">
-                                                    <Star size={8} className="text-[#FF4F18] fill-current" />
-                                                    <span className="text-[9px] font-black text-white/40">{rec.score || '0.0'}</span>
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#FF6E9F]/30 bg-[#FF6E9F]/10">
+                                                    <span className="text-[8px] font-black text-[#FF6E9F] uppercase">cc</span>
+                                                    <span className="text-[9px] font-black text-[#FF6E9F]">{rec.subEpisodes || rec.totalEpisodes || '?'}</span>
                                                 </div>
-                                                <div className="w-1 h-1 rounded-full bg-white/10" />
-                                                <span className="text-[9px] font-bold text-white/30">{rec.subEpisodes || rec.totalEpisodes || '?'} sub</span>
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#53CCB8]/30 bg-[#53CCB8]/10">
+                                                    <svg className="w-2 h-2 text-[#53CCB8] fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" /><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" /></svg>
+                                                    <span className="text-[9px] font-black text-[#53CCB8]">{rec.subEpisodes || rec.totalEpisodes || '?'}</span>
+                                                </div>
+                                                <span className="text-[10px] font-bold text-white/30 lowercase">{rec.type || 'tv'}</span>
+                                                <div className="flex items-center gap-1 ml-auto">
+                                                    <Star size={8} className="text-[#FFB941] fill-current" />
+                                                    <span className="text-[10px] font-bold text-white/40">{rec.score || '0.0'}</span>
+                                                </div>
                                             </div>
+                                        </div>
+
+                                        {/* Right Image Overlay */}
+                                        <div className="absolute top-0 right-0 w-[45%] h-full">
+                                            <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#0c0d10] via-[#0c0d10]/60 to-transparent" />
+                                            <img src={rec.image} className="w-full h-full object-cover transition-all duration-700 opacity-60 group-hover:opacity-100" alt="" />
                                         </div>
                                     </Link>
                                 ))}

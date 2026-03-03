@@ -83,7 +83,7 @@ export const fetchAnimeInfo = async (id: string): Promise<AnimeInfo | null> => {
         }
 
         const relations = anime.related?.map((rel: any) => ({
-            relation: 'Related',
+            relation: rel.relation || 'Related',
             entry: {
                 mal_id: rel.id,
                 type: rel.type,
@@ -293,7 +293,8 @@ export const fetchRelatedAnime = async (id: string): Promise<any[]> => {
     try {
         const res = await fetch(`${BASE_URL}/anime/${id}`);
         const json = await res.json();
-        return (json.data?.related || []).map(mapCustomToAnime);
+        // This function is often used for the "Recommendations" section
+        return (json.data?.recommended || []).map(mapCustomToAnime);
     } catch (error) {
         return [];
     }
@@ -313,7 +314,14 @@ export const fetchAnimeThemes = async (id: string): Promise<any> => {
     return { openings: [], endings: [] };
 };
 export const fetchAnimeRelations = async (id: string): Promise<any[]> => {
-    return fetchRelatedAnime(id);
+    try {
+        const res = await fetch(`${BASE_URL}/anime/${id}`);
+        const json = await res.json();
+        // This function returns direct relations like Sequels, Prequels, etc.
+        return (json.data?.related || []).map(mapCustomToAnime);
+    } catch (error) {
+        return [];
+    }
 };
 
 export const fetchAnimeByGenre = async (genreId: string, page: number = 1): Promise<{ data: any[], pagination: any }> => {
