@@ -57,11 +57,22 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         .slice(0, 18);
 
     return (
-        <main className="min-h-screen bg-[#0b0c0c] text-white/90 font-sans selection:bg-primary/30">
+        <main className="min-h-screen bg-[#161618] text-white/90 font-sans selection:bg-primary/30 relative">
             <Navbar />
 
+            {/* Blurred Background Hero */}
+            <div className="absolute inset-x-0 top-0 h-[890px] overflow-hidden pointer-events-none">
+                <img
+                    src={anime.cover || anime.image}
+                    alt=""
+                    className="w-full h-full object-cover blur-[8px] scale-125 opacity-40"
+                    draggable={false}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#161618]/60 via-[#161618]/80 to-[#161618]" />
+            </div>
+
             {/* main content container */}
-            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-12 max-w-[1320px]">
+            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-12 max-w-[1320px] relative z-10">
                 <WatchContent
                     id={id}
                     initialEpisodeId={episodeId}
