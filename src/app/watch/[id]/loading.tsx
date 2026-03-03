@@ -14,7 +14,7 @@ export default function WatchLoading() {
                     </div>
 
                     {/* Top Header Section Skeleton */}
-                    <div className="relative z-10 container mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-6">
+                    <div className="relative z-10 container mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-6 max-w-[1400px]">
                         <div className="flex flex-col lg:flex-row gap-8">
                             <div className="flex flex-col md:flex-row gap-6 flex-1">
                                 {/* Poster Skeleton */}
@@ -71,7 +71,7 @@ export default function WatchLoading() {
                 </div>
 
                 {/* Main Body Skeleton */}
-                <div className="container mx-auto px-4 md:px-6 mt-6">
+                <div className="container mx-auto px-4 md:px-6 mt-6 max-w-[1400px]">
                     <div className="flex flex-col lg:flex-row gap-6">
                         {/* Left Sidebar */}
                         <aside className="lg:w-[260px] xl:w-[280px] flex-shrink-0">

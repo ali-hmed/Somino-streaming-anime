@@ -6,7 +6,7 @@ export default function PlayerLoading() {
         <main className="min-h-screen bg-[#0b0b0c] text-white/90">
             <Navbar />
 
-            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-12 animate-pulse max-w-[1320px]">
+            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-12 animate-pulse max-w-[1400px]">
                 {/* upper section skeleton */}
                 <div className="flex flex-col lg:flex-row gap-5 mb-12 lg:items-stretch h-full">
 

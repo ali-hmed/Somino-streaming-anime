@@ -95,7 +95,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 {/* Breadcrumbs */}
-                <div className="relative z-10 container mx-auto px-4 md:px-6 pt-24 md:pt-32">
+                <div className="relative z-10 container mx-auto px-4 md:px-6 pt-24 md:pt-32 max-w-[1600px]">
                     <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-white/30 mb-8">
                         <Link href="/" className="hover:text-primary transition-colors flex items-center gap-1.5">
                             Home
@@ -108,7 +108,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 {/* Top Header Section */}
-                <div className="relative z-10 container mx-auto px-4 md:px-6 pt-4 pb-6">
+                <div className="relative z-10 container mx-auto px-4 md:px-6 pt-4 pb-6 max-w-[1600px]">
                     <div className="flex flex-col lg:flex-row gap-8">
                         <div className="flex flex-col md:flex-row gap-6 flex-1">
                             {/* Poster */}
@@ -222,7 +222,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {/* Main Body */}
-            <div className="container mx-auto px-4 md:px-6 mt-6">
+            <div className="container mx-auto px-4 md:px-6 mt-6 max-w-[1400px]">
                 <div className="flex flex-col lg:flex-row gap-6">
 
                     {/* ─── LEFT SIDEBAR ─── */}

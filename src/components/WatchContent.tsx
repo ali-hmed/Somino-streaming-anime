@@ -108,7 +108,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                 <div className="w-full space-y-2.5 pt-4 border-t border-white/[0.03] text-left">
                                     <div className="flex items-start gap-2 text-[10px]">
                                         <span className="text-white/30 font-bold shrink-0">Genres:</span>
-                                        <span className="text-white font-bold">{anime.genres?.slice(0, 3).join(', ')}</span>
+                                        <span className="text-white font-bold">{anime.genres?.slice(0, 5).join(', ')}</span>
                                     </div>
                                     <div className="flex items-start gap-2 text-[10px]">
                                         <span className="text-white/30 font-bold shrink-0">Status:</span>
