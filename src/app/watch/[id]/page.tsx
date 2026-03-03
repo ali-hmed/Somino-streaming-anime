@@ -77,7 +77,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
     ]);
     const cleanRecommended = (anime.recommended || [])
         .filter((rec: any) => rec.id !== id && !relationIds.has(rec.id))
-        .slice(0, 10);
+        .slice(0, 18);
 
     return (
         <main className="min-h-screen bg-[#161618] text-white pb-20">
@@ -383,12 +383,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                 </div>
                             </section>
                         )}
-                        {/* Relations Section */}
-                        {anime.relations && anime.relations.length > 0 && (
-                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
-                                <Relations relations={anime.relations} />
-                            </section>
-                        )}
+
 
                         {/* Characters (Mobile) */}
                         <section className="lg:hidden bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
@@ -398,11 +393,9 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                         {/* Recommended Section */}
                         {cleanRecommended.length > 0 && (
                             <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Recommendations</h2>
-                                    <span className="text-[10px] font-bold text-white/30 tracking-widest flex items-center gap-1">
-                                        more <ChevronRight size={12} />
-                                    </span>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
+                                    <h2 className="text-xl md:text-2xl font-black text-white ">Recommended for you</h2>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
                                     {cleanRecommended.map((item: any, i: number) => (

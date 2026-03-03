@@ -371,7 +371,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white'
                                 }`}
                         >
-                            <div className="px-0.5 rounded-[1px] bg-primary/20 text-primary text-[8px] font-black leading-none">CC</div>
+                            <div className="px-0.5 rounded-[1px] bg-primary/20 text-primary text-[8px] font-black leading-none">SUB</div>
                             sub
                         </button>
                         {dubEpisodes > 0 && (

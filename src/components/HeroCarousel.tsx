@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Play, Info, ChevronLeft, ChevronRight, Clock, Calendar, Tv } from 'lucide-react';
+import { Play, Info, ChevronLeft, ChevronRight, Clock, Calendar, Tv, MessageSquare, Mic } from 'lucide-react';
 import { getTitle } from '@/types/anime';
 
 interface HeroCarouselProps {
@@ -111,7 +111,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                     }}
                 >
                     <img
-                        src={item.cover || item.image} 
+                        src={item.cover || item.image}
                         alt=""
                         className="absolute right-0 top-0 h-full w-full object-center md:object-cover object-center md:object-right"
                         style={{
@@ -127,7 +127,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                                 'linear-gradient(to top, transparent 0%, black 18%)',
                             ].join(', '),
                             maskComposite: 'intersect',
-                            
+
                         }}
                     />
                     {/* TOP fade over image — navbar legibility */}
@@ -180,6 +180,16 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             {title}
                         </h1>
 
+                        {/* Japanese Title / Synonyms — like detail page */}
+                        <div
+                            className="mb-4 transition-all duration-500 delay-100"
+                            style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(10px)' : 'translateY(0)' }}
+                        >
+                            <p className="text-[11px] md:text-[12px] text-white/40 font-bold tracking-wider truncate">
+                                {[anime.japaneseTitle, ...(Array.isArray(anime.synonyms) ? anime.synonyms : [])].filter(Boolean).slice(0, 2).join(' · ')}
+                            </p>
+                        </div>
+
                         {/* Info row — hidden on mobile */}
                         <div
                             className="hidden md:flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-4 transition-all duration-500 delay-100"
@@ -200,19 +210,32 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             {/* Date */}
                             <span className="flex items-center gap-1 text-white/80 text-xs font-semibold">
                                 <Calendar size={10} className="text-white/60" />
-                                {anime.releaseDate || anime.year || '2024'}
+                                {(() => {
+                                    if (anime.year) return anime.year;
+                                    if (anime.releaseDate) {
+                                        const match = String(anime.releaseDate).match(/\b(19|20)\d{2}\b/);
+                                        return match ? match[0] : anime.releaseDate;
+                                    }
+                                    return anime.premiered || 'TBA';
+                                })()}
                             </span>
                             <span className="text-white/20 text-xs">•</span>
                             {/* Outlined media badges */}
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-primary/60 text-primary tracking-wider">HD</span>
-                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-[#2ECC71]/60 text-[#2ECC71] tracking-wider flex items-center gap-0.5">
-                                    CC {anime.totalEpisodes || anime.subEpisodes || '?'}
+                                <span className="text-white/20 text-xs">•</span>
+                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-[#FF6E9F]/60 text-[#FF6E9F] tracking-wider flex items-center gap-1">
+                                    <MessageSquare size={10} fill="currentColor" />
+                                    SUB {anime.totalEpisodes || anime.subEpisodes || '?'}
                                 </span>
                                 {anime.dubEpisodes > 0 && (
-                                    <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-[#818CF8]/60 text-[#818CF8] tracking-wider flex items-center gap-0.5">
-                                        DUB {anime.dubEpisodes}
-                                    </span>
+                                    <>
+                                        <span className="text-white/20 text-xs">•</span>
+                                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-[#53CCB8]/60 text-[#53CCB8] tracking-wider flex items-center gap-1">
+                                            <Mic size={10} fill="currentColor" strokeWidth={3} />
+                                            DUB {anime.dubEpisodes}
+                                        </span>
+                                    </>
                                 )}
                             </div>
                         </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import WatchControls from './WatchControls';
 import EpisodeList from './EpisodeList';
 import WatchComments from './WatchComments';
+import AnimeCard from './AnimeCard';
 import { Mic, MessageSquare, Star, Home, ChevronRight, GitBranch } from 'lucide-react';
 import { Episode, getTitle } from '@/types/anime';
 import { useRouter } from 'next/navigation';
@@ -53,7 +54,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
     return (
         <div className="flex flex-col gap-12">
             {/* Upper Section: 3-Column Layout on Desktop */}
-            <div className="flex flex-col lg:flex-row gap-5 lg:items-stretch lg:h-[600px]">
+            <div className="flex flex-col lg:flex-row gap-5 lg:items-stretch lg:min-h-[620px]">
 
                 {/* 1. Anime Info Panel */}
                 <aside className="w-full lg:w-[260px] shrink-0 order-3 lg:order-1">
@@ -80,11 +81,11 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                 </div>
 
                                 <div className="flex flex-wrap items-center justify-center gap-1.5 mb-5">
-                                    <span className={`px-1.5 py-0.5 rounded-[2px] ${String(anime.rating || '').includes('R') || String(anime.rating || '').includes('18') ? 'bg-[#FF4B12] text-white shadow-lg' : 'bg-[#FF4F18]/10 border border-[#FF4F18]/30 text-[#FF4F18]'} text-[8px] font-black lowercase tracking-tighter`}>
+                                    <span className={`px-1.5 py-0.5 rounded-[2px] ${String(anime.rating || '').includes('R') || String(anime.rating || '').includes('18') ? 'bg-[#FF4B12] text-white shadow-lg' : 'bg-[#FF4F18]/10 border border-[#FF4F18]/30 text-[#FF4F18]'} text-[8px] font-black tracking-tighter`}>
                                         {(() => {
                                             const r = String(anime.rating || '');
                                             if (r.includes('R') || r.includes('18')) return '18+';
-                                            return 'pg 13';
+                                            return 'PG 13';
                                         })()}
                                     </span>
                                     <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 border border-[#FF6E9F]/30 text-[#FF6E9F] text-[8px] font-black tracking-tighter">
@@ -97,7 +98,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                             {anime.dubEpisodes}
                                         </div>
                                     ) : null}
-                                    <span className="px-1.5 py-0.5 rounded-[2px] bg-white/[0.03] border border-white/5 text-white/20 text-[8px] font-black tracking-tighter">{anime.type || 'tv'}</span>
+                                    <span className="px-1.5 py-0.5 rounded-[2px] bg-white/[0.03] border border-white/5 text-white/20 text-[8px] font-black tracking-tighter">{anime.type || 'TV'}</span>
                                 </div>
 
                                 <p className="text-[10px] font-medium text-white/40 leading-relaxed mb-6 px-1 line-clamp-3">
@@ -129,20 +130,20 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                 </aside>
 
                 {/* 2. Video Player Panel */}
-                <div className="flex-1 min-w-0 flex flex-col order-1 lg:order-2">
-                    <div className="bg-[#141519]/80 backdrop-blur-xl rounded-[8px] overflow-hidden shadow-2xl border border-white/[0.03] flex flex-col h-full relative">
+                <div className="flex-1 min-w-0 flex flex-col order-1 lg:order-2 h-full">
+                    <div className="bg-[#141519]/80 backdrop-blur-xl rounded-[8px] overflow-hidden shadow-2xl border border-white/[0.03] flex flex-col relative">
                         {isChanging && (
                             <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                    <p className="text-xs font-black text-white tracking-widest uppercase opacity-50">Loading Episode...</p>
+                                    <p className="text-xs font-black text-white tracking-widest opacity-50">Loading Episode...</p>
                                 </div>
                             </div>
                         )}
 
                         {/* Player Header */}
                         <div className="px-5 py-3 h-10 flex items-center bg-[#0b0c10]/40 border-b border-white/[0.03]">
-                            <div className="flex items-center gap-2 text-[10px] font-black text-white/30 tracking-widest uppercase">
+                            <div className="flex items-center gap-2 text-[10px] font-black text-white/30 tracking-widest">
                                 <Link href="/" className="hover:text-primary transition-colors flex items-center gap-1.5 focus:outline-none">
                                     <Home size={11} /> Home
                                 </Link>
@@ -171,6 +172,53 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             onEpisodeChange={handleEpisodeChange}
                             isLoading={isChanging}
                         />
+
+                        {/* Watch more seasons — image-style footer */}
+                        {anime.moreSeasons && anime.moreSeasons.length > 0 && (
+                            <div className="px-6 py-6 border-t border-white/[0.03] bg-black/20">
+                                <h3 className="text-[14px] font-bold text-white/90 mb-4 tracking-tight">
+                                    Watch more seasons of this anime
+                                </h3>
+                                <div className="flex flex-wrap gap-3">
+                                    {anime.moreSeasons.map((season: any, i: number) => {
+                                        // Some seasons might be the current one; highlight it.
+                                        const isActive = season.id === id;
+                                        const seasonTitle = getTitle(season.title);
+
+                                        // Attempt to extract season number or just use index
+                                        const displayLabel = seasonTitle.toLowerCase().includes('season')
+                                            ? (seasonTitle.match(/Season\s+\d+/i)?.[0] || seasonTitle)
+                                            : `Season ${i + 1}`;
+
+                                        return (
+                                            <Link
+                                                key={i}
+                                                href={`/watch/${season.id}`}
+                                                className={`group relative overflow-hidden rounded-xl h-[52px] w-[130px] md:w-[150px] flex items-center justify-center border-2 transition-all duration-300 ${isActive
+                                                    ? 'border-primary shadow-[0_0_20px_rgba(83,204,184,0.15)] scale-[1.02]'
+                                                    : 'border-white/[0.05] hover:border-white/20 active:scale-95'
+                                                    }`}
+                                            >
+                                                {/* Blurred cover background */}
+                                                <div className="absolute inset-0 z-0">
+                                                    <img
+                                                        src={season.image || anime.image}
+                                                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-125 ${isActive ? 'opacity-50 blur-[1px]' : 'opacity-30 blur-[2px]'}`}
+                                                        alt=""
+                                                    />
+                                                    <div className={`absolute inset-0 bg-black/40 ${isActive ? 'bg-black/10' : ''}`} />
+                                                </div>
+
+                                                {/* Text Label */}
+                                                <span className={`relative z-10 text-[11px] font-black tracking-widest transition-colors ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white'}`}>
+                                                    {displayLabel}
+                                                </span>
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -204,14 +252,14 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             <div className="flex items-center justify-between p-5 pb-3">
                                 <div className="flex items-center gap-2">
                                     <GitBranch size={16} className="text-primary" />
-                                    <h3 className="text-[13px] font-black text-white tracking-widest uppercase">relations</h3>
+                                    <h3 className="text-[13px] font-black text-white tracking-widest">Relations</h3>
                                 </div>
                                 {sidebarRelations.length > 3 && (
                                     <button
                                         onClick={() => setShowAllRelations(!showAllRelations)}
                                         className="flex items-center gap-1 px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-white/40 transition-colors uppercase hover:text-primary"
                                     >
-                                        {showAllRelations ? 'less' : `all (${sidebarRelations.length})`}
+                                        {showAllRelations ? 'Less' : `All (${sidebarRelations.length})`}
                                         <ChevronRight size={12} className={`ml-1 transition-transform ${showAllRelations ? 'rotate-[-90deg]' : 'rotate-90'}`} />
                                     </button>
                                 )}
@@ -231,15 +279,15 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                                             <div className="flex items-center gap-2">
                                                 <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#FF6E9F]/30 bg-[#FF6E9F]/10">
-                                                    <span className="text-[8px] font-black text-[#FF6E9F] uppercase">cc</span>
+                                                    <span className="text-[8px] font-black text-[#FF6E9F]">SUB</span>
                                                     <span className="text-[9px] font-black text-[#FF6E9F]">{rel.subEpisodes || rel.episodes || '?'}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#53CCB8]/30 bg-[#53CCB8]/10">
                                                     <svg className="w-2 h-2 text-[#53CCB8] fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" /><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" /></svg>
                                                     <span className="text-[9px] font-black text-[#53CCB8]">{rel.subEpisodes || rel.episodes || '?'}</span>
                                                 </div>
-                                                <span className="text-[10px] font-bold text-white/30 lowercase">{rel.type || 'tv'}</span>
-                                                <span className="text-[9px] font-black text-white/40 lowercase truncate">{rel.relationType}</span>
+                                                <span className="text-[10px] font-bold text-white/30">{rel.type}</span>
+                                                <span className="text-[9px] font-black text-white/40 truncate">{rel.relationType}</span>
                                             </div>
                                         </div>
 
@@ -254,54 +302,23 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                         </section>
                     )}
 
-                    {/* 2. recommended */}
-                    {recommended && recommended.length > 0 && (
-                        <section className="rounded-2xl bg-[#0c0d10] border border-white/[0.05] overflow-hidden shadow-xl">
-                            <div className="p-5 pb-3">
-                                <h3 className="text-[13px] font-black text-white tracking-widest uppercase">recommended</h3>
-                            </div>
-                            <div className="flex flex-col gap-2 p-2">
-                                {recommended.slice(0, 6).map((rec: any, i: number) => (
-                                    <Link
-                                        key={i}
-                                        href={`/watch/${rec.id}`}
-                                        className="group relative flex h-[76px] bg-[#0c0d10] hover:bg-white/[0.03] border border-white/[0.05] rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
-                                    >
-                                        {/* Left Content */}
-                                        <div className="relative z-10 flex flex-col justify-center pl-5 pr-2 w-[70%] h-full">
-                                            <h4 className="text-[13px] font-bold text-white leading-tight truncate mb-2 group-hover:text-primary transition-colors">
-                                                {getTitle(rec.title)}
-                                            </h4>
-
-                                            <div className="flex items-center gap-2">
-                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#FF6E9F]/30 bg-[#FF6E9F]/10">
-                                                    <span className="text-[8px] font-black text-[#FF6E9F] uppercase">cc</span>
-                                                    <span className="text-[9px] font-black text-[#FF6E9F]">{rec.subEpisodes || rec.totalEpisodes || '?'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#53CCB8]/30 bg-[#53CCB8]/10">
-                                                    <svg className="w-2 h-2 text-[#53CCB8] fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" /><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" /></svg>
-                                                    <span className="text-[9px] font-black text-[#53CCB8]">{rec.subEpisodes || rec.totalEpisodes || '?'}</span>
-                                                </div>
-                                                <span className="text-[10px] font-bold text-white/30 lowercase">{rec.type || 'tv'}</span>
-                                                <div className="flex items-center gap-1 ml-auto">
-                                                    <Star size={8} className="text-[#FFB941] fill-current" />
-                                                    <span className="text-[10px] font-bold text-white/40">{rec.score || '0.0'}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Right Image Overlay */}
-                                        <div className="absolute top-0 right-0 w-[45%] h-full">
-                                            <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#0c0d10] via-[#0c0d10]/60 to-transparent" />
-                                            <img src={rec.image} className="w-full h-full object-cover transition-all duration-700 opacity-60 group-hover:opacity-100" alt="" />
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        </section>
-                    )}
                 </aside>
             </div>
+
+            {/* Recommended Section - Full Width at Bottom */}
+            {recommended && recommended.length > 0 && (
+                <section className="mt-12">
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
+                        <h2 className="text-xl md:text-2xl font-black text-white tracking-widest">Recommended For You</h2>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                        {recommended.map((rec: any, i: number) => (
+                            <AnimeCard key={`rec-${rec.id || i}`} anime={rec} variant="portrait" isSharp={true} />
+                        ))}
+                    </div>
+                </section>
+            )}
         </div>
     );
 };

@@ -94,12 +94,12 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
 
                     {/* Metadata Section */}
                     <div className="space-y-1 content-start">
-                        <h3 className="text-[12px] font-bold text-white group-hover:text-[#FF6E9F] transition-colors truncate lowercase leading-none mb-1.5">
+                        <h3 className="text-[12px] font-bold text-white group-hover:text-[#FF6E9F] transition-colors truncate leading-none mb-1.5">
                             {title}
                         </h3>
                         <div className="flex items-center justify-between gap-2 px-0.5 mb-2">
-                            <span className="text-[10px] font-black text-white/30 lowercase">ep {currentEpisodeNum}</span>
-                            <span className="text-[10px] font-black text-[#FF6395] lowercase">{currentTimeStr} / {durationStr}</span>
+                            <span className="text-[10px] font-black text-white/30">EP {currentEpisodeNum}</span>
+                            <span className="text-[10px] font-black text-[#FF6395]">{currentTimeStr} / {durationStr}</span>
                         </div>
                         {/* Thin Progress Bar */}
                         <div className={`w-full h-0.5 bg-white/5 ${isSharp ? 'rounded-none' : 'rounded-full'} overflow-hidden`}>
@@ -147,13 +147,13 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                                 return <span className="bg-[#FF4B12] text-white text-[10px] font-black px-1.5 py-0.5 rounded-[2px] shadow-lg tracking-tighter">18+</span>;
                             }
                             if (showPG13 && rating.includes('PG')) {
-                                return <span className="bg-[#FF4F18]/10 border border-[#FF4F18]/40 backdrop-blur-md text-[8px] font-black px-1.5 py-0.5 rounded-[2px] text-[#FF4F18] tracking-tight">pg 13</span>;
+                                return <span className="bg-[#FF4F18]/10 border border-[#FF4F18]/40 backdrop-blur-md text-[8px] font-black px-1.5 py-0.5 rounded-[2px] text-[#FF4F18] tracking-tight">PG 13</span>;
                             }
                             return null;
                         })()}
                         {anime.episodeNumber && showEpisode && (
                             <span className="bg-black/60 backdrop-blur-md text-white/60 text-[8px] font-black px-1.5 py-0.5 rounded-[2px] border border-white/10 tracking-tighter">
-                                ep {anime.episodeNumber}
+                                EP {anime.episodeNumber}
                             </span>
                         )}
                     </div>
@@ -193,7 +193,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                             )}
                             {isUpcoming && (
                                 <span className="text-[9px] font-black text-[#53CCB8] tracking-widest leading-none">
-                                    {anime.premiered || anime.releaseDate || 'tba'}
+                                    {anime.premiered || anime.releaseDate || 'TBA'}
                                 </span>
                             )}
                         </div>

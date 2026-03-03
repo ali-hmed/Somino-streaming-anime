@@ -30,9 +30,9 @@ const Relations: React.FC<RelationsProps> = ({ relations }) => {
     return (
         <div className="mt-10 rounded-2xl bg-[#0c0d10] border border-white/[0.05] overflow-hidden shadow-xl">
             <div className="flex items-center justify-between p-6 pb-4">
-                <div className="flex items-center gap-2">
-                    <GitBranch size={16} className="text-primary" />
-                    <h3 className="text-[14px] font-black text-white tracking-[0.1em] uppercase">related anime</h3>
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
+                    <h2 className="text-xl md:text-2xl font-black text-white tracking-widest">Relations</h2>
                 </div>
 
                 {relations.length > 3 && (
@@ -60,18 +60,18 @@ const Relations: React.FC<RelationsProps> = ({ relations }) => {
                             </h4>
 
                             <div className="flex items-center gap-2">
-                                {/* CC Badge */}
+                                {/* SUB Badge */}
                                 <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#FF6E9F]/30 bg-[#FF6E9F]/10">
-                                    <span className="text-[8px] font-black text-[#FF6E9F] uppercase">cc</span>
+                                    <span className="text-[8px] font-black text-[#FF6E9F]">SUB</span>
                                     <span className="text-[9px] font-black text-[#FF6E9F]">{rel.entry.subEpisodes || rel.entry.episodes || '?'}</span>
                                 </div>
                                 {/* Mic/Dub Badge */}
                                 <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-[#53CCB8]/30 bg-[#53CCB8]/10">
                                     <svg className="w-2 h-2 text-[#53CCB8] fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" /><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" /></svg>
-                                    <span className="text-[9px] font-black text-[#53CCB8]">{rel.entry.subEpisodes || rel.entry.episodes || '?'}</span>
+                                    <span className="text-[9px] font-black text-[#53CCB8]">{rel.entry.dubEpisodes || '?'}</span>
                                 </div>
-                                <span className="text-[11px] font-bold text-white/30 lowercase">{rel.entry.type || 'tv'}</span>
-                                <span className="text-[10px] font-black text-white/40 lowercase truncate">{rel.relation}</span>
+                                <span className="text-[10px] font-bold text-white/30">{rel.entry.type || 'TV'}</span>
+                                <span className="text-[9px] font-black text-white/40 truncate">{rel.relation || 'Related'}</span>
                             </div>
                         </div>
 

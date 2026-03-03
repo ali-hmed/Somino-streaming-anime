@@ -32,9 +32,9 @@ const ReleaseItem: React.FC<ReleaseItemProps> = ({ anime }) => {
                     {title}
                 </h4>
                 <div className="flex items-center gap-2 flex-wrap">
-                    {/* CC Badge - Main Theme Green */}
+                    {/* SUB Badge - Main Theme Pink */}
                     <div className="flex items-center gap-1 bg-[#FF6E9F] text-black text-[10px] font-black px-1.5 py-0.5 rounded-[2px]">
-                        <span className="opacity-60">CC</span>
+                        <span className="opacity-60">SUB</span>
                         {anime.subEpisodes || anime.episodeNumber || anime.totalEpisodes || '1'}
                     </div>
 

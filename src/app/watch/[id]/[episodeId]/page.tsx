@@ -54,7 +54,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
     const relationIds = new Set(sidebarRelations.map(r => r.id));
     const recommended = (anime.recommended || [])
         .filter((rec: any) => rec.id !== id && !relationIds.has(rec.id))
-        .slice(0, 10);
+        .slice(0, 18);
 
     return (
         <main className="min-h-screen bg-[#0b0c0c] text-white/90 font-sans selection:bg-primary/30">
