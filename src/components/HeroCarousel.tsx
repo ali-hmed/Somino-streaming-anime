@@ -63,7 +63,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
 
     return (
         <section
-            className="relative w-full overflow-hidden h-[max(400px,70vh)] md:h-[max(550px,82vh)] touch-pan-y"
+            className="relative w-full overflow-hidden h-[60vh] md:h-[max(550px,82vh)] touch-pan-y"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -86,8 +86,9 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             filter: 'blur(40px) brightness(0.2)',
                         }}
                     />
-                    {/* Dark overlay */}
-                    <div className="absolute inset-0 bg-[#161618]/70" />
+                    {/* Dark overlay — lighter on mobile to remove "dark right space" */}
+                    <div className="absolute inset-0 bg-[#161618]/70 hidden md:block" />
+                    <div className="absolute inset-0 bg-[#161618]/40 block md:hidden" />
                     {/* Strong left gradient — text area */}
                     <div className="absolute inset-0" style={{ zIndex: 1, background: 'linear-gradient(to right, #161618 20%, rgba(22,22,24,0.55) 35%, rgba(22,22,24,0.05) 45%, transparent 100%)' }} />
                     {/* TOP fade — keeps navbar area dark so text is legible */}
@@ -110,23 +111,23 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                     }}
                 >
                     <img
-                        src={item.cover || item.image}
+                        src={item.cover || item.image} 
                         alt=""
-                        className="absolute right-0 top-0 h-full w-full object-cover object-top md:object-right-top"
+                        className="absolute right-0 top-0 h-full w-full object-center md:object-cover object-center md:object-right"
                         style={{
-                            /* Mask: fade left, top, and bottom edges */
-                            maskImage: [
-                                'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.6) 30%, black 50%)',
-                                'linear-gradient(to bottom, transparent 0%, black 18%)',
-                                'linear-gradient(to top, transparent 0%, black 18%)',
-                            ].join(', '),
-                            WebkitMaskImage: [
+                            /* Mask: fade left, top, and bottom edges — reduced/none on small screens */
+                            // maskImage: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'none' : [
+                            //     'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.6) 30%, black 50%)',
+                            //     'linear-gradient(to bottom, transparent 0%, black 18%)',
+                            //     'linear-gradient(to top, transparent 0%, black 18%)',
+                            // ].join(', '),
+                            WebkitMaskImage: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'none' : [
                                 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.6) 30%, black 50%)',
                                 'linear-gradient(to bottom, transparent 0%, black 18%)',
                                 'linear-gradient(to top, transparent 0%, black 18%)',
                             ].join(', '),
                             maskComposite: 'intersect',
-                            WebkitMaskComposite: 'destination-in',
+                            
                         }}
                     />
                     {/* TOP fade over image — navbar legibility */}
@@ -157,9 +158,9 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
             ))}
 
             {/* Content */}
-            <div className="relative z-10 h-full flex items-end pb-28 md:pb-20">
+            <div className="relative z-10 h-full flex items-end pb-12 md:pb-20">
                 <div className="container mx-auto px-4 md:px-12">
-                    <div className="max-w-full md:max-w-[540px]">
+                    <div className="max-w-[300px] md:max-w-[540px]">
 
                         {/* Spotlight label — pink, like reference */}
                         <div
@@ -173,7 +174,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
 
                         {/* Title — scaled down slightly for desktop */}
                         <h1
-                            className="text-xl md:text-2xl font-medium text-white mb-3 md:mb-4 leading-[1.1] tracking-tight transition-all duration-500 delay-75"
+                            className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight transition-all duration-500 delay-75 line-clamp-2"
                             style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(10px)' : 'translateY(0)' }}
                         >
                             {title}
@@ -264,12 +265,12 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                         />
                     ))}
                 </div>
-                {/* <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                     <button
                         onClick={prev}
                         className="w-10 h-10 rounded-[4px] bg-white/5 border border-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary hover:border-primary transition-all group"
                     >
-                        <ChevronLeft size={20} className="group-active:scale-90 transition-transform" />
+                        <ChevronLeft size={10} className="group-active:scale-90 transition-transform" />
                     </button>
                     <button
                         onClick={next}
@@ -277,7 +278,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                     >
                         <ChevronRight size={20} className="group-active:scale-90 transition-transform" />
                     </button>
-                </div> */}
+                </div>
             </div>
         </section>
     );

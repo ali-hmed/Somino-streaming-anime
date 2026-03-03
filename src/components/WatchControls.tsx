@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import VideoPlayer from './VideoPlayer';
 import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Heart, Flag, MessageSquare } from 'lucide-react';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
+import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings';
 
 interface WatchControlsProps {
     id: string;
@@ -17,8 +18,11 @@ interface WatchControlsProps {
     nextEpId?: string;
     animeId: string;
     dubEpisodes?: number;
+    subEpisodes?: number;
     animeTitle: string;
     animeImage: string;
+    onEpisodeChange?: (newId: string) => void;
+    isLoading?: boolean;
 }
 
 const WatchControls: React.FC<WatchControlsProps> = ({
@@ -31,13 +35,16 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     nextEpId,
     animeId,
     dubEpisodes = 0,
+    subEpisodes = 0,
     animeTitle,
     animeImage,
+    onEpisodeChange,
+    isLoading = false,
 }) => {
     const router = useRouter();
     const [server, setServer] = useState<'megaPlay' | 'vidWish'>('megaPlay');
     const [category, setCategory] = useState<'sub' | 'dub'>('sub');
-    const [autoNext, setAutoNext] = useState(true);
+    const [autoNext, setAutoNext] = useState(false);
     const [autoPlay, setAutoPlay] = useState(true);
 
     // Resume Logic
@@ -47,6 +54,30 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
     // Use a ref for the exact current time to avoid stale closures in save intervals
     const currentProgressRef = useRef(0);
+
+    // Initial Load of Settings
+    useEffect(() => {
+        const settings = getUserSettings();
+        setAutoNext(settings.autoNext);
+        setAutoPlay(settings.autoPlay);
+
+        // Sub/Dub Preference Logic:
+        // Do not override user choice if it exists
+        const stored = localStorage.getItem('somino_user_settings');
+        if (stored) {
+            setCategory(settings.preferredCategory);
+            setServer(settings.lastServer);
+        } else {
+            // First time logic: 
+            // If anime has dub only episodes (no sub), load dub by default
+            if (subEpisodes === 0 && dubEpisodes > 0) {
+                setCategory('dub');
+            } else {
+                setCategory('sub');
+            }
+            setServer('megaPlay');
+        }
+    }, [subEpisodes, dubEpisodes]);
 
     useEffect(() => {
         const progress = getAnimeProgress(animeId);
@@ -107,6 +138,15 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     // Handle incoming time updates from the player (skips, seeks, etc.)
     // Handle incoming time updates from the player (skips, seeks, etc.)
     const handleProgress = (newTime: number, duration: number) => {
+        // Server fallback logic
+        if (newTime === -1) {
+            if (server === 'megaPlay') {
+                console.log('Server 1 failed, trying Server 2');
+                setServer('vidWish');
+            }
+            return;
+        }
+
         // PREVENTION: Don't let an initial '0' from the iframe clobber our resume point!
         // We only trust '0' if we genuinely have no previous progress OR if the video has played/jumped.
         if (newTime === 0 && currentProgressRef.current > 5) {
@@ -155,7 +195,11 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
             if (isEnded && autoNext && nextEpId) {
                 setTimeout(() => {
-                    router.push(`/watch/${animeId}/${nextEpId}`);
+                    if (onEpisodeChange) {
+                        onEpisodeChange(nextEpId);
+                    } else {
+                        router.push(`/watch/${animeId}/${nextEpId}`);
+                    }
                 }, 1000);
             }
         };
@@ -189,31 +233,47 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     <Moon size={12} strokeWidth={2.5} /> Focus
                 </button>
                 <button
-                    onClick={() => setAutoNext(!autoNext)}
+                    onClick={() => {
+                        const newState = !autoNext;
+                        setAutoNext(newState);
+                        saveUserSettings({ autoNext: newState });
+                    }}
                     className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-[#FF6331]' : 'text-white/20 hover:text-white/40'}`}
                 >
                     <FastForward size={14} className={autoNext ? 'fill-current' : ''} strokeWidth={2.5} /> AutoNext
                 </button>
                 <button
-                    onClick={() => setAutoPlay(!autoPlay)}
+                    onClick={() => {
+                        const newState = !autoPlay;
+                        setAutoPlay(newState);
+                        saveUserSettings({ autoPlay: newState });
+                    }}
                     className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
                 >
                     <PlayCircle size={13} className={autoPlay ? 'fill-current' : ''} strokeWidth={2.5} /> AutoPlay
                 </button>
                 <div className="hidden md:block w-px h-3 bg-white/5 mx-1" />
                 {prevEpId ? (
-                    <Link href={`/watch/${animeId}/${prevEpId}`} className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
+                    <button
+                        onClick={() => onEpisodeChange?.(prevEpId)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                    >
                         <SkipBack size={12} strokeWidth={2.5} /> Prev
-                    </Link>
+                    </button>
                 ) : (
                     <div className="flex items-center gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
                         <SkipBack size={12} strokeWidth={2.5} /> Prev
                     </div>
                 )}
                 {nextEpId ? (
-                    <Link href={`/watch/${animeId}/${nextEpId}`} className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
+                    <button
+                        onClick={() => onEpisodeChange?.(nextEpId)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                    >
                         <SkipForward size={12} strokeWidth={2.5} /> Next
-                    </Link>
+                    </button>
                 ) : (
                     <div className="flex items-center gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
                         <SkipForward size={12} strokeWidth={2.5} /> Next
@@ -241,7 +301,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     <div className="flex flex-col items-end gap-3.5 shrink-0">
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={() => setCategory('sub')}
+                                onClick={() => {
+                                    setCategory('sub');
+                                    saveUserSettings({ preferredCategory: 'sub' });
+                                }}
                                 className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category === 'sub'
                                     ? 'bg-primary/15 border border-primary/40 text-primary'
                                     : 'bg-white/[0.03] border border-white/5 text-white/20 hover:text-white/50'
@@ -252,7 +315,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             </button>
                             {dubEpisodes > 0 && (
                                 <button
-                                    onClick={() => setCategory('dub')}
+                                    onClick={() => {
+                                        setCategory('dub');
+                                        saveUserSettings({ preferredCategory: 'dub' });
+                                    }}
                                     className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category === 'dub'
                                         ? 'bg-[#53CCB8]/15 border border-[#53CCB8]/40 text-[#53CCB8]'
                                         : 'bg-white/[0.03] border border-white/5 text-white/20 hover:text-white/50'
@@ -265,7 +331,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         </div>
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={() => setServer('megaPlay')}
+                                onClick={() => {
+                                    setServer('megaPlay');
+                                    saveUserSettings({ lastServer: 'megaPlay' });
+                                }}
                                 className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all shadow-lg active:scale-95 ${server === 'megaPlay'
                                     ? 'bg-[#53CCB8] text-[#0b0c10] shadow-[#53CCB8]/20'
                                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
@@ -274,7 +343,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 server 1
                             </button>
                             <button
-                                onClick={() => setServer('vidWish')}
+                                onClick={() => {
+                                    setServer('vidWish');
+                                    saveUserSettings({ lastServer: 'vidWish' });
+                                }}
                                 className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all active:scale-95 ${server === 'vidWish'
                                     ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/20'
                                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
@@ -290,7 +362,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 <div className="flex md:hidden flex-col items-center p-4 px-5 gap-4">
                     <div className="flex items-center gap-3">
                         <button
-                            onClick={() => setCategory('sub')}
+                            onClick={() => {
+                                setCategory('sub');
+                                saveUserSettings({ preferredCategory: 'sub' });
+                            }}
                             className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category === 'sub'
                                 ? 'bg-primary/10 border-primary/40 text-primary'
                                 : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white'
@@ -301,7 +376,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         </button>
                         {dubEpisodes > 0 && (
                             <button
-                                onClick={() => setCategory('dub')}
+                                onClick={() => {
+                                    setCategory('dub');
+                                    saveUserSettings({ preferredCategory: 'dub' });
+                                }}
                                 className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category === 'dub'
                                     ? 'bg-[#53CCB8]/10 border-[#53CCB8]/40 text-[#53CCB8]'
                                     : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white'
@@ -314,7 +392,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     </div>
                     <div className="flex items-center justify-center gap-2 w-full max-w-[280px]">
                         <button
-                            onClick={() => setServer('megaPlay')}
+                            onClick={() => {
+                                setServer('megaPlay');
+                                saveUserSettings({ lastServer: 'megaPlay' });
+                            }}
                             className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'megaPlay'
                                 ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/10'
                                 : 'bg-white/5 text-white/40 border border-white/5'
@@ -323,7 +404,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             server 1
                         </button>
                         <button
-                            onClick={() => setServer('vidWish')}
+                            onClick={() => {
+                                setServer('vidWish');
+                                saveUserSettings({ lastServer: 'vidWish' });
+                            }}
                             className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'vidWish'
                                 ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/10'
                                 : 'bg-white/5 text-white/40 border border-white/5'

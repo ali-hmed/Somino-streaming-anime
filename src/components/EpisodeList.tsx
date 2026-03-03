@@ -9,9 +9,10 @@ interface EpisodeListProps {
     episodes: Episode[];
     animeId: string;
     currentEpisodeId: string;
+    onEpisodeClick?: (id: string) => void;
 }
 
-const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpisodeId }) => {
+const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpisodeId, onEpisodeClick }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const activeRef = useRef<HTMLAnchorElement>(null);
 
@@ -69,25 +70,19 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                     <div className="divide-y divide-white/[0.02]">
                         {filteredEpisodes.map((ep, index) => {
                             const isActive = ep.id === currentEpisodeId;
-                            return (
-                                <Link
-                                    key={ep.id}
-                                    ref={isActive ? activeRef : null}
-                                    href={`/watch/${animeId}/${ep.id}`}
-                                    className={`flex items-center gap-4 px-5 py-3 transition-all group relative overflow-hidden ${isActive ?'bg-primary'
-                                        : 'hover:bg-white/[0.03]'
-                                        }`}
-                                >
+
+                            const content = (
+                                <>
                                     {/* active indicator side bar */}
                                     {isActive && (
                                         <div className="absolute right-0 top-1 bottom-1 w-1 bg-white/40 rounded-l-full" />
                                     )}
 
-                                    <span className={`text-[11px] font-black w-5 transition-colors ${isActive ?'text-white' : 'text-white/20 group-hover:text-primary'}`}>
+                                    <span className={`text-[11px] font-black w-5 transition-colors ${isActive ? 'text-white' : 'text-white/20 group-hover:text-primary'}`}>
                                         {ep.number}
                                     </span>
 
-                                    <span className={`flex-1 text-[11px] font-bold transition-colors line-clamp-1 ${isActive ?'text-white' : 'text-white/60 group-hover:text-white'}`}>
+                                    <span className={`flex-1 text-[11px] font-bold transition-colors line-clamp-1 ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
                                         {ep.title || `episode ${ep.number}`}
                                     </span>
 
@@ -96,6 +91,31 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                                             <Zap size={14} className="text-white fill-white/20 animate-pulse" />
                                         </div>
                                     )}
+                                </>
+                            );
+
+                            if (onEpisodeClick) {
+                                return (
+                                    <button
+                                        key={ep.id}
+                                        onClick={() => onEpisodeClick(ep.id)}
+                                        className={`w-full flex items-center gap-4 px-5 py-3 transition-all group relative overflow-hidden text-left ${isActive ? 'bg-primary' : 'hover:bg-white/[0.03]'}`}
+                                    >
+                                        {content}
+                                    </button>
+                                );
+                            }
+
+                            return (
+                                <Link
+                                    key={ep.id}
+                                    ref={isActive ? activeRef : null}
+                                    href={`/watch/${animeId}/${ep.id}`}
+                                    className={`flex items-center gap-4 px-5 py-3 transition-all group relative overflow-hidden ${isActive ? 'bg-primary'
+                                        : 'hover:bg-white/[0.03]'
+                                        }`}
+                                >
+                                    {content}
                                 </Link>
                             );
                         })}

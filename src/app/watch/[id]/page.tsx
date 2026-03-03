@@ -6,6 +6,7 @@ import AnimeCard from '@/components/AnimeCard';
 import { Star, BookmarkPlus, ChevronRight, Play } from 'lucide-react';
 import Link from 'next/link';
 import CharacterSection from '@/components/CharacterSection';
+import WatchComments from '@/components/WatchComments';
 
 export default async function WatchPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -174,14 +175,14 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                                 {/* Stats Cards Row */}
                                 <div className="flex flex-wrap items-center gap-3 pt-4">
-                                    <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[100px]">
+                                    {/* <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[100px]">
                                         <span className="text-[9px] font-black text-white/30 tracking-[0.2em] mb-1">Score</span>
                                         <div className="flex items-center gap-1.5">
                                             <span className="text-lg font-black text-white">{score ?? 'N/A'}</span>
                                             <Star size={12} className="text-[#FFB941] fill-current" />
                                         </div>
                                         {members && <span className="text-[8px] font-bold text-white/20 mt-0.5">{formatNum(members)} users</span>}
-                                    </div>
+                                    </div> */}
                                     {rank && (
                                         <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px]">
                                             <span className="text-[9px] font-black text-white/30 tracking-[0.2em] mb-1">Rank</span>
@@ -434,6 +435,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                 </div>
                             </section>
                         )}
+
                     </div>
 
                 </div>
