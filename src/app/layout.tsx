@@ -31,6 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${outfit.variable} ${inter.variable} font-sans antialiased bg-background text-foreground flex flex-col min-h-screen`}
+        suppressHydrationWarning
       >
         <main className="flex-1 flex flex-col">
           {children}

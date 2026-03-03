@@ -81,7 +81,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                 </div>
 
                                 <div className="flex flex-wrap items-center justify-center gap-1.5 mb-5">
-                                    <span className={`px-1.5 py-0.5 rounded-[2px] ${String(anime.rating || '').includes('R') || String(anime.rating || '').includes('18') ? 'bg-[#FF4B12] text-white shadow-lg' : 'bg-[#FF4F18]/10 border border-[#FF4F18]/30 text-[#FF4F18]'} text-[8px] font-black tracking-tighter`}>
+                                    <span className={`px-1.5 py-0.5 rounded-[2px] ${String(anime.rating || '').includes('R') || String(anime.rating || '').includes('18') ? 'bg-[#FF4B12] text-white shadow-lg' : 'bg-primary/10 border border-primary/30 text-primary'} text-[8px] font-black tracking-tighter`}>
                                         {(() => {
                                             const r = String(anime.rating || '');
                                             if (r.includes('R') || r.includes('18')) return '18+';
@@ -107,22 +107,64 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                                 <div className="w-full space-y-2.5 pt-4 border-t border-white/[0.03] text-left">
                                     <div className="flex items-start gap-2 text-[10px]">
-                                        <span className="text-white/30 font-bold shrink-0">genres:</span>
+                                        <span className="text-white/30 font-bold shrink-0">Genres:</span>
                                         <span className="text-white font-bold">{anime.genres?.slice(0, 3).join(', ')}</span>
                                     </div>
                                     <div className="flex items-start gap-2 text-[10px]">
-                                        <span className="text-white/30 font-bold shrink-0">status:</span>
-                                        <span className="text-white font-bold">{anime.status || 'unknown'}</span>
+                                        <span className="text-white/30 font-bold shrink-0">Status:</span>
+                                        <span className="text-white font-bold">{anime.status || 'Unknown'}</span>
+                                    </div>
+                                    {anime.premiered && (
+                                        <div className="flex items-start gap-2 text-[10px]">
+                                            <span className="text-white/30 font-bold shrink-0">Premiered:</span>
+                                            <span className="text-white font-bold">{String(anime.premiered)}</span>
+                                        </div>
+                                    )}
+                                    {anime.broadcast?.string && (
+                                        <div className="flex items-start gap-2 text-[10px]">
+                                            <span className="text-white/30 font-bold shrink-0">Broadcast:</span>
+                                            <span className="text-white font-bold">{String(anime.broadcast.string)}</span>
+                                        </div>
+                                    )}
+                                    {episodes && episodes.length > 0 && (
+                                        <div className="flex items-start gap-2 text-[10px]">
+                                            <span className="text-white/30 font-bold shrink-0">Episodes:</span>
+                                            <span className="text-white font-bold">{String(episodes.length)}</span>
+                                        </div>
+                                    )}
+                                    <div className="flex items-start gap-2 text-[10px]">
+                                        <span className="text-white/30 font-bold shrink-0">Duration:</span>
+                                        <span className="text-white font-bold">{String(anime.duration || '24m')}</span>
+                                    </div>
+                                    {anime.studios && anime.studios.length > 0 && (
+                                        <div className="flex items-start gap-2 text-[10px]">
+                                            <span className="text-white/30 font-bold shrink-0">Studios:</span>
+                                            <span className="text-white font-bold truncate">
+                                                {Array.isArray(anime.studios) ? anime.studios.join(', ') : String(anime.studios)}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {anime.producers && anime.producers.length > 0 && (
+                                        <div className="flex items-start gap-2 text-[10px]">
+                                            <span className="text-white/30 font-bold shrink-0">Producers:</span>
+                                            <span className="text-white font-bold truncate">
+                                                {Array.isArray(anime.producers) ? anime.producers.slice(0, 2).join(', ') : String(anime.producers)}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <div className="flex items-start gap-2 text-[10px]">
+                                        <span className="text-white/30 font-bold shrink-0">Score:</span>
+                                        <span className="text-white font-bold">{anime.score ? `${anime.score} / 10` : 'TBA'}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="bg-[#0b0c10] px-5 py-6 text-center shrink-0 border-t border-white/[0.02]">
-                            <h4 className="text-[12px] font-black text-[#FF4F18] mb-1 leading-tight">how&apos;d you rate this?</h4>
+                            <h4 className="text-[12px] font-black text-primary mb-1 leading-tight">How&apos;d you rate this?</h4>
                             <div className="flex items-center justify-center gap-1 px-2">
                                 {[1, 2, 3, 4, 5].map(i => (
-                                    <Star key={i} size={22} className={`${i <= Math.round((anime.score || 0) / 2) ? 'text-[#FF4F18] fill-[#FF4F18]' : 'text-white/5 fill-white/5'} transition-transform hover:scale-110 cursor-pointer`} />
+                                    <Star key={i} size={22} className={`${i <= Math.round((anime.score || 0) / 2) ? 'text-primary fill-primary' : 'text-white/5 fill-white/5'} transition-transform hover:scale-110 cursor-pointer`} />
                                 ))}
                             </div>
                         </div>
