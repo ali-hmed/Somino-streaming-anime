@@ -1,3 +1,4 @@
+// Vercel Redeploy Trigger - Picking up new API URL
 import type { Metadata } from "next";
 import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
