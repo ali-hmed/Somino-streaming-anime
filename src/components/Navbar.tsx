@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Bell, User, Filter, Grid, Menu, X, ChevronRight, Shuffle, Users } from 'lucide-react';
+import { Search, Bell, User, Filter, Grid, Menu, X, ChevronRight, Shuffle, Users, LogOut, PlaySquare, Heart, Settings, Film, ArrowRight } from 'lucide-react';
 import { searchAnime } from '@/lib/consumet';
 import { getTitle } from '@/types/anime';
+import { useAuthStore } from '@/store/authStore';
+import AuthModal from './AuthModal';
 
 const Navbar = () => {
     const [query, setQuery] = useState('');
@@ -17,6 +19,11 @@ const Navbar = () => {
     const [isMobileGenresOpen, setIsMobileGenresOpen] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const profileRef = useRef<HTMLDivElement>(null);
+
+    const { user, isAuthenticated, logout } = useAuthStore();
     const router = useRouter();
 
     const genres = [
@@ -34,7 +41,10 @@ const Navbar = () => {
         onScroll();
 
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') setIsSearchOpen(false);
+            if (e.key === 'Escape') {
+                setIsSearchOpen(false);
+                setIsProfileOpen(false);
+            }
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 setIsSearchOpen(true);
@@ -42,9 +52,17 @@ const Navbar = () => {
         };
         window.addEventListener('keydown', handleKeyDown);
 
+        const handleClickOutside = (e: MouseEvent) => {
+            if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+                setIsProfileOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+
         return () => {
             window.removeEventListener('scroll', onScroll);
             window.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
@@ -189,21 +207,134 @@ const Navbar = () => {
                             <Search size={22} strokeWidth={2.5} />
                         </button>
 
-                        {/* Notification Icon (Style Match) */}
-                        <button className="p-2 text-white/80 hover:text-white transition-colors">
-                            <Bell size={22} strokeWidth={2} />
-                        </button>
 
-                        <button className="flex items-center group">
-                            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/50 group-hover:bg-primary/20 group-hover:text-primary group-hover:border-primary/40 transition-all">
-                                <User size={18} />
+                        {isAuthenticated ? (
+                            <div ref={profileRef} className="relative flex items-center gap-2 pl-2 border-l border-white/5">
+                                {/* Bell icon */}
+                                <button
+                                    aria-label="Notifications"
+                                    className="p-1.5 text-white/50 hover:text-white transition-colors"
+                                >
+                                    <Bell size={18} strokeWidth={2} />
+                                </button>
+
+                                {/* Avatar trigger */}
+                                <button
+                                    id="profile-menu-trigger"
+                                    aria-haspopup="true"
+                                    aria-expanded={isProfileOpen}
+                                    aria-controls="profile-dropdown"
+                                    onClick={() => setIsProfileOpen(v => !v)}
+                                    className="w-9 h-9 rounded-full bg-primary/20 border-2 flex items-center justify-center text-primary overflow-hidden transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                                    style={{ borderColor: isProfileOpen ? 'var(--primary)' : 'rgba(83,204,184,0.2)' }}
+                                >
+                                    {user?.avatar ? (
+                                        <img src={user.avatar} alt={user?.username} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-[13px] font-black uppercase">{user?.username?.[0]}</span>
+                                    )}
+                                </button>
+
+                                {/* Profile Dropdown */}
+                                <AnimatePresence>
+                                    {isProfileOpen && (
+                                        <motion.div
+                                            id="profile-dropdown"
+                                            role="menu"
+                                            aria-labelledby="profile-menu-trigger"
+                                            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                                            transition={{ duration: 0.18, ease: 'easeOut' }}
+                                            className="absolute top-[calc(100%+12px)] right-0 z-[300] w-[240px] rounded-2xl shadow-2xl overflow-hidden"
+                                            style={{
+                                                background: 'var(--surface)',
+                                                border: '1px solid var(--border)',
+                                                boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
+                                            }}
+                                        >
+                                            {/* User info header */}
+                                            <div className="px-4 pt-4 pb-3">
+                                                <p className="text-[14px] font-black text-white leading-tight" style={{ color: 'var(--primary)' }}>
+                                                    {user?.username}
+                                                </p>
+                                                <p className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>
+                                                    {user?.email}
+                                                </p>
+                                            </div>
+
+                                            {/* Divider */}
+                                            <div className="h-px mx-3 mb-1" style={{ background: 'var(--border)' }} />
+
+                                            {/* Menu Items */}
+                                            <div className="px-2 py-1 flex flex-col gap-0.5">
+                                                {([
+                                                    { href: '/profile', icon: User, label: 'Profile' },
+                                                    { href: '/profile', icon: PlaySquare, label: 'Continue Watching' },
+                                                    { href: '/profile', icon: Heart, label: 'Watch List' },
+                                                    { href: '/profile', icon: Bell, label: 'Notification' },
+                                                    { href: '/profile', icon: Film, label: 'MAL Import / Export' },
+                                                    { href: '/profile', icon: Settings, label: 'Settings' },
+                                                ] as const).map(({ href, icon: Icon, label }) => (
+                                                    <Link
+                                                        key={label}
+                                                        href={href}
+                                                        role="menuitem"
+                                                        tabIndex={0}
+                                                        onClick={() => setIsProfileOpen(false)}
+                                                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors group"
+                                                        style={{ color: 'var(--text-muted)' }}
+                                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-raised)')}
+                                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                                    >
+                                                        <Icon size={15} strokeWidth={2} className="flex-shrink-0 group-hover:text-white transition-colors" />
+                                                        <span className="text-white/80 group-hover:text-white transition-colors">{label}</span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+
+                                            {/* Divider */}
+                                            <div className="h-px mx-3 mt-1" style={{ background: 'var(--border)' }} />
+
+                                            {/* Logout */}
+                                            <div className="px-2 py-2">
+                                                <button
+                                                    role="menuitem"
+                                                    tabIndex={0}
+                                                    onClick={() => { logout(); setIsProfileOpen(false); router.push('/'); }}
+                                                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors group"
+                                                    style={{ color: 'var(--text-muted)' }}
+                                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-raised)')}
+                                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                                >
+                                                    <span className="text-white/70 group-hover:text-white transition-colors">Logout</span>
+                                                    <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" style={{ color: 'var(--text-muted)' }} />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                            <span className="hidden sm:inline-block ml-2 text-[14px] font-medium text-white/70 group-hover:text-white transition-colors">
-                                Sign in
-                            </span>
-                        </button>
+                        ) : (
+                            <button
+                                onClick={() => setIsAuthModalOpen(true)}
+                                className="flex items-center group"
+                            >
+                                <div className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/50 group-hover:bg-primary/20 group-hover:text-primary group-hover:border-primary/40 transition-all">
+                                    <User size={18} />
+                                </div>
+                                <span className="hidden sm:inline-block ml-2 text-[14px] font-medium text-white/70 group-hover:text-white transition-colors">
+                                    Sign in
+                                </span>
+                            </button>
+                        )}
                     </div>
                 </div>
+
+                <AuthModal
+                    isOpen={isAuthModalOpen}
+                    onClose={() => setIsAuthModalOpen(false)}
+                />
 
                 {/* Floating Search Overlay */}
                 {isSearchOpen && (
