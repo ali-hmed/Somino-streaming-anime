@@ -23,6 +23,12 @@ const Navbar = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
 
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
     const { user, isAuthenticated, logout } = useAuthStore();
     const router = useRouter();
 
@@ -208,7 +214,7 @@ const Navbar = () => {
                         </button>
 
 
-                        {isAuthenticated ? (
+                        {(isClient && isAuthenticated) ? (
                             <div ref={profileRef} className="relative flex items-center gap-2 pl-2 border-l border-white/5">
                                 {/* Bell icon */}
                                 <button
@@ -318,7 +324,7 @@ const Navbar = () => {
                         ) : (
                             <button
                                 onClick={() => setIsAuthModalOpen(true)}
-                                className="flex items-center group"
+                                className={`flex items-center group ${!isClient ? 'opacity-0' : 'opacity-100'} transition-opacity`}
                             >
                                 <div className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/50 group-hover:bg-primary/20 group-hover:text-primary group-hover:border-primary/40 transition-all">
                                     <User size={18} />
