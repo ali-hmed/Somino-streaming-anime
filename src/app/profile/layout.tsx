@@ -27,10 +27,10 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             <Navbar />
 
             {/* Profile Header Banner */}
-            <div className="relative pt-[80px] pb-0 overflow-hidden border-b" style={{ borderColor: "var(--border)" }}>
+            <div className="relative h-[40vh] pt-[80px] overflow-hidden border-b flex flex-col justify-end" style={{ borderColor: "var(--border)" }}>
                 {/* Blurred BG using user avatar or fallback */}
                 <div
-                    className="absolute inset-0 z-0 opacity-15 blur-lg scale-110"
+                    className="absolute inset-0 z-0 opacity-15 blur-[5px] scale-110"
                     style={{
                         backgroundImage: user.avatar
                             ? `url('${user.avatar}')`
@@ -42,7 +42,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                 <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(to top, var(--background) 5%, transparent 80%)" }} />
 
                 <div className="relative z-10 container mx-auto px-4 md:px-8 flex flex-col items-center">
-                    <h1 className="text-2xl font-bold text-white mb-5 tracking-wide">
+                    <h1 className="text-3xl md:text-5xl font-black text-white mb-8 tracking-wide">
                         Hi, <span style={{ color: "var(--primary)" }}>{user.username}</span>
                     </h1>
 

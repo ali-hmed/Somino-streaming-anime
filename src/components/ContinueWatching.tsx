@@ -5,15 +5,22 @@ import { RotateCcw, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import AnimeCard from './AnimeCard';
 import { getWatchHistory, WatchHistoryItem } from '@/lib/watchHistory';
+import { useAuthStore } from '@/store/authStore';
 
 const ContinueWatching = () => {
-    const [history, setHistory] = useState<WatchHistoryItem[]>([]);
+    const { user, isAuthenticated } = useAuthStore();
+    const [localHistory, setLocalHistory] = useState<WatchHistoryItem[]>([]);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
-        setHistory(getWatchHistory());
+        setLocalHistory(getWatchHistory());
     }, []);
+
+    // When logged in → show only cloud history. When guest → show local storage.
+    const history: WatchHistoryItem[] = isAuthenticated
+        ? (user?.watchHistory || [])
+        : localHistory;
 
     if (!mounted || history.length === 0) return null;
 
@@ -26,7 +33,7 @@ const ContinueWatching = () => {
                         continue watching
                     </h2>
                 </div>
-                <Link href="#" className="flex items-center gap-1 text-[10px] font-bold text-white/30 hover:text-[#FF6E9F] transition-colors tracking-widest lowercase">
+                <Link href="/profile/continue-watching" className="flex items-center gap-1 text-[10px] font-bold text-white/30 hover:text-[#FF6E9F] transition-colors tracking-widest lowercase">
                     view more <ChevronRight size={12} />
                 </Link>
             </div>
