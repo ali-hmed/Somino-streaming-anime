@@ -46,6 +46,7 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     animeId,
                     animeTitle,
@@ -80,7 +81,8 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user?.token}`
-                }
+                },
+                credentials: 'include'
             });
 
             const data = await res.json();

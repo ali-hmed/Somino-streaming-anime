@@ -43,7 +43,8 @@ export default function ContinueWatchingPage() {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user?.token}`
-                }
+                },
+                credentials: 'include'
             });
 
             if (res.ok) {

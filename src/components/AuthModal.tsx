@@ -37,6 +37,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             const res = await fetch(`${BASE_URL}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(isLogin ? {
                     email: formData.email,
                     password: formData.password
