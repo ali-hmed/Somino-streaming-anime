@@ -1,0 +1,165 @@
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
+import { BookmarkPlus, ChevronDown, Check, Loader2, Trash2 } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+import { AnimatePresence, motion } from "framer-motion";
+
+interface WatchlistButtonProps {
+    animeId: string;
+    animeTitle: string;
+    animeImage: string;
+}
+
+const STATUS_OPTIONS = ['Watching', 'Completed', 'Planned', 'Dropped'] as const;
+type WatchlistStatus = (typeof STATUS_OPTIONS)[number];
+
+export default function WatchlistButton({ animeId, animeTitle, animeImage }: WatchlistButtonProps) {
+    const { user, isAuthenticated, setWatchlist } = useAuthStore();
+    const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const itemInList = user?.watchlist?.find((item) => item.animeId === animeId);
+    const currentStatus = itemInList?.status;
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleUpdateStatus = async (status: WatchlistStatus) => {
+        if (!isAuthenticated) return;
+
+        setIsLoading(true);
+        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+
+        try {
+            const res = await fetch(`${BASE_URL}/auth/watchlist`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
+                },
+                body: JSON.stringify({
+                    animeId,
+                    animeTitle,
+                    animeImage,
+                    status
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success) {
+                    setWatchlist(data.data);
+                }
+            } else {
+                const text = await res.text();
+                console.error("Watchlist operation error response:", text);
+            }
+        } catch (error) {
+            console.error("Watchlist error:", error);
+        } finally {
+            setIsLoading(false);
+            setIsOpen(false);
+        }
+    };
+
+    const handleRemove = async () => {
+        setIsLoading(true);
+        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+
+        try {
+            const res = await fetch(`${BASE_URL}/auth/watchlist/${animeId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${user?.token}`
+                }
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                setWatchlist(data.data);
+            }
+        } catch (error) {
+            console.error("Watchlist remove error:", error);
+        } finally {
+            setIsLoading(false);
+            setIsOpen(false);
+        }
+    };
+
+    if (!isAuthenticated) return null;
+
+    return (
+        <div className="relative w-full" ref={dropdownRef}>
+            <button
+                onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(!isOpen);
+                }}
+                disabled={isLoading}
+                className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-md text-[10px] font-semibold transition-all border ${currentStatus
+                    ? 'bg-primary/10 border-primary/20 text-primary hover:bg-primary/20'
+                    : 'bg-white/5 border-white/10 text-white/70 hover:text-white'
+                    }`}
+            >
+                {isLoading ? (
+                    <Loader2 size={12} className="animate-spin text-primary" />
+                ) : (
+                    <>
+                        <BookmarkPlus size={13} />
+                        {currentStatus || "Add To List"}
+                        <ChevronDown size={11} className={`ml-auto transition-transform duration-300 ${isOpen ? 'rotate-180' : ''} opacity-40`} />
+                    </>
+                )}
+            </button>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                        className="absolute bottom-full left-0 w-full mb-2 bg-[#1a1c22]/95 backdrop-blur-xl border border-white/5 rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
+                    >
+                        <div className="flex flex-col gap-0.5">
+                            {STATUS_OPTIONS.map((status) => (
+                                <button
+                                    key={status}
+                                    onClick={() => handleUpdateStatus(status)}
+                                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${currentStatus === status
+                                        ? 'bg-primary/10 text-primary'
+                                        : 'text-white/40 hover:bg-white/5 hover:text-white'
+                                        }`}
+                                >
+                                    {status}
+                                    {currentStatus === status && <Check size={11} />}
+                                </button>
+                            ))}
+
+                            {currentStatus && (
+                                <>
+                                    <div className="h-px bg-white/5 mx-2 my-1" />
+                                    <button
+                                        onClick={handleRemove}
+                                        className="flex items-center justify-between px-3 py-1.5 rounded-lg text-[10px] font-bold text-red-500/60 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                                    >
+                                        Remove
+                                        <Trash2 size={11} />
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}

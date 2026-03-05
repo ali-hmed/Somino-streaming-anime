@@ -13,7 +13,7 @@ export interface WatchHistoryItem {
 
 const STORAGE_KEY = 'somino_watch_history';
 
-export const saveWatchProgress = (item: Omit<WatchHistoryItem, 'lastWatched'>) => {
+export const saveWatchProgress = async (item: Omit<WatchHistoryItem, 'lastWatched'>, token?: string) => {
     if (typeof window === 'undefined') return;
 
     try {
@@ -27,8 +27,9 @@ export const saveWatchProgress = (item: Omit<WatchHistoryItem, 'lastWatched'>) =
             const isDifferentEpisode = existing.episodeId !== item.episodeId;
             const timeDiff = Math.abs(existing.currentTime - item.currentTime);
 
-            // If same episode and less than 1s difference, skip to save performance
-            if (!isDifferentEpisode && timeDiff < 1) return;
+            // If same episode and less than 3s difference, skip to save performance
+            // We use 3s here because backend sync doesn't need to be extremely frequent
+            if (!isDifferentEpisode && timeDiff < 3) return;
         }
 
         const newItem: WatchHistoryItem = {
@@ -45,6 +46,20 @@ export const saveWatchProgress = (item: Omit<WatchHistoryItem, 'lastWatched'>) =
 
         // Limit to top 20 items
         localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 20)));
+
+        // Sync to backend if token is provided
+        if (token) {
+            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+            fetch(`${BASE_URL}/auth/history`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(item)
+            }).catch(err => console.error("History sync error:", err));
+        }
+
     } catch (error) {
         // Silently fail to avoid console clutter on storage full
     }

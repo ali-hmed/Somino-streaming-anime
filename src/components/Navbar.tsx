@@ -217,12 +217,13 @@ const Navbar = () => {
                         {(isClient && isAuthenticated) ? (
                             <div ref={profileRef} className="relative flex items-center gap-2 pl-2 border-l border-white/5">
                                 {/* Bell icon */}
-                                <button
+                                <Link
+                                    href="/profile/notification"
                                     aria-label="Notifications"
                                     className="p-1.5 text-white/50 hover:text-white transition-colors"
                                 >
                                     <Bell size={18} strokeWidth={2} />
-                                </button>
+                                </Link>
 
                                 {/* Avatar trigger */}
                                 <button
@@ -276,11 +277,11 @@ const Navbar = () => {
                                             <div className="px-2 py-1 flex flex-col gap-0.5">
                                                 {([
                                                     { href: '/profile', icon: User, label: 'Profile' },
-                                                    { href: '/profile', icon: PlaySquare, label: 'Continue Watching' },
-                                                    { href: '/profile', icon: Heart, label: 'Watch List' },
-                                                    { href: '/profile', icon: Bell, label: 'Notification' },
-                                                    { href: '/profile', icon: Film, label: 'MAL Import / Export' },
-                                                    { href: '/profile', icon: Settings, label: 'Settings' },
+                                                    { href: '/profile/continue-watching', icon: PlaySquare, label: 'Continue Watching' },
+                                                    { href: '/profile/watch-list', icon: Heart, label: 'Watch List' },
+                                                    { href: '/profile/notification', icon: Bell, label: 'Notification' },
+                                                    { href: '/profile/mal', icon: Film, label: 'MAL Import / Export' },
+                                                    { href: '/profile/settings', icon: Settings, label: 'Settings' },
                                                 ] as const).map(({ href, icon: Icon, label }) => (
                                                     <Link
                                                         key={label}

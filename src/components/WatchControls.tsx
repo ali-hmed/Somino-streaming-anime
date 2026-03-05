@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 import VideoPlayer from './VideoPlayer';
 import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Heart, Flag, MessageSquare } from 'lucide-react';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
@@ -42,6 +43,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     isLoading = false,
 }) => {
     const router = useRouter();
+    const { user } = useAuthStore();
     const [server, setServer] = useState<'megaPlay' | 'vidWish'>('megaPlay');
     const [category, setCategory] = useState<'sub' | 'dub'>('sub');
     const [autoNext, setAutoNext] = useState(false);
@@ -80,9 +82,19 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     }, [subEpisodes, dubEpisodes]);
 
     useEffect(() => {
-        const progress = getAnimeProgress(animeId);
-        if (progress && progress.episodeId === episodeId) {
-            const savedTime = progress.currentTime || 0;
+        // Find progress in user's remote watch history first, then fallback to local
+        const remoteProgress = user?.watchHistory?.find(item => item.animeId === animeId && item.episodeId === episodeId);
+        const localProgress = getAnimeProgress(animeId);
+
+        let savedTime = 0;
+
+        if (remoteProgress) {
+            savedTime = remoteProgress.currentTime || 0;
+        } else if (!user && localProgress && localProgress.episodeId === episodeId) {
+            savedTime = localProgress.currentTime || 0;
+        }
+
+        if (savedTime > 0) {
             setInitialTime(savedTime || 0.1); // Small offset to avoid 0 check issues
             setCurrentTime(savedTime);
             currentProgressRef.current = savedTime;
@@ -92,7 +104,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             currentProgressRef.current = 0;
         }
         setHasLoadedProgress(true);
-    }, [animeId, episodeId]);
+    }, [animeId, episodeId, user?.watchHistory]);
 
     // Timer to estimate progress (one source of truth: local state synced with player)
     useEffect(() => {
@@ -106,7 +118,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             });
         }, 1000);
 
-        // Periodically save to localStorage
+        // Periodically save to localStorage & backend
         const saveInterval = setInterval(() => {
             saveWatchProgress({
                 animeId,
@@ -116,7 +128,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
                 currentTime: currentProgressRef.current,
                 duration: 1440 // 24 mins fallback
-            });
+            }, user?.token);
         }, 5000);
 
         return () => {
@@ -131,9 +143,9 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
                 currentTime: currentProgressRef.current,
                 duration: 1440
-            });
+            }, user?.token);
         };
-    }, [hasLoadedProgress, animeId, episodeId, animeTitle, animeImage, episodeNumber]);
+    }, [hasLoadedProgress, animeId, episodeId, animeTitle, animeImage, episodeNumber, user?.token]);
 
     // Handle incoming time updates from the player (skips, seeks, etc.)
     // Handle incoming time updates from the player (skips, seeks, etc.)
@@ -167,7 +179,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
                 currentTime: newTime,
                 duration: duration || 1440
-            });
+            }, user?.token);
         }
     };
 

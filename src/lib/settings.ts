@@ -11,7 +11,7 @@ const STORAGE_KEY = 'somino_user_settings';
 
 const DEFAULT_SETTINGS: UserSettings = {
     autoNext: false, // Default is OFF
-    autoPlay: true,  // Auto play usually ON by default in streaming
+    autoPlay: false, // Default is OFF as requested
     lastServer: 'megaPlay',
     preferredCategory: 'sub',
 };

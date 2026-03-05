@@ -8,6 +8,7 @@ import Link from 'next/link';
 import CharacterSection from '@/components/CharacterSection';
 import WatchComments from '@/components/WatchComments';
 import Relations from '@/components/Relations';
+import WatchlistButton from '@/components/WatchlistButton';
 
 export default async function WatchPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -116,10 +117,13 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                 <div className="w-[130px] rounded-lg overflow-hidden shadow-2xl border border-white/10 mx-auto">
                                     <img src={anime.image} alt={title} className="w-full h-full object-cover" />
                                 </div>
-                                <button className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md text-[10px] font-semibold text-white/70 hover:text-white transition-all">
-                                    <BookmarkPlus size={13} />
-                                    Add To List
-                                </button>
+                                <div className="mt-3 w-full">
+                                    <WatchlistButton
+                                        animeId={id}
+                                        animeTitle={title}
+                                        animeImage={anime.image}
+                                    />
+                                </div>
                             </div>
 
                             {/* Info */}
