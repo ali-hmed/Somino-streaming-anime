@@ -30,7 +30,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             <div className="relative h-[40vh] pt-[80px] overflow-hidden border-b flex flex-col justify-end" style={{ borderColor: "var(--border)" }}>
                 {/* Blurred BG using user avatar or fallback */}
                 <div
-                    className="absolute inset-0 z-0 opacity-15 blur-[5px] scale-110"
+                    className="absolute inset-0 z-0 opacity-15 blur-[10px] scale-110"
                     style={{
                         backgroundImage: user.avatar
                             ? `url('${user.avatar}')`
