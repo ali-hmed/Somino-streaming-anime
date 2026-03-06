@@ -31,13 +31,12 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         setError('');
 
         try {
-            const BASE_URL = 'https://somino-backend.vercel.app/api/v1';
+            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
             const endpoint = isLogin ? '/auth/login' : '/auth/signup';
 
             const res = await fetch(`${BASE_URL}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
                 body: JSON.stringify(isLogin ? {
                     email: formData.email,
                     password: formData.password

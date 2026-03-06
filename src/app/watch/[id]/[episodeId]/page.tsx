@@ -47,7 +47,8 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         image: rel.entry.image,
         type: rel.entry.type,
         relationType: rel.relation || 'Related',
-        subEpisodes: rel.entry.subEpisodes || rel.entry.episodes || 0
+        subEpisodes: rel.entry.subEpisodes || rel.entry.episodes || 0,
+        dubEpisodes: rel.entry.dubEpisodes || 0
     })).slice(0, 10);
 
     // 2. Prepare Recommended (deduplicated against relations)

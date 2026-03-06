@@ -36,8 +36,7 @@ export default function ProfilePage() {
         if (!user.token) return;
         const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
         fetch(`${BASE_URL}/auth/me`, {
-            headers: { 'Authorization': `Bearer ${user.token}` },
-            credentials: 'include'
+            headers: { 'Authorization': `Bearer ${user.token}` }
         })
             .then(r => r.json())
             .then(data => {
@@ -74,8 +73,11 @@ export default function ProfilePage() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`
                 },
-                credentials: 'include',
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    username: formData.username,
+                    email: formData.email,
+                    avatar: formData.avatar
+                })
             });
 
             const data = await res.json();

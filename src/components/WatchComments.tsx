@@ -3,12 +3,15 @@
 import React, { useState } from 'react';
 import { MessageSquare, Send, User, LogIn, UserPlus, Heart, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '@/store/authStore';
+import Link from 'next/link';
+import AuthModal from './AuthModal';
 
 const WatchComments = () => {
     const [comment, setComment] = useState("");
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-    // In a real app, this would come from a global auth state / context
-    const isLoggedIn = false;
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const { isAuthenticated: isLoggedIn } = useAuthStore();
     const [comments, setComments] = useState<any[]>([]);
 
     const handleSend = () => {
@@ -82,14 +85,14 @@ const WatchComments = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
-                                        className="px-5 py-2.5 bg-white text-black font-black text-[10px] tracking-widest uppercase rounded-lg hover:opacity-90 transition-all active:scale-95"
-                                        onClick={() => console.log("Navigate to login")}
+                                        className="px-5 py-2.5 bg-white text-black font-black text-[10px] tracking-widest uppercase rounded-lg hover:opacity-90 transition-all active:scale-95 text-center"
+                                        onClick={() => setIsAuthModalOpen(true)}
                                     >
                                         Login
                                     </button>
                                     <button
-                                        className="px-5 py-2.5 bg-white/10 text-white font-black text-[10px] tracking-widest uppercase rounded-lg hover:bg-white/20 transition-all active:scale-95 border border-white/5"
-                                        onClick={() => console.log("Navigate to signup")}
+                                        className="px-5 py-2.5 bg-white/10 text-white font-black text-[10px] tracking-widest uppercase rounded-lg hover:bg-white/20 transition-all active:scale-95 border border-white/5 text-center"
+                                        onClick={() => setIsAuthModalOpen(true)}
                                     >
                                         Register
                                     </button>
@@ -107,6 +110,11 @@ const WatchComments = () => {
                     )}
                 </AnimatePresence>
             </div>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+            />
 
             {/* Comments List */}
             <div className="min-h-[200px] flex flex-col items-center justify-center p-12 text-center">

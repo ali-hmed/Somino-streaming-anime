@@ -1,6 +1,6 @@
 import { AnimeInfo, SearchResult, RecentAnime } from '@/types/anime';
 
-const BASE_URL = 'https://somino-backend.vercel.app' + '/api/v1';
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
 
 export const mapCustomToAnime = (item: any): any => ({
     ...item,
