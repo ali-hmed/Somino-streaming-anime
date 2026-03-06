@@ -311,7 +311,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                 {/* Main area: Comments */}
                 <div className="flex-1 min-w-0 relative">
                     <div className={isChanging ? 'opacity-30 pointer-events-none transition-opacity duration-300' : 'transition-opacity duration-300'}>
-                        <WatchComments key={currentEpisodeId} />
+                        <WatchComments episodeId={currentEpisodeId} key={currentEpisodeId} />
                     </div>
                 </div>
 
