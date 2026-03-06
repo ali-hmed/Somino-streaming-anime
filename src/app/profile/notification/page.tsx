@@ -16,8 +16,9 @@ interface NotificationType {
         username: string;
         avatar?: string;
     };
-    type: 'reply' | 'like' | 'dislike';
-    commentId: string;
+    type: 'reply' | 'like' | 'dislike' | 'episode';
+    category: 'anime' | 'community';
+    commentId?: string;
     episodeId: string;
     animeId: string;
     animeTitle: string;
@@ -125,7 +126,7 @@ export default function NotificationsPage() {
         );
     }
 
-    const filteredNotifications = activeTab === 'anime' ? notifications : [];
+    const filteredNotifications = notifications.filter(n => n.category === activeTab);
 
     return (
         <div className="space-y-10">
@@ -204,7 +205,7 @@ export default function NotificationsPage() {
                                     exit={{ opacity: 0, scale: 0.95 }}
                                 >
                                     <Link
-                                        href={`/watch/${n.animeId}/${n.episodeId}#comment-${n.commentId}`}
+                                        href={`/watch/${n.animeId}/${n.episodeId}${n.commentId ? `#comment-${n.commentId}` : ''}`}
                                         onClick={() => !n.isRead && markAsRead(n._id)}
                                         className={`group relative flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/[0.03] active:scale-[0.99] border border-transparent hover:border-white/5 ${n.isRead ? 'opacity-40' : 'bg-[#1a1b20] shadow-xl'}`}
                                     >
