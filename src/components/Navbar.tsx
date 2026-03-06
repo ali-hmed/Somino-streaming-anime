@@ -120,6 +120,41 @@ const Navbar = () => {
         }
     };
 
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    const fetchUnreadCount = async () => {
+        if (!isAuthenticated || !user) return;
+        try {
+            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+            const res = await fetch(`${BASE_URL}/notifications`, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                setUnreadCount(data.data.filter((n: any) => !n.isRead).length);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchUnreadCount();
+            const interval = setInterval(fetchUnreadCount, 60000); // Check every minute
+            return () => clearInterval(interval);
+        }
+    }, [isAuthenticated, user?.token]);
+
+    const NotificationBadge = () => {
+        if (unreadCount === 0) return null;
+        return (
+            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-primary border-2 border-[#090a0f] rounded-full flex items-center justify-center text-[8px] font-black text-white p-0">
+                {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+        );
+    };
+
     const navLinks = [
         { label: 'Genre', hasDropdown: true, href: '#' },
         { label: 'Movies', hasDropdown: false, href: '/animes/movie' },
@@ -220,9 +255,10 @@ const Navbar = () => {
                                 <Link
                                     href="/profile/notification"
                                     aria-label="Notifications"
-                                    className="p-1.5 text-white/50 hover:text-white transition-colors"
+                                    className="relative p-1.5 text-white/50 hover:text-white transition-colors"
                                 >
                                     <Bell size={18} strokeWidth={2} />
+                                    <NotificationBadge />
                                 </Link>
 
                                 {/* Avatar trigger */}

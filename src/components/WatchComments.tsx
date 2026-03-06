@@ -25,9 +25,12 @@ interface CommentType {
 
 interface WatchCommentsProps {
     episodeId: string;
+    animeId: string;
+    animeTitle: string;
+    episodeNumber: number;
 }
 
-const WatchComments = ({ episodeId }: WatchCommentsProps) => {
+const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchCommentsProps) => {
     const [mounted, setMounted] = useState(false);
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState<CommentType[]>([]);
@@ -62,6 +65,23 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
         fetchComments();
     }, [fetchComments]);
 
+    // Auto-scroll to comment from hash
+    useEffect(() => {
+        if (!isLoading && comments.length > 0) {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#comment-')) {
+                const element = document.getElementById(hash.substring(1));
+                if (element) {
+                    setTimeout(() => {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        element.classList.add('bg-primary/5');
+                        setTimeout(() => element.classList.remove('bg-primary/5'), 3000);
+                    }, 500);
+                }
+            }
+        }
+    }, [isLoading, comments]);
+
     useEffect(() => {
         const handleClickOutside = () => setActiveDropdown(null);
         window.addEventListener('click', handleClickOutside);
@@ -87,7 +107,10 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                 body: JSON.stringify({
                     episodeId,
                     text: comment,
-                    parentCommentId: replyingTo?.mainId || null
+                    parentCommentId: replyingTo?.mainId || null,
+                    animeId,
+                    animeTitle,
+                    episodeNumber
                 })
             });
 
