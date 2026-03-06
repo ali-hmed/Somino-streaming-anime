@@ -142,14 +142,14 @@ export default function NotificationsPage() {
                             onClick={markAllRead}
                             className="flex items-center gap-2 px-4 py-2 bg-[#53CCB8] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all shadow-lg active:scale-95"
                         >
-                            <Check size={14} strokeWidth={3} />
+                            <Check size={12} strokeWidth={3} />
                             Mark all as read
                         </button>
                         <button
                             onClick={clearAll}
                             className="flex items-center gap-2 px-4 py-2 bg-[#FFB800] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all shadow-lg active:scale-95"
                         >
-                            <Trash2 size={14} />
+                            <Trash2 size={12} />
                             Clear All
                         </button>
                     </div>

@@ -146,9 +146,13 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
         }
     };
 
-    const handleVote = async (commentId: string, type: 'like' | 'dislike') => {
+    const handleVote = async (commentId: string, type: 'like' | 'dislike', commentAuthorId: string) => {
         if (!isAuthenticated) {
             setShowLoginPrompt(true);
+            return;
+        }
+
+        if (user?._id === commentAuthorId) {
             return;
         }
 
@@ -280,16 +284,18 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
 
                         <div className="flex items-center gap-3.5">
                             <button
-                                onClick={() => handleVote(item._id, 'like')}
-                                className={`flex items-center gap-1 transition-colors ${isLiked ? 'text-primary' : 'text-white/30 hover:text-white'}`}
+                                onClick={() => handleVote(item._id, 'like', item.userId)}
+                                disabled={user?._id === item.userId}
+                                className={`flex items-center gap-1 transition-colors ${isLiked ? 'text-primary' : 'text-white/30 hover:text-white'} ${user?._id === item.userId ? 'cursor-not-allowed opacity-50' : ''}`}
                             >
                                 <ThumbsUp size={13} className={isLiked ? 'fill-primary' : ''} />
                                 {item.likes > 0 && <span className="text-[11px] font-bold">{item.likes}</span>}
                             </button>
 
                             <button
-                                onClick={() => handleVote(item._id, 'dislike')}
-                                className={`flex items-center gap-1 transition-colors ${isDisliked ? 'text-primary' : 'text-white/30 hover:text-white'}`}
+                                onClick={() => handleVote(item._id, 'dislike', item.userId)}
+                                disabled={user?._id === item.userId}
+                                className={`flex items-center gap-1 transition-colors ${isDisliked ? 'text-primary' : 'text-white/30 hover:text-white'} ${user?._id === item.userId ? 'cursor-not-allowed opacity-50' : ''}`}
                             >
                                 <ThumbsDown size={13} className={isDisliked ? 'fill-primary' : ''} />
                                 {item.dislikes > 0 && <span className="text-[11px] font-bold">{item.dislikes}</span>}
