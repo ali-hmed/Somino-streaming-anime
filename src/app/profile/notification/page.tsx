@@ -110,8 +110,8 @@ export default function NotificationsPage() {
 
     const getActionIcon = (type: string) => {
         switch (type) {
-            case 'reply': return <MessageCircle size={14} className="text-[#FF6E9F]" />;
-            case 'like': return <ThumbsUp size={14} className="text-[#FF6E9F]" />;
+            case 'reply': return <MessageCircle size={14} className="text-primary" />;
+            case 'like': return <ThumbsUp size={14} className="text-primary" />;
             case 'dislike': return <ThumbsDown size={14} className="text-white/20" />;
             default: return <Bell size={14} />;
         }
@@ -160,8 +160,8 @@ export default function NotificationsPage() {
                     <button
                         onClick={() => setActiveTab('anime')}
                         className={`px-5 py-2 rounded-[6px] text-xs font-black tracking-widest uppercase transition-all ${activeTab === 'anime'
-                                ? 'bg-[#FF6E9F] text-white shadow-[0_0_15px_rgba(255,110,159,0.3)]'
-                                : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
+                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(83,204,184,0.3)]'
+                            : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
                             }`}
                     >
                         Anime
@@ -169,8 +169,8 @@ export default function NotificationsPage() {
                     <button
                         onClick={() => setActiveTab('community')}
                         className={`px-5 py-2 rounded-[6px] text-xs font-black tracking-widest uppercase transition-all ${activeTab === 'community'
-                                ? 'bg-[#FF6E9F] text-white shadow-[0_0_15px_rgba(255,110,159,0.3)]'
-                                : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
+                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(83,204,184,0.3)]'
+                            : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
                             }`}
                     >
                         Community
@@ -226,18 +226,18 @@ export default function NotificationsPage() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-2">
                                                 <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
-                                                    <span className="text-[13px] font-black text-[#FF6E9F] uppercase tracking-tight">
+                                                    <span className="text-[13px] font-black text-primary uppercase tracking-tight">
                                                         {n.fromUserId?.username || 'User'}
                                                     </span>
                                                     <span className="text-[13px] font-medium text-white/50">
                                                         {getActionText(n.type)}
                                                     </span>
-                                                    <span className="text-[13px] font-bold text-white group-hover:text-[#FF6E9F] transition-colors line-clamp-1">
+                                                    <span className="text-[13px] font-bold text-white group-hover:text-primary transition-colors line-clamp-1">
                                                         {n.animeTitle} – Episode {n.episodeNumber}
                                                     </span>
                                                 </div>
                                                 {!n.isRead && (
-                                                    <div className="shrink-0 w-2 h-2 rounded-full bg-[#FF6E9F] shadow-[0_0_8px_rgba(255,110,159,0.8)]" />
+                                                    <div className="shrink-0 w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(83,204,184,0.8)]" />
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-3 mt-1.5">
@@ -247,7 +247,7 @@ export default function NotificationsPage() {
                                                 {!n.isRead && (
                                                     <button
                                                         onClick={(e) => markAsRead(n._id, e)}
-                                                        className="text-[10px] font-black text-[#53CCB8] uppercase tracking-tighter hover:underline px-1"
+                                                        className="text-[10px] font-black text-primary hover:text-primary/70 uppercase tracking-tighter hover:underline px-1"
                                                     >
                                                         Mark read
                                                     </button>
