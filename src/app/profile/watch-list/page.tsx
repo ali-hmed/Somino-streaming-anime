@@ -71,13 +71,13 @@ export default function WatchListPage() {
                     <span className="text-xs font-bold text-white/40 uppercase tracking-widest">Public</span>
                     <button
                         onClick={() => setIsPublic(!isPublic)}
-                        className={`relative w-11 h-5 rounded-md transition-colors ${isPublic ? 'bg-[#FF6E9F]' : 'bg-white/10'}`}
+                        className={`relative w-11 h-5 rounded-md transition-colors ${isPublic ? 'bg-primary' : 'bg-white/10'}`}
                     >
                         <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-[4px] bg-white transition-transform ${isPublic ? 'translate-x-6' : 'translate-x-0'}`} />
                         <span className="absolute right-1 text-[8px] font-black text-white/40 uppercase leading-5">OFF</span>
                         <span className="absolute left-1.5 text-[8px] font-black text-white uppercase leading-5">ON</span>
                     </button>
-                    <div className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase text-white ${isPublic ? 'bg-[#FF6E9F]' : 'bg-white/10'}`}>
+                    <div className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase text-white ${isPublic ? 'bg-primary' : 'bg-white/10'}`}>
                         {isPublic ? 'ON' : 'OFF'}
                     </div>
                 </div>
@@ -90,8 +90,8 @@ export default function WatchListPage() {
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-5 py-2 rounded-[6px] text-xs font-black tracking-widest uppercase transition-all whitespace-nowrap ${activeTab === tab
-                                ? 'bg-primary text-white shadow-[0_0_15px_rgba(83,204,184,0.3)]'
-                                : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
+                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(83,204,184,0.3)]'
+                            : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
                             }`}
                     >
                         {tab}
