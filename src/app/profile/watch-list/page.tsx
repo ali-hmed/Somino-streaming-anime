@@ -2,29 +2,29 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/store/authStore";
-import { Heart, Bookmark, ChevronLeft, ChevronRight, MoreVertical, Check, Subtitles, Mic } from "lucide-react";
-import Link from "next/link";
+import { Heart, Bookmark, ChevronLeft, ChevronRight, MoreVertical, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import AnimeCard from "@/components/AnimeCard";
 
 type WatchlistStatus = 'All' | 'Watching' | 'On-Hold' | 'Plan to Watch' | 'Dropped' | 'Completed';
 const STATUS_OPTIONS: Exclude<WatchlistStatus, 'All'>[] = ['Watching', 'On-Hold', 'Plan to Watch', 'Dropped', 'Completed'];
 const ITEMS_PER_PAGE = 30;
 
-// ── Inline watchlist card matching the reference image exactly ──────────────
-function WatchlistCard({
-    item,
-    onRemove,
+// ── Three-dot status menu overlaid on top of AnimeCard ─────────────────────
+function StatusMenu({
+    animeId,
+    currentStatus,
     onStatusChange,
+    onRemove,
 }: {
-    item: { animeId: string; animeTitle: string; animeImage?: string; status: string };
-    onRemove: (id: string) => void;
+    animeId: string;
+    currentStatus: string;
     onStatusChange: (id: string, status: Exclude<WatchlistStatus, 'All'>) => void;
+    onRemove: (id: string) => void;
 }) {
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
-    const currentStatus = item.status as Exclude<WatchlistStatus, 'All'>;
 
-    // Close menu on outside click
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -34,93 +34,43 @@ function WatchlistCard({
     }, []);
 
     return (
-        <div className="group flex flex-col">
-            {/* Poster */}
-            <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-[#1a1a1e] border border-white/5 shadow-lg mb-3">
-                <Link href={`/watch/${item.animeId}`} className="block w-full h-full">
-                    {item.animeImage ? (
-                        <img
-                            src={item.animeImage}
-                            alt={item.animeTitle}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                    ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-[#1a1a1e] to-[#252529]" />
-                    )}
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </Link>
+        <div ref={ref} className="absolute top-2 right-2 z-30">
+            <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(o => !o); }}
+                className="w-7 h-7 rounded-md bg-white/90 backdrop-blur flex items-center justify-center text-black shadow hover:bg-white transition-colors"
+            >
+                <MoreVertical size={14} />
+            </button>
 
-                {/* Three-dot menu button — always visible, top-right */}
-                <div ref={ref} className="absolute top-2 right-2 z-30">
-                    <button
-                        onClick={() => setOpen(o => !o)}
-                        className="w-7 h-7 rounded-md bg-white/90 backdrop-blur flex items-center justify-center text-black shadow hover:bg-white transition-colors"
+            <AnimatePresence>
+                {open && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -4, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -4, scale: 0.97 }}
+                        transition={{ duration: 0.12 }}
+                        className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-2xl overflow-hidden z-50 py-1"
                     >
-                        <MoreVertical size={14} />
-                    </button>
-
-                    {/* Dropdown */}
-                    <AnimatePresence>
-                        {open && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: -6, scale: 0.97 }}
-                                transition={{ duration: 0.15 }}
-                                className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-2xl overflow-hidden z-50 py-1"
+                        {STATUS_OPTIONS.map(s => (
+                            <button
+                                key={s}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onStatusChange(animeId, s); setOpen(false); }}
+                                className="w-full flex items-center justify-between px-4 py-2.5 text-[13px] text-gray-800 hover:bg-gray-100 transition-colors"
                             >
-                                {STATUS_OPTIONS.map(s => (
-                                    <button
-                                        key={s}
-                                        onClick={() => { onStatusChange(item.animeId, s); setOpen(false); }}
-                                        className="w-full flex items-center justify-between px-4 py-2.5 text-[13px] text-gray-800 hover:bg-gray-100 transition-colors font-medium"
-                                    >
-                                        <span className={currentStatus === s ? 'font-black text-black' : ''}>{s}</span>
-                                        {currentStatus === s && <Check size={14} className="text-black" strokeWidth={3} />}
-                                    </button>
-                                ))}
-                                <div className="h-px bg-gray-200 mx-2 my-1" />
-                                <button
-                                    onClick={() => { onRemove(item.animeId); setOpen(false); }}
-                                    className="w-full flex items-center px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-50 transition-colors font-bold"
-                                >
-                                    Remove
-                                </button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-
-                {/* Bottom episode badges — CC / Mic / total */}
-                <div className="absolute bottom-2 left-2 flex items-center gap-1 z-10 pointer-events-none">
-                    <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-[3px] bg-[#FF6E9F]/90 backdrop-blur text-white text-[9px] font-black">
-                        <Subtitles size={9} />
-                        <span>13</span>
-                    </div>
-                    <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-[3px] bg-[#53CCB8]/90 backdrop-blur text-white text-[9px] font-black">
-                        <Mic size={9} />
-                        <span>13</span>
-                    </div>
-                    <div className="px-1.5 py-0.5 rounded-[3px] bg-black/70 backdrop-blur text-white/80 text-[9px] font-black">
-                        13
-                    </div>
-                </div>
-            </div>
-
-            {/* Title + meta */}
-            <div className="space-y-0.5 px-0.5">
-                <Link href={`/watch/${item.animeId}`}>
-                    <h3 className="text-[13px] font-bold text-white group-hover:text-[#53CCB8] transition-colors line-clamp-1 leading-tight">
-                        {item.animeTitle}
-                    </h3>
-                </Link>
-                <div className="flex items-center gap-1.5 text-[11px] font-medium text-white/30">
-                    <span>TV</span>
-                    <span className="w-0.5 h-0.5 rounded-full bg-white/20" />
-                    <span>24m</span>
-                </div>
-            </div>
+                                <span className={currentStatus === s ? 'font-black text-black' : 'font-medium'}>{s}</span>
+                                {currentStatus === s && <Check size={14} className="text-black shrink-0" strokeWidth={3} />}
+                            </button>
+                        ))}
+                        <div className="h-px bg-gray-200 mx-2 my-1" />
+                        <button
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(animeId); setOpen(false); }}
+                            className="w-full flex items-center px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-50 transition-colors font-bold"
+                        >
+                            Remove
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
@@ -174,12 +124,7 @@ export default function WatchListPage() {
             const res = await fetch(`${BASE_URL}/auth/watchlist`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${user.token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    animeId: item.animeId,
-                    animeTitle: item.animeTitle,
-                    animeImage: item.animeImage,
-                    status: newStatus
-                })
+                body: JSON.stringify({ animeId: item.animeId, animeTitle: item.animeTitle, animeImage: item.animeImage, status: newStatus })
             });
             if (res.ok) {
                 const data = await res.json();
@@ -188,7 +133,21 @@ export default function WatchListPage() {
         } catch (e) { console.error(e); }
     };
 
+    // Map watchlist items to the exact shape AnimeCard uses across the site
+    const toAnimeShape = (item: typeof uniqueWatchlist[0]) => ({
+        id: item.animeId,
+        title: { english: item.animeTitle, romaji: item.animeTitle, userPreferred: item.animeTitle },
+        image: item.animeImage,
+        type: 'TV',
+        subEpisodes: 13,   // placeholder — real value would come from full anime data
+        dubEpisodes: 13,
+        totalEpisodes: 13,
+        score: null,
+        rating: '',
+    });
+
     const tabs: WatchlistStatus[] = ['All', 'Watching', 'On-Hold', 'Plan to Watch', 'Dropped', 'Completed'];
+
     if (!mounted) return null;
 
     return (
@@ -229,17 +188,33 @@ export default function WatchListPage() {
                 </div>
             ) : (
                 <>
+                    {/* Same grid as filter/popular pages: 2 → 3 → 4 → 5 → 6 cols */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8">
                         <AnimatePresence mode="popLayout">
                             {pagedList.map(item => (
-                                <motion.div key={item.animeId} layout
+                                <motion.div
+                                    key={item.animeId}
+                                    layout
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}>
-                                    <WatchlistCard
-                                        item={item}
-                                        onRemove={handleRemove}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    className="relative"
+                                >
+                                    {/* Exact same AnimeCard used everywhere else in the site */}
+                                    <AnimeCard
+                                        anime={toAnimeShape(item)}
+                                        variant="portrait"
+                                        showEpisode={false}
+                                        showScore={false}
+                                        showPG13={false}
+                                    />
+
+                                    {/* ⋮ Status menu overlaid on the card image */}
+                                    <StatusMenu
+                                        animeId={item.animeId}
+                                        currentStatus={mapStatus(item.status)}
                                         onStatusChange={handleStatusChange}
+                                        onRemove={handleRemove}
                                     />
                                 </motion.div>
                             ))}
@@ -253,6 +228,7 @@ export default function WatchListPage() {
                                 className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 text-white/40 hover:text-white disabled:opacity-30">
                                 <ChevronLeft size={16} />
                             </button>
+
                             {Array.from({ length: totalPages }, (_, i) => i + 1)
                                 .filter(p => p === 1 || p === totalPages || Math.abs(p - safePage) <= 1)
                                 .reduce<(number | '...')[]>((acc, p, idx, arr) => {
@@ -262,8 +238,9 @@ export default function WatchListPage() {
                                 .map((p, idx) => p === '...'
                                     ? <span key={`d${idx}`} className="w-8 h-8 flex items-center justify-center text-white/20 text-[11px]">…</span>
                                     : <button key={p} onClick={() => setPage(p as number)}
-                                        className={`w-8 h-8 rounded-full text-[11px] font-black ${safePage === p ? 'bg-primary text-white' : 'bg-white/5 text-white/40 hover:text-white'}`}>{p}</button>
+                                        className={`w-8 h-8 rounded-full text-[11px] font-black transition-all ${safePage === p ? 'bg-primary text-white' : 'bg-white/5 text-white/40 hover:text-white'}`}>{p}</button>
                                 )}
+
                             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages}
                                 className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 text-white/40 hover:text-white disabled:opacity-30">
                                 <ChevronRight size={16} />
