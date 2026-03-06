@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, User, X, Reply, Trash2, Loader2, MessageCircle, ThumbsUp, ThumbsDown, MoreHorizontal, Link2, EyeOff, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
@@ -130,7 +130,6 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
         }
 
         try {
-            // Optimistic update
             const updateVoteInList = (list: CommentType[]): CommentType[] => {
                 return list.map(c => {
                     if (c._id === commentId) {
@@ -199,7 +198,6 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
     const handleCopyLink = (commentId: string) => {
         const url = `${window.location.origin}${window.location.pathname}#comment-${commentId}`;
         navigator.clipboard.writeText(url);
-        // Simple alert or native notification
     };
 
     const CommentItem = ({ item, isReply = false, mainId }: { item: CommentType, isReply?: boolean, mainId: string }) => {
@@ -207,113 +205,113 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
         const isDisliked = user?._id && item.dislikedBy?.includes(user._id);
 
         return (
-            <div id={`comment-${item._id}`} className={`group flex gap-4 ${isReply ? 'ml-12 mt-6' : 'mt-8'} scroll-mt-32`}>
-                {/* Avatar */}
-                <div className={`shrink-0 rounded-full border-2 border-white/5 overflow-hidden bg-[#1a1b20] ${isReply ? 'w-10 h-10' : 'w-12 h-12 md:w-14 md:h-14'}`}>
+            <div id={`comment-${item._id}`} className={`group flex gap-3 ${isReply ? 'ml-10 mt-5' : 'mt-7'} scroll-mt-32`}>
+                {/* Compact Avatar */}
+                <div className={`shrink-0 rounded-full border border-white/5 overflow-hidden bg-[#1a1b20] ${isReply ? 'w-8 h-8' : 'w-9 h-9 md:w-10 md:h-10'}`}>
                     {item.avatar ? (
                         <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                            <User className="w-1/2 h-1/2 text-white/10" />
+                            <User className="w-1/2 h-1/2 text-white/5" />
                         </div>
                     )}
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5">
-                            <div className="w-4 h-4 bg-primary/20 rounded-full flex items-center justify-center">
-                                <span className="text-[8px] text-primary">★</span>
+                <div className="flex-1 min-w-0 space-y-0.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                        <div className="flex items-center gap-1">
+                            <div className="w-3.5 h-3.5 bg-primary/20 rounded-full flex items-center justify-center">
+                                <span className="text-[7px] text-primary">★</span>
                             </div>
-                            <span className="text-[14px] font-bold text-primary group-hover:text-primary/80 transition-colors cursor-pointer">
-                                {item.username || 'Gringo'}
+                            <span className="text-[13px] font-bold text-primary group-hover:text-primary/80 transition-colors cursor-pointer leading-none">
+                                {item.username || 'User'}
                             </span>
                         </div>
-                        <span className="bg-white/5 text-white/40 text-[9px] font-black px-1.5 py-0.5 rounded border border-white/5 uppercase tracking-tighter">
+                        <span className="bg-white/5 text-white/30 text-[8px] font-black px-1 py-0.5 rounded border border-white/5 uppercase tracking-tighter leading-none">
                             Somino
                         </span>
-                        <span className="text-[12px] text-white/20 font-medium ml-1">
+                        <span className="text-[11px] text-white/20 font-medium leading-none">
                             {mounted ? timeAgo(item.createdAt) : '...'}
                         </span>
                     </div>
 
-                    <p className="text-[14px] text-white/80 leading-relaxed break-words whitespace-pre-wrap py-0.5">
+                    <p className="text-[13px] text-white/70 leading-relaxed break-words whitespace-pre-wrap">
                         {item.text}
                     </p>
 
-                    {/* Action Bar */}
-                    <div className="flex items-center gap-6 pt-1">
+                    {/* Action Bar - Smaller buttons */}
+                    <div className="flex items-center gap-5 pt-0.5">
                         {!isReply && (
                             <button
                                 onClick={() => {
                                     setReplyingTo({ id: item._id, username: item.username || 'User', mainId });
                                     document.getElementById('comment-input-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                 }}
-                                className="flex items-center gap-1.5 text-[12px] font-bold text-white/50 hover:text-white transition-colors"
+                                className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors"
                             >
-                                <Reply size={14} className="scale-x-[-1]" />
+                                <Reply size={12} className="scale-x-[-1]" />
                                 Reply
                             </button>
                         )}
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3.5">
                             <button
                                 onClick={() => handleVote(item._id, 'like')}
-                                className={`flex items-center gap-1.5 transition-colors ${isLiked ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                                className={`flex items-center gap-1 transition-colors ${isLiked ? 'text-primary' : 'text-white/30 hover:text-white'}`}
                             >
-                                <ThumbsUp size={16} className={isLiked ? 'fill-primary' : ''} />
-                                {item.likes > 0 && <span className="text-[12px] font-bold">{item.likes}</span>}
+                                <ThumbsUp size={13} className={isLiked ? 'fill-primary' : ''} />
+                                {item.likes > 0 && <span className="text-[11px] font-bold">{item.likes}</span>}
                             </button>
 
                             <button
                                 onClick={() => handleVote(item._id, 'dislike')}
-                                className={`flex items-center gap-1.5 transition-colors ${isDisliked ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                                className={`flex items-center gap-1 transition-colors ${isDisliked ? 'text-primary' : 'text-white/30 hover:text-white'}`}
                             >
-                                <ThumbsDown size={16} className={isDisliked ? 'fill-primary' : ''} />
-                                {item.dislikes > 0 && <span className="text-[12px] font-bold">{item.dislikes}</span>}
+                                <ThumbsDown size={13} className={isDisliked ? 'fill-primary' : ''} />
+                                {item.dislikes > 0 && <span className="text-[11px] font-bold">{item.dislikes}</span>}
                             </button>
                         </div>
 
-                        {/* More Dropdown */}
+                        {/* More Link */}
                         <div className="relative">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setActiveDropdown(activeDropdown === item._id ? null : item._id);
                                 }}
-                                className="flex items-center gap-1 text-[12px] font-bold text-white/50 hover:text-white transition-colors"
+                                className="flex items-center gap-1 text-[11px] font-bold text-white/30 hover:text-white transition-colors"
                             >
-                                <MoreHorizontal size={14} />
+                                <MoreHorizontal size={13} />
                                 More
                             </button>
 
                             <AnimatePresence>
                                 {activeDropdown === item._id && (
                                     <motion.div
-                                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                        initial={{ opacity: 0, scale: 0.98, y: 5 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#1f2026] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden py-1.5"
+                                        exit={{ opacity: 0, scale: 0.98, y: 5 }}
+                                        className="absolute bottom-full left-0 mb-2 w-40 bg-[#1f2026] border border-white/5 rounded-xl shadow-2xl z-50 overflow-hidden py-1"
                                     >
-                                        <button className="w-full flex items-center gap-3 px-4 py-2 text-[13px] font-medium text-white/70 hover:bg-white/5 hover:text-white transition-colors">
-                                            <EyeOff size={14} /> Hide
+                                        <button className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors text-left">
+                                            <EyeOff size={13} /> Hide
                                         </button>
-                                        <button className="w-full flex items-center gap-3 px-4 py-2 text-[13px] font-medium text-white/70 hover:bg-white/5 hover:text-white transition-colors">
-                                            <AlertTriangle size={14} /> Mark Spoil
+                                        <button className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors text-left">
+                                            <AlertTriangle size={13} /> Mark Spoil
                                         </button>
                                         <button
                                             onClick={() => handleCopyLink(item._id)}
-                                            className="w-full flex items-center gap-3 px-4 py-2 text-[13px] font-medium text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+                                            className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors text-left"
                                         >
-                                            <Link2 size={14} /> Copy Link
+                                            <Link2 size={13} /> Copy Link
                                         </button>
                                         {user?._id === item.userId && (
                                             <button
                                                 onClick={() => handleDelete(item._id)}
-                                                className="w-full flex items-center gap-3 px-4 py-2 text-[13px] font-medium text-red-400 hover:bg-red-500/10 transition-colors border-t border-white/5 mt-1"
+                                                className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-red-500/80 hover:bg-red-500/10 transition-colors border-t border-white/5 mt-1 text-left"
                                             >
-                                                <Trash2 size={14} /> Delete
+                                                <Trash2 size={13} /> Delete
                                             </button>
                                         )}
                                     </motion.div>
@@ -328,21 +326,20 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
 
     return (
         <div className="space-y-6">
-            {/* Comment Section Main Box */}
-            <div className="bg-[#141519]/40 backdrop-blur-md rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+            <div className="bg-[#141519]/40 backdrop-blur-md rounded-2xl border border-white/5 overflow-hidden shadow-xl">
                 <div className="space-y-0">
 
                     {/* Header */}
-                    <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                                <MessageCircle size={20} />
+                    <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                                <MessageCircle size={16} />
                             </div>
                             <div>
-                                <h2 className="text-base font-black text-white tracking-tight uppercase">Comments</h2>
-                                <p className="text-[10px] font-bold text-white/20 tracking-wider">SHARE YOUR THOUGHTS</p>
+                                <h2 className="text-sm font-black text-white tracking-tight uppercase">Comments</h2>
+                                <p className="text-[9px] font-bold text-white/20 tracking-wider">SHARE YOUR THOUGHTS</p>
                             </div>
-                            <span className="bg-primary/20 text-primary text-[11px] font-black px-3 py-1 rounded-full border border-primary/20 ml-2">
+                            <span className="bg-primary/20 text-primary text-[10px] font-black px-2.5 py-0.5 rounded-full border border-primary/20 ml-2">
                                 {comments.reduce((acc, curr) => acc + 1 + (curr.replies?.length || 0), 0)}
                             </span>
                         </div>
@@ -351,33 +348,33 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                     {/* Input Area */}
                     <div id="comment-input-area" className="p-6 border-b border-white/5 bg-white/[0.02]">
                         <div className="flex gap-4">
-                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1a1b20] border-2 border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+                            <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#1a1b20] border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
                                 {mounted && user?.avatar ? (
                                     <img src={user.avatar} className="w-full h-full object-cover" />
                                 ) : (
-                                    <User className="w-5 h-5 text-white/10" />
+                                    <User className="w-5 h-5 text-white/5" />
                                 )}
                             </div>
-                            <div className="flex-1 space-y-4">
+                            <div className="flex-1 space-y-3">
                                 <div className="relative group">
                                     {replyingTo && (
-                                        <div className="absolute bottom-full left-0 mb-3 flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-lg shadow-lg">
-                                            <span className="text-[10px] font-black text-primary uppercase">Replying to {replyingTo.username}</span>
-                                            <button onClick={() => setReplyingTo(null)} className="text-white/40 hover:text-white transition-colors px-1">
-                                                <X size={12} />
+                                        <div className="absolute bottom-full left-0 mb-2 flex items-center gap-2 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-lg">
+                                            <span className="text-[9px] font-black text-primary uppercase">Replying to {replyingTo.username}</span>
+                                            <button onClick={() => setReplyingTo(null)} className="text-white/40 hover:text-white transition-colors">
+                                                <X size={10} />
                                             </button>
                                         </div>
                                     )}
                                     <textarea
                                         value={comment}
                                         onChange={(e) => setComment(e.target.value)}
-                                        placeholder={mounted ? (isAuthenticated ? "What are your thoughts?" : "Please log in to leave a message...") : "Crunching data..."}
+                                        placeholder={mounted ? (isAuthenticated ? "What's on your mind?" : "Join the discussion...") : "Loading..."}
                                         disabled={!mounted || isPosting}
-                                        className="w-full min-h-[70px] bg-white/[0.02] border border-white/5 rounded-2xl px-5 py-4 text-[14px] text-white placeholder-white/20 focus:outline-none focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all resize-none shadow-inner group-hover:bg-white/[0.04]"
+                                        className="w-full min-h-[60px] bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 text-[13px] text-white placeholder-white/10 focus:outline-none focus:border-primary/20 focus:ring-4 focus:ring-primary/5 transition-all resize-none shadow-inner"
                                     />
                                     {mounted && !isAuthenticated && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[1px] rounded-2xl cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
-                                            <button className="px-8 py-3 bg-white text-black font-black text-[11px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform active:scale-95 shadow-xl">
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[1px] rounded-xl cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
+                                            <button className="px-6 py-2 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform active:scale-95">
                                                 Login to post
                                             </button>
                                         </div>
@@ -387,18 +384,18 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                                 {mounted && isAuthenticated && (
                                     <div className="flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                            <p className="text-[10px] font-bold text-white/20 tracking-wider uppercase">
-                                                Respect the community
+                                            <div className="w-1 h-1 rounded-full bg-primary/60 outline outline-2 outline-primary/20 animate-pulse" />
+                                            <p className="text-[9px] font-bold text-white/10 tracking-widest uppercase">
+                                                Community Guidelines apply
                                             </p>
                                         </div>
                                         <button
                                             onClick={handleSend}
                                             disabled={!comment.trim() || isPosting}
-                                            className="px-8 py-3 bg-primary text-white font-black text-[11px] tracking-widest uppercase rounded-xl flex items-center gap-2 transition-all hover:scale-[102%] active:scale-95 disabled:opacity-50 hover:shadow-[0_0_20px_rgba(255,107,38,0.3)]"
+                                            className="px-6 py-2 bg-primary text-white font-black text-[10px] tracking-widest uppercase rounded-lg flex items-center gap-2 transition-all hover:scale-[102%] active:scale-95 disabled:opacity-50"
                                         >
-                                            {isPosting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-                                            Post Comment
+                                            {isPosting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                                            Post
                                         </button>
                                     </div>
                                 )}
@@ -408,19 +405,19 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                         <AnimatePresence>
                             {showLoginPrompt && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
+                                    initial={{ opacity: 0, y: 5 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    className="mt-8 p-6 rounded-2xl bg-primary/10 border border-primary/20 backdrop-blur-md relative overflow-hidden"
+                                    exit={{ opacity: 0, y: 5 }}
+                                    className="mt-6 p-5 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-md relative overflow-hidden"
                                 >
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-                                        <div className="space-y-1">
-                                            <h3 className="text-sm font-black text-white uppercase tracking-widest">Login Required</h3>
-                                            <p className="text-[12px] font-medium text-white/50 leading-relaxed">Join the discussion by logging into your account.</p>
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                                        <div className="space-y-0.5">
+                                            <h3 className="text-[12px] font-black text-white uppercase tracking-widest">Sign in required</h3>
+                                            <p className="text-[11px] font-medium text-white/40">You need to be logged in to post a comment.</p>
                                         </div>
-                                        <div className="flex items-center gap-3">
-                                            <button className="px-6 py-3 bg-white text-black font-black text-[11px] tracking-widest uppercase rounded-xl shadow-lg hover:bg-white/90 transition-colors" onClick={() => setIsAuthModalOpen(true)}>Login</button>
-                                            <button onClick={() => setShowLoginPrompt(false)} className="p-3 text-white/20 hover:text-white transition-colors"><X size={18} /></button>
+                                        <div className="flex items-center gap-2">
+                                            <button className="px-5 py-2.5 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg hover:bg-white/90" onClick={() => setIsAuthModalOpen(true)}>Login</button>
+                                            <button onClick={() => setShowLoginPrompt(false)} className="p-2 text-white/20 hover:text-white"><X size={16} /></button>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -429,16 +426,15 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                     </div>
 
                     {/* Comments List */}
-                    <div className="p-6 md:p-10">
+                    <div className="p-6 md:p-8">
                         {!mounted || isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-20">
-                                <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                                <p className="mt-4 text-[11px] font-bold text-white/20 tracking-widest uppercase">Fetching thoughts...</p>
+                            <div className="flex flex-col items-center justify-center py-16">
+                                <Loader2 className="w-8 h-8 text-primary/40 animate-spin" />
                             </div>
                         ) : comments.length > 0 ? (
-                            <div className="divide-y divide-white/[0.03]">
+                            <div className="divide-y divide-white/[0.02]">
                                 {comments.map((main) => (
-                                    <div key={main._id} className="pb-8 last:pb-0">
+                                    <div key={main._id} className="pb-6 last:pb-0">
                                         <CommentItem item={main} mainId={main._id} />
                                         {main.replies && main.replies.map(reply => (
                                             <CommentItem key={reply._id} item={reply} isReply={true} mainId={main._id} />
@@ -447,12 +443,10 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-24 text-center">
-                                <div className="w-20 h-20 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6">
-                                    <MessageSquare size={32} className="text-white/10" />
-                                </div>
-                                <h3 className="text-sm font-black text-white/40 tracking-widest uppercase mb-2">Silence is golden</h3>
-                                <p className="text-[11px] font-bold text-white/10 tracking-wider">BE THE FIRST TO START THE CONVERSATION!</p>
+                            <div className="flex flex-col items-center justify-center py-20 text-center">
+                                <MessageSquare size={24} className="text-white/5 mb-4" />
+                                <h3 className="text-[13px] font-black text-white/20 tracking-widest uppercase mb-1">No comments yet</h3>
+                                <p className="text-[10px] font-bold text-white/10 tracking-wider italic">Be the conversation starter!</p>
                             </div>
                         )}
                     </div>
