@@ -6,6 +6,7 @@ import EpisodeList from './EpisodeList';
 import WatchComments from './WatchComments';
 import AnimeCard from './AnimeCard';
 import { Mic, MessageSquare, Star, Home, ChevronRight, GitBranch } from 'lucide-react';
+import { useAuthStore } from '@/store/authStore';
 import { Episode, getTitle } from '@/types/anime';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -50,6 +51,33 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
     }, [currentEpisodeId]);
 
     const title = anime.title?.english || anime.title?.romaji || 'Anime';
+    const { user, isAuthenticated, setWatchlist } = useAuthStore();
+    const poster = anime.image;
+
+    // Auto-update to 'Watching' if not already or in 'Planned'
+    useEffect(() => {
+        if (!isAuthenticated || !user || !id) return;
+
+        const currentItem = user.watchlist?.find(item => item.animeId === id);
+        if (!currentItem || currentItem.status === 'Planned') {
+            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+            fetch(`${BASE_URL}/auth/watchlist`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({
+                    animeId: id,
+                    animeTitle: title,
+                    animeImage: poster,
+                    status: 'Watching'
+                })
+            }).then(res => res.json()).then(data => {
+                if (data.success) setWatchlist(data.data);
+            }).catch(err => console.error("Auto-watching Error:", err));
+        }
+    }, [id, isAuthenticated, user?.token]);
 
     return (
         <div className="flex flex-col gap-12">
@@ -100,6 +128,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                     ) : null}
                                     <span className="px-1.5 py-0.5 rounded-[2px] bg-white/[0.03] border border-white/5 text-white/20 text-[8px] font-black tracking-tighter">{anime.type || 'TV'}</span>
                                 </div>
+
 
                                 <p className="text-[10px] font-medium text-white/40 leading-relaxed mb-6 px-1 line-clamp-3">
                                     {anime.description?.replace(/<[^>]*>?/gm, '') || 'no description available.'}

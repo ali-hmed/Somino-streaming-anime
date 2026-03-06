@@ -8,18 +8,15 @@ import FilterPanel from '@/components/FilterPanel';
 async function fetchFiltered(params: Record<string, string | undefined>, page: number) {
     const query: Record<string, any> = { page };
 
-    // Map frontend generic values to Custom Backend values
-    // custom backend genres accepts comma-separated strings matching the name
-    if (params.genres) {
-        // Map ID string to correct genre names if needed, but since we'll update GENRES array below, genres might be string names
-        query.genres = params.genres;
-    }
+    if (params.genres) query.genres = params.genres;
     if (params.type) query.type = params.type;
     if (params.status) query.status = params.status;
-    if (params.rating) query.rated = params.rating;
+    if (params.rated) query.rated = params.rated;
     if (params.q) query.keyword = params.q;
     if (params.sort) query.sort = params.sort;
+    if (params.score) query.score = params.score;
     if (params.season) query.season = params.season;
+    if (params.language) query.language = params.language;
 
     const qStr = new URLSearchParams(
         Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined).map(([k, v]) => [k, String(v)]))
@@ -38,7 +35,7 @@ async function fetchFiltered(params: Record<string, string | undefined>, page: n
         pagination: {
             has_next_page: json.data?.pageInfo?.hasNextPage,
             last_visible_page: json.data?.pageInfo?.totalPages || 1,
-            items: { total: undefined } // Total not typically available from scraping
+            items: { total: json.data?.pageInfo?.totalItems || 0 }
         }
     };
 }
@@ -63,12 +60,11 @@ const GENRES = [
 ];
 
 const TYPES: FilterOption[] = [
-    { value: 'TV', label: 'TV' },
-    { value: 'Movie', label: 'Movie' },
-    { value: 'OVA', label: 'OVA' },
-    { value: 'ONA', label: 'ONA' },
-    { value: 'Special', label: 'Special' },
-    { value: 'Music', label: 'Music' },
+    { value: 'movie', label: 'Movie' },
+    { value: 'tv', label: 'TV' },
+    { value: 'ova', label: 'OVA' },
+    { value: 'special', label: 'Special' },
+    { value: 'music', label: 'Music' },
 ];
 const SEASONS: FilterOption[] = [
     { value: 'spring', label: 'Spring 🌸', emoji: '🌸' },
@@ -77,26 +73,38 @@ const SEASONS: FilterOption[] = [
     { value: 'winter', label: 'Winter ❄️', emoji: '❄️' },
 ];
 const STATUSES = [
-    { value: 'airing', label: 'Currently Airing' },
-    { value: 'complete', label: 'Finished Airing' },
-    { value: 'upcoming', label: 'Upcoming' },
+    { value: 'finished_airing', label: 'Finished Airing' },
+    { value: 'currently_airing', label: 'Currently Airing' },
+    { value: 'not_yet_aired', label: 'Not Yet Aired' },
 ];
 const RATINGS: FilterOption[] = [
     { value: 'g', label: 'G - All Ages' },
     { value: 'pg', label: 'PG - Children' },
-    { value: 'pg13', label: 'PG-13 - Teens 13+' },
-    { value: 'r17', label: 'R - 17+ Violence' },
-    { value: 'r', label: 'R+ - Mild Nudity' },
+    { value: 'pg-13', label: 'PG-13 - Teens 13+' },
+    { value: 'r', label: 'R - 17+ Violence' },
+    { value: 'r+', label: 'R+ - Mild Nudity' },
     { value: 'rx', label: 'Rx - Hentai' },
 ];
+const SCORE_OPTIONS: FilterOption[] = [
+    { value: 'appalling', label: '1 - Appalling' },
+    { value: 'horrible', label: '2 - Horrible' },
+    { value: 'very_bad', label: '3 - Very Bad' },
+    { value: 'bad', label: '4 - Bad' },
+    { value: 'average', label: '5 - Average' },
+    { value: 'fine', label: '6 - Fine' },
+    { value: 'good', label: '7 - Good' },
+    { value: 'very_good', label: '8 - Very Good' },
+    { value: 'great', label: '9 - Great' },
+    { value: 'masterpiece', label: '10 - Masterpiece' },
+];
 const SORT_OPTIONS = [
+    { value: 'default', label: 'Default' },
+    { value: 'recently_added', label: 'Recently Added' },
+    { value: 'recently_updated', label: 'Recently Updated' },
     { value: 'score', label: 'Score' },
-    { value: 'popularity', label: 'Popularity' },
-    { value: 'rank', label: 'Rank' },
-    { value: 'members', label: 'Members' },
-    { value: 'favorites', label: 'Favorites' },
-    { value: 'title', label: 'Title' },
-    { value: 'start_date', label: 'Release Date' },
+    { value: 'name_az', label: 'Name A-Z' },
+    { value: 'release_date', label: 'Release Date' },
+    { value: 'most_watched', label: 'Most Watched' },
 ];
 
 export default async function FilterPage({
@@ -106,19 +114,20 @@ export default async function FilterPage({
         genres?: string;
         type?: string;
         status?: string;
-        rating?: string;
+        rated?: string;
         season?: string;
         q?: string;
-        order_by?: string;
         sort?: string;
+        score?: string;
+        language?: string;
         page?: string;
     }>;
 }) {
     const params = await searchParams;
     const currentPage = parseInt(params.page || '1');
-    const hasFilters = !!(params.genres || params.type || params.status || params.rating || params.season || params.q || params.order_by);
-
     const { data: results = [], pagination = {} } = await fetchFiltered(params, currentPage);
+
+    const hasFilters = !!(params.genres || params.type || params.status || params.rated || params.season || params.q || params.sort || params.score || params.language);
 
     return (
         <main className="min-h-screen bg-background text-foreground pb-20">
@@ -141,20 +150,21 @@ export default async function FilterPage({
                         ratings={RATINGS}
                         seasons={SEASONS}
                         sortOptions={SORT_OPTIONS}
+                        scoreOptions={SCORE_OPTIONS}
                         currentParams={params}
                     />
 
                     {/* ── Below: Results ── */}
                     <div>
-                        <div className="flex items-center justify-between mb-6">
-                            <h1 className="text-lg font-black text-white tracking-tight">
+                        <div className="flex items-center justify-between mb-8">
+                            <h1 className="text-lg md:text-xl font-bold tracking-tight text-white">
                                 {hasFilters ? 'filtered results' : 'all anime'}
-                                {((pagination as any)?.items?.total !== undefined && (pagination as any).items.total > 0) && (
-                                    <span className="ml-3 text-[11px] font-bold text-white/30 tracking-widest">
-                                        {(pagination as any).items.total.toLocaleString()} anime found
-                                    </span>
-                                )}
                             </h1>
+                            {((pagination as any)?.items?.total !== undefined && (pagination as any).items.total > 0) && (
+                                <div className="text-sm md:text-base font-medium text-white">
+                                    {(pagination as any).items.total.toLocaleString()} <span className="text-white/40 font-bold tracking-wider">anime</span>
+                                </div>
+                            )}
                         </div>
 
                         {results.length > 0 ? (
@@ -165,11 +175,12 @@ export default async function FilterPage({
                                             id: item.id?.toString(),
                                             title: { english: item.title, romaji: item.alternativeTitle || item.title },
                                             image: item.poster,
-                                            score: item.score ? parseFloat(item.score) : undefined,
+                                            score: item.score ? parseFloat(item.score) : item.MAL_score ? parseFloat(item.MAL_score) : undefined,
                                             type: item.type,
                                             status: item.status,
-                                            totalEpisodes: item.episodes?.eps,
-                                            availableEpisodes: item.episodes?.eps || 0,
+                                            totalEpisodes: parseInt(item.episodes?.eps || '0'),
+                                            subEpisodes: parseInt(item.episodes?.sub || '0'),
+                                            dubEpisodes: parseInt(item.episodes?.dub || '0'),
                                             genres: item.genres || [],
                                         };
                                         return <AnimeCard key={`${anime.id}-${i}`} anime={anime} variant="portrait" />;

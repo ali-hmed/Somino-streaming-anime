@@ -122,14 +122,28 @@ export default async function GenrePage({
                 {animeList.length > 0 ? (
                     <>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 min-h-[600px]">
-                            {animeList.map((anime: any, i: number) => (
-                                <AnimeCard
-                                    key={`${anime.id}-${i}`}
-                                    anime={anime}
-                                    variant="portrait"
-                                    isSharp={true}
-                                />
-                            ))}
+                            {animeList.map((item: any, i: number) => {
+                                const anime = {
+                                    id: item.id?.toString(),
+                                    title: { english: item.title, romaji: item.alternativeTitle || item.title },
+                                    image: item.poster,
+                                    score: item.score ? parseFloat(item.score) : item.MAL_score ? parseFloat(item.MAL_score) : undefined,
+                                    type: item.type,
+                                    status: item.status,
+                                    totalEpisodes: parseInt(item.episodes?.eps || '0'),
+                                    subEpisodes: parseInt(item.episodes?.sub || '0'),
+                                    dubEpisodes: parseInt(item.episodes?.dub || '0'),
+                                    genres: item.genres || [],
+                                };
+                                return (
+                                    <AnimeCard
+                                        key={`${anime.id}-${i}`}
+                                        anime={anime}
+                                        variant="portrait"
+                                        isSharp={true}
+                                    />
+                                );
+                            })}
                         </div>
 
                         {/* Pagination */}

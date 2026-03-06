@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import VideoPlayer from './VideoPlayer';
-import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Heart, Flag, MessageSquare } from 'lucide-react';
+import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Flag, MessageSquare, Heart } from 'lucide-react';
+import WatchControlsWatchlist from './WatchControlsWatchlist';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings';
 
@@ -237,7 +238,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             )}
 
             {/* ── Actions bar (Prev / Next / AutoNext etc.) ───── */}
-            <div className="px-4 py-2 bg-[#0b0c10]/60 border-b border-white/[0.03] flex items-center justify-between md:justify-center gap-4 md:gap-7 overflow-x-auto no-scrollbar shrink-0">
+            <div className="px-4 md:px-5 py-2.5 bg-[#0b0c10]/60 border-b border-white/[0.03] flex items-center justify-between md:justify-center gap-4 md:gap-8 shrink-0 relative z-20 overflow-visible">
                 <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
                     <Maximize2 size={12} strokeWidth={2.5} /> Expand
                 </button>
@@ -291,9 +292,11 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         <SkipForward size={12} strokeWidth={2.5} /> Next
                     </div>
                 )}
-                <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                    <Heart size={12} strokeWidth={2.5} /> Bookmark
-                </button>
+                <WatchControlsWatchlist
+                    animeId={animeId}
+                    animeTitle={animeTitle}
+                    animeImage={animeImage}
+                />
                 <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
                     <Flag size={12} strokeWidth={2.5} /> Report
                 </button>

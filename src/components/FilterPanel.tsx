@@ -14,23 +14,16 @@ interface FilterPanelProps {
     ratings: FilterOption[];
     seasons: FilterOption[];
     sortOptions: FilterOption[];
+    scoreOptions: FilterOption[];
     currentParams: Record<string, string | undefined>;
 }
 
-const ALL = '__all__';
-
-// Generate years from 1950 to current + 2
-// Initial static year for hydration safety
-const INITIAL_YEAR = 2024;
-const YEARS = Array.from({ length: 85 }, (_, i) => ({
-    value: String(INITIAL_YEAR + 2 - i),
-    label: String(INITIAL_YEAR + 2 - i)
-}));
+const ALL = 'all';
 
 const LANGUAGES = [
     { value: 'sub', label: 'Subbed' },
     { value: 'dub', label: 'Dubbed' },
-    { value: 'both', label: 'Both' }
+    { value: 'sub_dub', label: 'Both' }
 ];
 
 /* ────────────────────────────────────────────────────────────
@@ -68,20 +61,20 @@ function CustomDropdown({
             <button
                 type="button"
                 onClick={() => setOpen(p => !p)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[7px] border transition-all text-left min-w-[110px] ${open ?'bg-[#1e1e22] border-primary/50'
+                className={`flex items-center gap-2 px-4 py-2 rounded-[7px] border transition-all text-left min-w-[110px] ${open ? 'bg-[#1e1e22] border-primary/50'
                     : isActive
                         ? 'bg-[#1e1e22] border-primary/30'
                         : 'bg-[#1a1c22] border-white/[0.07] hover:border-white/20'
                     }`}
             >
                 <span className="text-[10px] font-bold text-white/40 shrink-0">{label}</span>
-                <span className={`text-[10px] font-black flex-1 truncate ${isActive ?'text-primary' : 'text-white/30'}`}>
+                <span className={`text-[10px] font-black flex-1 truncate ${isActive ? 'text-primary' : 'text-white/30'}`}>
                     {isActive ? selectedLabel : 'All'}
                 </span>
                 <ChevronDown
                     size={11}
                     strokeWidth={2.5}
-                    className={`shrink-0 transition-transform text-white/20 ${open ?'rotate-180 text-primary/60' : ''}`}
+                    className={`shrink-0 transition-transform text-white/20 ${open ? 'rotate-180 text-primary/60' : ''}`}
                 />
             </button>
 
@@ -91,7 +84,7 @@ function CustomDropdown({
                     <button
                         type="button"
                         onClick={() => { onChange(ALL); setOpen(false); }}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 text-[10px] font-bold transition-colors ${value === ALL ?'bg-primary/10 text-primary'
+                        className={`w-full flex items-center justify-between px-3 py-1.5 text-[10px] font-bold transition-colors ${value === ALL ? 'bg-primary/10 text-primary'
                             : 'text-white/40 hover:bg-white/[0.04] hover:text-white'
                             }`}
                     >
@@ -107,7 +100,7 @@ function CustomDropdown({
                                 key={opt.value}
                                 type="button"
                                 onClick={() => { onChange(opt.value); setOpen(false); }}
-                                className={`w-full flex items-center justify-between px-3 py-1.5 text-[10px] font-semibold transition-colors ${value === opt.value ?'bg-primary/10 text-primary'
+                                className={`w-full flex items-center justify-between px-3 py-1.5 text-[10px] font-semibold transition-colors ${value === opt.value ? 'bg-primary/10 text-primary'
                                     : 'text-white/50 hover:bg-white/[0.04] hover:text-white'
                                     }`}
                             >
@@ -125,19 +118,16 @@ function CustomDropdown({
 /* ────────────────────────────────────────────────────────────
    Main FilterPanel
 ──────────────────────────────────────────────────────────── */
-export default function FilterPanel({ genres, types, statuses, ratings, seasons, sortOptions, currentParams }: FilterPanelProps) {
+export default function FilterPanel({ genres, types, statuses, ratings, seasons, sortOptions, scoreOptions, currentParams }: FilterPanelProps) {
     const router = useRouter();
 
     const [type, setType] = useState(currentParams.type || ALL);
     const [status, setStatus] = useState(currentParams.status || ALL);
-    const [rating, setRating] = useState(currentParams.rating || ALL);
-    const [orderBy, setOrderBy] = useState(currentParams.order_by || ALL);
+    const [rating, setRating] = useState(currentParams.rated || ALL);
+    const [sort, setSort] = useState(currentParams.sort || ALL);
     const [season, setSeason] = useState(currentParams.season || ALL);
-    const [language, setLanguage] = useState(ALL); // Dummy for UI
-
-    // Single Year State
-    const initialYear = currentParams.start_date ? currentParams.start_date.split('-')[0] : ALL;
-    const [year, setYear] = useState(initialYear);
+    const [score, setScore] = useState(currentParams.score || ALL);
+    const [language, setLanguage] = useState(currentParams.language || ALL);
 
     const initGenres = currentParams.genres ? currentParams.genres.split(',').filter(Boolean) : [];
     const [selectedGenres, setSelectedGenres] = useState<string[]>(initGenres);
@@ -151,33 +141,11 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
         const p = new URLSearchParams();
         if (type !== ALL) p.set('type', type);
         if (status !== ALL) p.set('status', status);
-        if (rating !== ALL) p.set('rating', rating);
-        if (orderBy !== ALL) p.set('order_by', orderBy);
-
-        // Handle Season and Year together
-        const activeYear = year !== ALL ? parseInt(year) : new Date().getFullYear();
-
-        if (season !== ALL) {
-            p.set('season', season); // Keep for UI tracking
-            let start = `${activeYear}-01-01`;
-            let end = `${activeYear}-03-31`;
-
-            if (season === 'spring') {
-                start = `${activeYear}-04-01`;
-                end = `${activeYear}-06-30`;
-            } else if (season === 'summer') {
-                start = `${activeYear}-07-01`;
-                end = `${activeYear}-09-30`;
-            } else if (season === 'fall') {
-                start = `${activeYear}-10-01`;
-                end = `${activeYear}-12-31`;
-            }
-            p.set('start_date', start);
-            p.set('end_date', end);
-        } else if (year !== ALL) {
-            p.set('start_date', `${year}-01-01`);
-            p.set('end_date', `${year}-12-31`);
-        }
+        if (rating !== ALL) p.set('rated', rating);
+        if (sort !== ALL) p.set('sort', sort);
+        if (score !== ALL) p.set('score', score);
+        if (season !== ALL) p.set('season', season);
+        if (language !== ALL) p.set('language', language);
 
         if (selectedGenres.length) p.set('genres', selectedGenres.join(','));
         router.push(`/filter?${p.toString()}`);
@@ -185,12 +153,12 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
 
     const clearAll = () => {
         setType(ALL); setStatus(ALL); setRating(ALL);
-        setOrderBy(ALL); setSeason(ALL); setYear(ALL);
+        setSort(ALL); setSeason(ALL); setScore(ALL);
         setSelectedGenres([]); setLanguage(ALL);
         router.push('/filter');
     };
 
-    const hasAny = type !== ALL || status !== ALL || rating !== ALL || orderBy !== ALL || season !== ALL || year !== ALL || selectedGenres.length > 0;
+    const hasAny = type !== ALL || status !== ALL || rating !== ALL || sort !== ALL || season !== ALL || score !== ALL || language !== ALL || selectedGenres.length > 0;
 
     return (
         <div className="bg-[#141519] border border-white/[0.04] rounded-[10px] p-6 shadow-xl">
@@ -212,10 +180,10 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
                 <CustomDropdown label="Type" value={type} options={types} onChange={setType} />
                 <CustomDropdown label="Status" value={status} options={statuses} onChange={setStatus} />
                 <CustomDropdown label="Rated" value={rating} options={ratings} onChange={setRating} />
-                <CustomDropdown label="Score" value={orderBy} options={sortOptions} onChange={setOrderBy} />
+                <CustomDropdown label="Score" value={score} options={scoreOptions} onChange={setScore} />
                 <CustomDropdown label="Season" value={season} options={seasons} onChange={setSeason} />
                 <CustomDropdown label="Language" value={language} options={LANGUAGES} onChange={setLanguage} />
-                <CustomDropdown label="Year" value={year} options={YEARS} onChange={setYear} />
+                <CustomDropdown label="Sort" value={sort} options={sortOptions} onChange={setSort} />
             </div>
 
             {/* Divider */}
@@ -233,7 +201,7 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
                             <button
                                 key={g.id}
                                 onClick={() => toggleGenre(g.id)}
-                                className={`px-2.5 py-1 rounded-[5px] text-[10px] font-semibold transition-all border ${active ?'bg-primary/15 border-primary/50 text-primary'
+                                className={`px-2.5 py-1 rounded-[5px] text-[10px] font-semibold transition-all border ${active ? 'bg-primary/15 border-primary/50 text-primary'
                                     : 'bg-white/[0.03] border-white/[0.06] text-white/40 hover:border-white/20 hover:text-white hover:bg-white/[0.05]'
                                     }`}
                             >
