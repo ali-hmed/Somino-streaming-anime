@@ -46,19 +46,20 @@ async function fetchFiltered(params: Record<string, string | undefined>, page: n
 interface FilterOption { value: string; label: string; emoji?: string; }
 
 const GENRES = [
-    { id: 'action', name: 'Action' }, { id: 'adventure', name: 'Adventure' }, { id: 'comedy', name: 'Comedy' },
-    { id: 'drama', name: 'Drama' }, { id: 'fantasy', name: 'Fantasy' }, { id: 'horror', name: 'Horror' },
-    { id: 'mystery', name: 'Mystery' }, { id: 'romance', name: 'Romance' }, { id: 'sci-fi', name: 'Sci-Fi' },
-    { id: 'slice-of-life', name: 'Slice of Life' }, { id: 'sports', name: 'Sports' }, { id: 'supernatural', name: 'Supernatural' },
-    { id: 'suspense', name: 'Suspense' }, { id: 'strategy-game', name: 'Strategy Game' }, { id: 'historical', name: 'Historical' },
-    { id: 'martial-arts', name: 'Martial Arts' }, { id: 'hentai', name: 'Hentai' }, { id: 'military', name: 'Military' },
-    { id: 'music', name: 'Music' }, { id: 'school', name: 'School' }, { id: 'super-power', name: 'Super Power' },
-    { id: 'psychological', name: 'Psychological' }, { id: 'seinen', name: 'Seinen' }, { id: 'kids', name: 'Kids' },
-    { id: 'ecchi', name: 'Ecchi' }, { id: 'harem', name: 'Harem' }, { id: 'josei', name: 'Josei' },
-    { id: 'shoujo', name: 'Shoujo' }, { id: 'shounen', name: 'Shounen' }, { id: 'vampire', name: 'Vampire' },
-    { id: 'isekai', name: 'Isekai' }, { id: 'parody', name: 'Parody' }, { id: 'police', name: 'Police' },
-    { id: 'magic', name: 'Magic' }, { id: 'samurai', name: 'Samurai' }, { id: 'space', name: 'Space' },
-    { id: 'cars', name: 'Cars' }, { id: 'demons', name: 'Demons' }, { id: 'mecha', name: 'Mecha' },
+    { id: 'action', name: 'Action' }, { id: 'adventure', name: 'Adventure' }, { id: 'cars', name: 'Cars' },
+    { id: 'comedy', name: 'Comedy' }, { id: 'dementia', name: 'Dementia' }, { id: 'demons', name: 'Demons' },
+    { id: 'drama', name: 'Drama' }, { id: 'ecchi', name: 'Ecchi' }, { id: 'fantasy', name: 'Fantasy' },
+    { id: 'game', name: 'Game' }, { id: 'harem', name: 'Harem' }, { id: 'historical', name: 'Historical' },
+    { id: 'horror', name: 'Horror' }, { id: 'isekai', name: 'Isekai' }, { id: 'josei', name: 'Josei' },
+    { id: 'kids', name: 'Kids' }, { id: 'magic', name: 'Magic' }, { id: 'martial-arts', name: 'Martial Arts' },
+    { id: 'mecha', name: 'Mecha' }, { id: 'military', name: 'Military' }, { id: 'music', name: 'Music' },
+    { id: 'mystery', name: 'Mystery' }, { id: 'parody', name: 'Parody' }, { id: 'police', name: 'Police' },
+    { id: 'psychological', name: 'Psychological' }, { id: 'romance', name: 'Romance' }, { id: 'samurai', name: 'Samurai' },
+    { id: 'school', name: 'School' }, { id: 'sci-fi', name: 'Sci-Fi' }, { id: 'seinen', name: 'Seinen' },
+    { id: 'shoujo', name: 'Shoujo' }, { id: 'shoujo-ai', name: 'Shoujo Ai' }, { id: 'shounen', name: 'Shounen' },
+    { id: 'shounen-ai', name: 'Shounen Ai' }, { id: 'slice-of-life', name: 'Slice of Life' }, { id: 'space', name: 'Space' },
+    { id: 'sports', name: 'Sports' }, { id: 'super-power', name: 'Super Power' }, { id: 'supernatural', name: 'Supernatural' },
+    { id: 'thriller', name: 'Thriller' }, { id: 'vampire', name: 'Vampire' }
 ];
 
 const TYPES: FilterOption[] = [

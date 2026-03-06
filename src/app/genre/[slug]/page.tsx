@@ -25,21 +25,19 @@ export default async function GenrePage({
 
     // Fallback map for legacy MAL categories or common aliases (normalized for Jikan v4)
     const genreNameMap: Record<string, string> = {
-        'dementia': 'avant garde',
-        'cars': 'racing',
-        'game': 'strategy game',
-        'demons': 'mythology',
-        'magic': 'super power',
+        'dementia': 'dementia',
+        'cars': 'cars',
+        'game': 'game',
+        'demons': 'demons',
+        'magic': 'magic',
         'super-power': 'super power',
         'military': 'military',
-        'police': 'detective',
-        'thriller': 'suspense',
-        'yaoi': 'boys love',
-        'yuri': 'girls love',
+        'police': 'police',
+        'thriller': 'thriller',
         'martial-arts': 'martial arts',
         'slice-of-life': 'slice of life',
-        'shoujo-ai': 'girls love',
-        'shounen-ai': 'boys love'
+        'shoujo-ai': 'shoujo ai',
+        'shounen-ai': 'shounen ai'
     };
 
     const searchSlug = slug.toLowerCase();

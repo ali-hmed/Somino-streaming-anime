@@ -15,7 +15,7 @@ const STATUS_OPTIONS = ['Watching', 'Completed', 'Planned', 'Dropped'] as const;
 type WatchlistStatus = (typeof STATUS_OPTIONS)[number];
 
 export default function WatchlistButton({ animeId, animeTitle, animeImage }: WatchlistButtonProps) {
-    const { user, isAuthenticated, setWatchlist } = useAuthStore();
+    const { user, isAuthenticated, setWatchlist, setAuthModalOpen } = useAuthStore();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -34,7 +34,10 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
     }, []);
 
     const handleUpdateStatus = async (status: WatchlistStatus) => {
-        if (!isAuthenticated) return;
+        if (!isAuthenticated) {
+            setAuthModalOpen(true);
+            return;
+        }
 
         setIsLoading(true);
         const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
@@ -95,13 +98,17 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
         }
     };
 
-    if (!isAuthenticated) return null;
+    // if (!isAuthenticated) return null;
 
     return (
         <div className="relative w-full" ref={dropdownRef}>
             <button
                 onClick={(e) => {
                     e.preventDefault();
+                    if (!isAuthenticated) {
+                        setAuthModalOpen(true);
+                        return;
+                    }
                     setIsOpen(!isOpen);
                 }}
                 disabled={isLoading}

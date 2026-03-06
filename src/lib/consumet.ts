@@ -429,7 +429,9 @@ export const fetchGenresList = async (): Promise<any[]> => {
     try {
         const res = await fetch(`${BASE_URL}/genres`);
         const json = await res.json();
-        return (json.data || []).map((g: string) => ({ name: g }));
+        return (json.data || []).map((g: string) => ({
+            name: g.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+        }));
     } catch (error) {
         return [];
     }

@@ -15,10 +15,12 @@ interface User {
 interface AuthState {
     user: User | null;
     isAuthenticated: boolean;
+    isAuthModalOpen: boolean;
     login: (user: User) => void;
     logout: () => void;
     setWatchlist: (watchlist: any[]) => void;
     setWatchHistory: (watchHistory: any[]) => void;
+    setAuthModalOpen: (isOpen: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -26,13 +28,19 @@ export const useAuthStore = create<AuthState>()(
         (set) => ({
             user: null,
             isAuthenticated: false,
+            isAuthModalOpen: false,
             login: (user) => set({ user, isAuthenticated: true }),
             logout: () => set({ user: null, isAuthenticated: false }),
             setWatchlist: (watchlist) => set((state) => ({ user: state.user ? { ...state.user, watchlist } : null })),
             setWatchHistory: (watchHistory) => set((state) => ({ user: state.user ? { ...state.user, watchHistory } : null })),
+            setAuthModalOpen: (isAuthModalOpen) => set({ isAuthModalOpen }),
         }),
         {
             name: 'auth-storage',
+            partialize: (state) => ({
+                user: state.user,
+                isAuthenticated: state.isAuthenticated,
+            }),
         }
     )
 );

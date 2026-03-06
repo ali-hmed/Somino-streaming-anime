@@ -19,7 +19,7 @@ const Navbar = () => {
     const [isMobileGenresOpen, setIsMobileGenresOpen] = useState(false);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
-    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    // const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
 
@@ -29,16 +29,16 @@ const Navbar = () => {
         setIsClient(true);
     }, []);
 
-    const { user, isAuthenticated, logout } = useAuthStore();
+    const { user, isAuthenticated, logout, isAuthModalOpen, setAuthModalOpen } = useAuthStore();
     const router = useRouter();
 
     const genres = [
-        "Action", "Adventure", "Avant Garde", "Comedy", "Detective", "Drama", "Ecchi",
-        "Fantasy", "Strategy Game", "Harem", "Hentai", "Historical", "Horror", "Josei", "Kids",
-        "Magic", "Martial Arts", "Mecha", "Military", "Music", "Mystery", "Mythology",
-        "Parody", "Psychological", "Racing", "Romance", "Samurai", "School", "Sci-Fi", "Seinen",
-        "Shoujo", "Girls Love", "Shounen", "Boys Love", "Slice of Life", "Space", "Sports",
-        "Super Power", "Supernatural", "Suspense", "Vampire",
+        "Action", "Adventure", "Cars", "Comedy", "Dementia", "Demons", "Drama", "Ecchi",
+        "Fantasy", "Game", "Harem", "Historical", "Horror", "Isekai", "Josei", "Kids",
+        "Magic", "Martial Arts", "Mecha", "Military", "Music", "Mystery", "Parody",
+        "Police", "Psychological", "Romance", "Samurai", "School", "Sci-Fi", "Seinen",
+        "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Space",
+        "Sports", "Super Power", "Supernatural", "Thriller", "Vampire"
     ];
 
     useEffect(() => {
@@ -324,7 +324,7 @@ const Navbar = () => {
                             </div>
                         ) : (
                             <button
-                                onClick={() => setIsAuthModalOpen(true)}
+                                onClick={() => setAuthModalOpen(true)}
                                 className={`flex items-center group ${!isClient ? 'opacity-0' : 'opacity-100'} transition-opacity`}
                             >
                                 <div className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/50 group-hover:bg-primary/20 group-hover:text-primary group-hover:border-primary/40 transition-all">
@@ -340,7 +340,7 @@ const Navbar = () => {
 
                 <AuthModal
                     isOpen={isAuthModalOpen}
-                    onClose={() => setIsAuthModalOpen(false)}
+                    onClose={() => setAuthModalOpen(false)}
                 />
 
                 {/* Floating Search Overlay */}
