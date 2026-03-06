@@ -20,15 +20,17 @@ export default function WatchListPage() {
 
     const watchlist = user?.watchlist || [];
 
-    // Map existing statuses to the new tab names
+    // Filter out duplicates based on animeId to prevent React key errors
+    const uniqueWatchlist = Array.from(new Map(watchlist.map(item => [item.animeId, item])).values());
+
     const mapStatus = (status: string): WatchlistStatus => {
         if (status === 'Planned' || status === 'Plan to Watch') return 'Plan to Watch';
         return status as WatchlistStatus;
     };
 
     const filteredList = activeTab === 'All'
-        ? watchlist
-        : watchlist.filter(item => mapStatus(item.status) === activeTab);
+        ? uniqueWatchlist
+        : uniqueWatchlist.filter(item => mapStatus(item.status) === activeTab);
 
     const handleRemove = async (animeId: string) => {
         if (!user?.token) return;
@@ -82,8 +84,8 @@ export default function WatchListPage() {
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-3 py-1.5 rounded-[5px] text-[10px] font-black tracking-wider uppercase transition-all whitespace-nowrap ${activeTab === tab
-                                ? 'bg-primary text-white'
-                                : 'bg-white/[0.04] text-white/50 hover:text-white hover:bg-white/10'
+                            ? 'bg-primary text-white'
+                            : 'bg-white/[0.04] text-white/50 hover:text-white hover:bg-white/10'
                             }`}
                     >
                         {tab}
