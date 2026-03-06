@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Bell, BellOff, CheckCircle, Trash2, Loader2, User, MessageCircle, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Bell, BellOff, Check, Trash2, Loader2, User, MessageCircle, ThumbsUp, ThumbsDown, PackageOpen, Inbox } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { timeAgo } from "@/utils/dateUtils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface NotificationType {
     _id: string;
@@ -28,6 +29,7 @@ interface NotificationType {
 export default function NotificationsPage() {
     const [notifications, setNotifications] = useState<NotificationType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState<'anime' | 'community'>('anime');
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
     const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
@@ -58,7 +60,11 @@ export default function NotificationsPage() {
         }
     }, [isAuthenticated]);
 
-    const markAsRead = async (id: string) => {
+    const markAsRead = async (id: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         try {
             await fetch(`${API_URL}/notifications/${id}/read`, {
                 method: 'PUT',
@@ -86,6 +92,13 @@ export default function NotificationsPage() {
         }
     };
 
+    const clearAll = () => {
+        if (confirm("Are you sure you want to clear all notifications?")) {
+            setNotifications([]);
+            // In a real app, you'd call a DELETE /notifications/all endpoint
+        }
+    };
+
     const getActionText = (type: string) => {
         switch (type) {
             case 'reply': return 'replied to your comment on';
@@ -97,8 +110,8 @@ export default function NotificationsPage() {
 
     const getActionIcon = (type: string) => {
         switch (type) {
-            case 'reply': return <MessageCircle size={14} className="text-primary" />;
-            case 'like': return <ThumbsUp size={14} className="text-primary" />;
+            case 'reply': return <MessageCircle size={14} className="text-[#FF6E9F]" />;
+            case 'like': return <ThumbsUp size={14} className="text-[#FF6E9F]" />;
             case 'dislike': return <ThumbsDown size={14} className="text-white/20" />;
             default: return <Bell size={14} />;
         }
@@ -112,95 +125,142 @@ export default function NotificationsPage() {
         );
     }
 
+    const filteredNotifications = activeTab === 'anime' ? notifications : [];
+
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-6 rounded-full bg-primary shadow-[0_0_12px_rgba(83,204,184,0.4)]" />
-                    <h2 className="text-lg font-black text-white tracking-tight uppercase">Notifications</h2>
-                    {notifications.some(n => !n.isRead) && (
-                        <span className="bg-primary/20 text-primary text-[10px] font-black px-2 py-0.5 rounded-full border border-primary/20 ml-1">
-                            {notifications.filter(n => !n.isRead).length} NEW
-                        </span>
-                    )}
+        <div className="space-y-10">
+            {/* Header with Title and Action Buttons */}
+            <div className="flex flex-col gap-6">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center gap-3">
+                        <Bell size={28} className="text-white" />
+                        <h2 className="text-2xl font-black text-white tracking-tight">Notification</h2>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={markAllRead}
+                            className="flex items-center gap-2 px-4 py-2 bg-[#53CCB8] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all shadow-lg active:scale-95"
+                        >
+                            <Check size={14} strokeWidth={3} />
+                            Mark all as read
+                        </button>
+                        <button
+                            onClick={clearAll}
+                            className="flex items-center gap-2 px-4 py-2 bg-[#FFB800] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all shadow-lg active:scale-95"
+                        >
+                            <Trash2 size={14} />
+                            Clear All
+                        </button>
+                    </div>
                 </div>
 
-                {notifications.length > 0 && notifications.some(n => !n.isRead) && (
+                {/* Sub-tabs: Anime / Community */}
+                <div className="flex items-center gap-3">
                     <button
-                        onClick={markAllRead}
-                        className="text-[11px] font-bold text-white/30 hover:text-primary transition-colors uppercase tracking-widest"
+                        onClick={() => setActiveTab('anime')}
+                        className={`px-5 py-2 rounded-[6px] text-xs font-black tracking-widest uppercase transition-all ${activeTab === 'anime'
+                                ? 'bg-[#FF6E9F] text-white shadow-[0_0_15px_rgba(255,110,159,0.3)]'
+                                : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
+                            }`}
                     >
-                        Mark all as read
+                        Anime
                     </button>
-                )}
+                    <button
+                        onClick={() => setActiveTab('community')}
+                        className={`px-5 py-2 rounded-[6px] text-xs font-black tracking-widest uppercase transition-all ${activeTab === 'community'
+                                ? 'bg-[#FF6E9F] text-white shadow-[0_0_15px_rgba(255,110,159,0.3)]'
+                                : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
+                            }`}
+                    >
+                        Community
+                    </button>
+                </div>
             </div>
 
-            {notifications.length === 0 ? (
-                <div className="rounded-2xl p-24 flex flex-col items-center justify-center text-center space-y-6 bg-[#141519]/40 border border-white/5 backdrop-blur-md">
-                    <div className="p-6 rounded-full bg-white/[0.02] border border-white/5">
-                        <BellOff size={40} className="text-white/5" />
+            {/* Notifications List */}
+            <div className="min-h-[300px]">
+                {filteredNotifications.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-24 text-center animate-in fade-in duration-700">
+                        <div className="relative mb-6">
+                            <motion.div
+                                animate={{ y: [0, -10, 0] }}
+                                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                            >
+                                <PackageOpen size={90} strokeWidth={1} className="text-white/80" />
+                            </motion.div>
+                        </div>
+                        <h3 className="text-sm font-black text-white/60 tracking-widest uppercase">No Notifications</h3>
                     </div>
-                    <div>
-                        <h3 className="text-white font-black uppercase tracking-widest text-sm">No notifications</h3>
-                        <p className="text-[12px] font-medium mt-1 text-white/20">
-                            When people interact with you, it'll show up here.
-                        </p>
-                    </div>
-                    <Link href="/" className="px-8 py-2.5 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform active:scale-95">
-                        Start Watching
-                    </Link>
-                </div>
-            ) : (
-                <div className="space-y-3">
-                    {notifications.map((n) => (
-                        <Link
-                            key={n._id}
-                            href={`/watch/${n.animeId}/${n.episodeId}#comment-${n.commentId}`}
-                            onClick={() => !n.isRead && markAsRead(n._id)}
-                            className={`group relative flex items-start gap-4 p-4 rounded-xl border transition-all hover:scale-[1.01] active:scale-[0.99] ${n.isRead ? 'opacity-40 bg-transparent border-white/5' : 'opacity-100 bg-[#141519]/60 border-primary/20 shadow-lg'}`}
-                        >
-                            <div className="relative shrink-0">
-                                <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-white/5">
-                                    {n.fromUserId?.avatar ? (
-                                        <img src={n.fromUserId.avatar} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center">
-                                            <User className="w-1/2 h-1/2 text-white/10" />
+                ) : (
+                    <div className="grid gap-2.5">
+                        <AnimatePresence mode="popLayout">
+                            {filteredNotifications.map((n) => (
+                                <motion.div
+                                    key={n._id}
+                                    layout
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                >
+                                    <Link
+                                        href={`/watch/${n.animeId}/${n.episodeId}#comment-${n.commentId}`}
+                                        onClick={() => !n.isRead && markAsRead(n._id)}
+                                        className={`group relative flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/[0.03] active:scale-[0.99] border border-transparent hover:border-white/5 ${n.isRead ? 'opacity-40' : 'bg-[#1a1b20] shadow-xl'}`}
+                                    >
+                                        <div className="relative shrink-0">
+                                            <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-white/5 shadow-inner">
+                                                {n.fromUserId?.avatar ? (
+                                                    <img src={n.fromUserId.avatar} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <User className="w-1/2 h-1/2 text-white/10" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#1a1b20] border border-white/10 flex items-center justify-center shadow-lg">
+                                                {getActionIcon(n.type)}
+                                            </div>
                                         </div>
-                                    )}
-                                </div>
-                                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#1a1b20] border border-white/10 flex items-center justify-center shadow-lg">
-                                    {getActionIcon(n.type)}
-                                </div>
-                            </div>
 
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-2">
-                                    <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
-                                        <span className="text-[13px] font-black text-primary uppercase">
-                                            {n.fromUserId?.username || 'Some user'}
-                                        </span>
-                                        <span className="text-[13px] font-medium text-white/50">
-                                            {getActionText(n.type)}
-                                        </span>
-                                        <span className="text-[13px] font-bold text-white group-hover:text-primary transition-colors">
-                                            {n.animeTitle} – Episode {n.episodeNumber}
-                                        </span>
-                                    </div>
-                                    {!n.isRead && (
-                                        <div className="shrink-0 w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(83,204,184,0.6)]" />
-                                    )}
-                                </div>
-                                <div className="flex items-center gap-2 mt-1.5">
-                                    <span className="text-[11px] font-bold text-white/20 uppercase tracking-wider">
-                                        {timeAgo(n.createdAt)}
-                                    </span>
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            )}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
+                                                    <span className="text-[13px] font-black text-[#FF6E9F] uppercase tracking-tight">
+                                                        {n.fromUserId?.username || 'User'}
+                                                    </span>
+                                                    <span className="text-[13px] font-medium text-white/50">
+                                                        {getActionText(n.type)}
+                                                    </span>
+                                                    <span className="text-[13px] font-bold text-white group-hover:text-[#FF6E9F] transition-colors line-clamp-1">
+                                                        {n.animeTitle} – Episode {n.episodeNumber}
+                                                    </span>
+                                                </div>
+                                                {!n.isRead && (
+                                                    <div className="shrink-0 w-2 h-2 rounded-full bg-[#FF6E9F] shadow-[0_0_8px_rgba(255,110,159,0.8)]" />
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-3 mt-1.5">
+                                                <span className="text-[11px] font-bold text-white/20 uppercase tracking-widest">
+                                                    {timeAgo(n.createdAt)}
+                                                </span>
+                                                {!n.isRead && (
+                                                    <button
+                                                        onClick={(e) => markAsRead(n._id, e)}
+                                                        className="text-[10px] font-black text-[#53CCB8] uppercase tracking-tighter hover:underline px-1"
+                                                    >
+                                                        Mark read
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
