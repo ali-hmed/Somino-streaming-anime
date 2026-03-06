@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, User, X, Reply, Trash2, Loader2, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
@@ -16,7 +16,9 @@ interface CommentUser {
 interface CommentType {
     _id: string;
     episodeId: string;
-    userId: CommentUser;
+    userId: string; // ID as string in flattened version
+    username?: string;
+    avatar?: string;
     parentCommentId: string | null;
     text: string;
     createdAt: string;
@@ -37,9 +39,13 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
+    // Auth state from store
     const { user, isAuthenticated } = useAuthStore();
+
+    // API URL configuration
     const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
 
+    // Fetch comments for the current episode
     const fetchComments = useCallback(async () => {
         if (!episodeId) return;
         try {
@@ -56,11 +62,13 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
         }
     }, [episodeId, API_URL]);
 
+    // Mount handling to prevent hydration mismatch
     useEffect(() => {
         setMounted(true);
         fetchComments();
     }, [fetchComments]);
 
+    // Handle posting a new comment or reply
     const handleSend = async () => {
         if (!isAuthenticated) {
             setShowLoginPrompt(true);
@@ -88,6 +96,7 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
             if (data.success) {
                 setComment("");
                 setReplyingTo(null);
+                // Instant update or refresh
                 fetchComments();
             }
         } catch (error) {
@@ -97,6 +106,7 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
         }
     };
 
+    // Handle deleting a comment
     const handleDelete = async (commentId: string) => {
         if (!confirm("Are you sure you want to delete this comment?")) return;
 
@@ -116,11 +126,13 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
         }
     };
 
+    // Sub-component for individual comment items
     const CommentItem = ({ item, isReply = false, mainId }: { item: CommentType, isReply?: boolean, mainId: string }) => (
         <div className={`group flex gap-3 md:gap-4 ${isReply ? 'ml-8 md:ml-12 mt-4' : 'mt-8'}`}>
-            <div className={`shrink-0 rounded-full border border-white/10 overflow-hidden bg-white/5 ${isReply ? 'w-7 h-7 md:w-8 md:h-8' : 'w-9 h-9 md:w-11 md:h-11'}`}>
-                {item.userId.avatar ? (
-                    <img src={item.userId.avatar} alt={item.userId.username} className="w-full h-full object-cover" />
+            {/* User Avatar */}
+            <div className={`shrink-0 rounded-xl border border-white/10 overflow-hidden bg-white/5 relative ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-12 md:h-12'}`}>
+                {item.avatar ? (
+                    <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
                         <User className="w-1/2 h-1/2 text-white/20" />
@@ -128,10 +140,11 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                 )}
             </div>
 
+            {/* Comment Body */}
             <div className="flex-1 space-y-1.5 min-w-0">
                 <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-black text-white/90 truncate">
-                        {item.userId.username}
+                    <span className="text-[14px] font-black text-white/90 truncate uppercase tracking-tight">
+                        {item.username || 'User'}
                     </span>
                     <span className="text-[10px] font-bold text-white/20 uppercase tracking-tight">
                         • {mounted ? timeAgo(item.createdAt) : '...'}
@@ -142,25 +155,23 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                     {item.text}
                 </p>
 
+                {/* Actions: Reply and Delete */}
                 <div className="flex items-center gap-4 pt-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
                     {!isReply && (
                         <button
                             onClick={() => {
-                                setReplyingTo({ id: item._id, username: item.userId.username, mainId });
-                                const inputArea = document.getElementById('comment-input-area');
-                                if (inputArea) {
-                                    inputArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                }
+                                setReplyingTo({ id: item._id, username: item.username || 'User', mainId });
+                                document.getElementById('comment-input-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             }}
-                            className="flex items-center gap-1.5 text-[10px] font-black text-white/30 hover:text-primary transition-colors"
+                            className="flex items-center gap-1.5 text-[10px] font-black text-primary/60 hover:text-primary transition-colors"
                         >
                             <Reply size={12} /> REPLY
                         </button>
                     )}
-                    {user?._id === item.userId._id && (
+                    {user?._id === item.userId && (
                         <button
                             onClick={() => handleDelete(item._id)}
-                            className="flex items-center gap-1.5 text-[10px] font-black text-white/30 hover:text-red-500 transition-colors"
+                            className="flex items-center gap-1.5 text-[10px] font-black text-white/20 hover:text-red-500 transition-colors"
                         >
                             <Trash2 size={12} /> DELETE
                         </button>
@@ -170,24 +181,29 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
         </div>
     );
 
-    // Initial server render must match client render
-    // Use the same root class "space-y-8" to match the error report's expectation
+    // Root container style must be consistent between SSR and hydration
     return (
-        <div className="space-y-8">
-            <div className="bg-[#141519]/40 backdrop-blur-sm rounded-[12px] border border-white/5 overflow-hidden">
+        <div className="space-y-8 min-h-[400px]">
+            <div className="bg-[#141519]/40 backdrop-blur-sm rounded-[16px] border border-white/5 overflow-hidden shadow-2xl">
                 <div className="space-y-0">
-                    {/* Header */}
+
+                    {/* 1. Header Section */}
                     <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
                         <div className="flex items-center gap-3">
-                            <MessageSquare size={20} className="text-primary" />
-                            <h2 className="text-lg font-black text-white tracking-tight uppercase">Comments</h2>
-                            <span className="bg-white/5 text-white/40 text-[11px] font-black px-3 py-0.5 rounded-full border border-white/5">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                                <MessageCircle size={20} />
+                            </div>
+                            <div>
+                                <h2 className="text-base font-black text-white tracking-tight uppercase">Comments</h2>
+                                <p className="text-[10px] font-bold text-white/20 tracking-wider">SHARE YOUR THOUGHTS</p>
+                            </div>
+                            <span className="bg-white/5 text-primary text-[11px] font-black px-3 py-1 rounded-full border border-white/10 ml-2">
                                 {comments.reduce((acc, curr) => acc + 1 + (curr.replies?.length || 0), 0)}
                             </span>
                         </div>
                     </div>
 
-                    {/* Comment Input Area */}
+                    {/* 2. Input Section - Wrapped in mounted check for interactive parts */}
                     <div id="comment-input-area" className="p-6 border-b border-white/5 bg-white/[0.02]">
                         <div className="flex gap-4">
                             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
@@ -198,9 +214,9 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                                 )}
                             </div>
                             <div className="flex-1 space-y-4">
-                                <div className="relative group">
+                                <div className="relative">
                                     {replyingTo && (
-                                        <div className="absolute bottom-full left-0 mb-2 flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-lg">
+                                        <div className="absolute bottom-full left-0 mb-3 flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-lg">
                                             <span className="text-[10px] font-black text-primary uppercase">Replying to {replyingTo.username}</span>
                                             <button onClick={() => setReplyingTo(null)} className="text-white/40 hover:text-white transition-colors">
                                                 <X size={12} />
@@ -210,14 +226,14 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                                     <textarea
                                         value={comment}
                                         onChange={(e) => setComment(e.target.value)}
-                                        placeholder={mounted ? (isAuthenticated ? "Leave a message..." : "Please log in to leave a message...") : "Loading..."}
+                                        placeholder={mounted ? (isAuthenticated ? "What are your thoughts?" : "Please log in to comment...") : "Loading conversation..."}
                                         disabled={!mounted || isPosting}
-                                        className="w-full min-h-[50px] bg-white/[0.03] border border-white/5 rounded-2xl px-4 py-3 text-[14px] text-white placeholder-white/20 focus:outline-none focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all resize-none"
+                                        className="w-full min-h-[60px] bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 text-[14px] text-white placeholder-white/20 focus:outline-none focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all resize-none shadow-inner"
                                     />
                                     {mounted && !isAuthenticated && (
                                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] rounded-2xl cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
-                                            <button className="px-6 py-2 bg-white text-black font-black text-[11px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform active:scale-95 shadow-xl">
-                                                Login to comment
+                                            <button className="px-8 py-3 bg-white text-black font-black text-[11px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform active:scale-95 shadow-2xl">
+                                                Login to post
                                             </button>
                                         </div>
                                     )}
@@ -225,13 +241,16 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
 
                                 {mounted && isAuthenticated && (
                                     <div className="flex items-center justify-between gap-4">
-                                        <p className="text-[10px] font-bold text-white/20 tracking-wider uppercase">
-                                            Please be respectful in the comments
-                                        </p>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-pulse" />
+                                            <p className="text-[10px] font-bold text-white/20 tracking-wider uppercase">
+                                                Be polite and respectful
+                                            </p>
+                                        </div>
                                         <button
                                             onClick={handleSend}
                                             disabled={!comment.trim() || isPosting}
-                                            className="px-6 py-2.5 bg-primary text-white font-black text-[11px] tracking-widest uppercase rounded-xl flex items-center gap-2 transition-all hover:scale-[102%] active:scale-95 disabled:opacity-50"
+                                            className="px-8 py-3 bg-primary text-white font-black text-[11px] tracking-widest uppercase rounded-xl flex items-center gap-2 transition-all hover:shadow-[0_0_30px_rgba(255,107,38,0.2)] hover:scale-[102%] active:scale-95 disabled:opacity-50"
                                         >
                                             {isPosting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                                             Post Comment
@@ -241,39 +260,42 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                             </div>
                         </div>
 
+                        {/* Login Reminder Prompt */}
                         <AnimatePresence>
                             {showLoginPrompt && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    className="mt-8 p-6 rounded-2xl bg-primary/10 border border-primary/20 backdrop-blur-md relative"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 backdrop-blur-md relative overflow-hidden"
                                 >
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                        <div className="space-y-1">
-                                            <h3 className="text-sm font-black text-white uppercase tracking-widest">Login Required</h3>
-                                            <p className="text-[12px] font-medium text-white/50 leading-relaxed">Join the discussion by logging into your account.</p>
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                                        <div>
+                                            <h3 className="text-sm font-black text-white uppercase tracking-widest">Authentication Needed</h3>
+                                            <p className="text-[12px] font-medium text-white/50 leading-relaxed">Please sign in to join the discussion.</p>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <button className="px-6 py-3 bg-white text-black font-black text-[11px] tracking-widest uppercase rounded-xl" onClick={() => setIsAuthModalOpen(true)}>Login</button>
+                                            <button className="px-6 py-3 bg-white text-black font-black text-[11px] tracking-widest uppercase rounded-xl hover:shadow-xl transition-all" onClick={() => setIsAuthModalOpen(true)}>Login</button>
                                             <button onClick={() => setShowLoginPrompt(false)} className="p-3 text-white/20 hover:text-white"><X size={18} /></button>
                                         </div>
                                     </div>
+                                    <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </div>
 
-                    {/* Comments List Area */}
-                    <div className="p-6">
+                    {/* 3. Comments List Section */}
+                    <div className="p-6 md:p-8">
                         {!mounted || isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-10">
-                                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                            <div className="flex flex-col items-center justify-center py-20">
+                                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                                <p className="mt-4 text-[11px] font-bold text-white/20 tracking-widest uppercase">Loading comments...</p>
                             </div>
                         ) : comments.length > 0 ? (
-                            <div className="space-y-2">
+                            <div className="divide-y divide-white/[0.03]">
                                 {comments.map((main) => (
-                                    <div key={main._id} className="border-b last:border-0 border-white/[0.03] pb-8 last:pb-0">
+                                    <div key={main._id} className="pb-8 last:pb-0">
                                         <CommentItem item={main} mainId={main._id} />
                                         {main.replies && main.replies.map(reply => (
                                             <CommentItem key={reply._id} item={reply} isReply={true} mainId={main._id} />
@@ -282,9 +304,12 @@ const WatchComments = ({ episodeId }: WatchCommentsProps) => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-12 text-center">
-                                <h3 className="text-sm font-black text-white/20 tracking-widest uppercase mb-1">No comments yet</h3>
-                                <p className="text-[10px] font-bold text-white/10 tracking-wider">BE THE FIRST TO START THE CONVERSATION!</p>
+                            <div className="flex flex-col items-center justify-center py-20 text-center">
+                                <div className="w-20 h-20 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6">
+                                    <MessageSquare size={32} className="text-white/10" />
+                                </div>
+                                <h3 className="text-sm font-black text-white/40 tracking-widest uppercase mb-2">No comments here yet</h3>
+                                <p className="text-[11px] font-bold text-white/20 tracking-wider">BE THE FIRST TO BREAK THE SILENCE!</p>
                             </div>
                         )}
                     </div>
