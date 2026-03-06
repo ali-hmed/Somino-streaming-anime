@@ -198,7 +198,7 @@ export default function WatchListPage() {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
-                                    className="relative"
+                                    className="relative [&_h3]:line-clamp-1"
                                 >
                                     {/* Exact same AnimeCard used everywhere else in the site */}
                                     <AnimeCard
