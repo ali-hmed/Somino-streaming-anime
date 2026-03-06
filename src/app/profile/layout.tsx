@@ -73,7 +73,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             </div>
 
             {/* Main Content Area */}
-            <div className="max-w-3xl mx-auto px-4 md:px-8 mt-10">
+            <div className="max-w-[1200px] mx-auto px-4 md:px-8 mt-10">
                 {children}
             </div>
         </div>
