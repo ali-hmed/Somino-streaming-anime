@@ -15,13 +15,38 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
     const [list, setList] = useState<any[]>(initialList || []);
     const [loading, setLoading] = useState(false);
     const [selectedDateIndex, setSelectedDateIndex] = useState(1); // Index 1 is TODAY in our generateDays
+    const [days, setDays] = useState<any[]>([]);
 
     const INITIAL_COUNT = 8;
     const EXPANDED_COUNT = 14;
     const displayCount = isExpanded ? EXPANDED_COUNT : INITIAL_COUNT;
 
-    // Setup live clock for the footer
+    // Generate dynamic dates: Yesterday, Today, Tomorrow, +3 more
+    const generateDays = () => {
+        const dArr = [];
+        const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+        for (let i = -1; i <= 4; i++) {
+            const d = new Date();
+            d.setDate(d.getDate() + i);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const dayNum = String(d.getDate()).padStart(2, '0');
+
+            dArr.push({
+                name: dayNames[d.getDay()],
+                date: d.getDate().toString(),
+                fullDate: `${year}-${month}-${dayNum}`,
+                active: i === 0,
+            });
+        }
+        return dArr;
+    };
+
+    // Setup live clock for the footer AND initialize days
     useEffect(() => {
+        setDays(generateDays());
+
         const updateTime = () => {
             const now = new Date();
             const year = now.getFullYear();
@@ -37,32 +62,9 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
         return () => clearInterval(interval);
     }, []);
 
-    // Generate dynamic dates: Yesterday, Today, Tomorrow, +3 more
-    const generateDays = () => {
-        const days = [];
-        const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-
-        for (let i = -1; i <= 4; i++) {
-            const d = new Date();
-            d.setDate(d.getDate() + i);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const dayNum = String(d.getDate()).padStart(2, '0');
-
-            days.push({
-                name: dayNames[d.getDay()],
-                date: d.getDate().toString(),
-                fullDate: `${year}-${month}-${dayNum}`,
-                active: i === 0,
-            });
-        }
-        return days;
-    };
-
-    const days = generateDays();
-
     // Fetch schedule when selected day changes
     useEffect(() => {
+        if (days.length === 0) return;
         // Skip first load if we already have initialList and it's today
         if (selectedDateIndex === 1 && initialList && list === initialList) return;
 

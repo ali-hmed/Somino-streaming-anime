@@ -69,7 +69,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
     const popularity = animeRaw.popularity;
     const members = animeRaw.members;
     const favorites = animeRaw.favorites;
-    const demographics = animeRaw.demographics?.map((d: any) => d.name) || [];
+    const demographics = Array.isArray(animeRaw.demographics) ? animeRaw.demographics.map((d: any) => d?.name || String(d)) : (animeRaw.demographics ? [animeRaw.demographics?.name || String(animeRaw.demographics)] : []);
 
     // Deduplicate recommendations against relations and more seasons
     const relationIds = new Set([
@@ -136,9 +136,11 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                         </span>
                                     )}
                                     {status && (
-                                        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded border ${status.toLowerCase().includes('airing')
+                                        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded border ${status.toLowerCase() === 'currently airing' || status.toLowerCase() === 'ongoing' || status.toLowerCase() === 'airing'
                                             ? 'bg-[#2ECC71]/15 border-[#2ECC71]/40 text-[#2ECC71]'
-                                            : 'bg-white/5 border-white/10 text-white/60'
+                                            : status.toLowerCase() === 'not yet aired' || status.toLowerCase() === 'upcoming'
+                                                ? 'bg-white/5 border-white/10 text-white/40'
+                                                : 'bg-white/5 border-white/10 text-white/60'
                                             }`}>
                                             {status}
                                         </span>
@@ -151,7 +153,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     )}
                                     {studios.length > 0 && (
                                         <span className="text-[11px] font-semibold text-white/40 tracking-wide">
-                                            {studios[0]}
+                                            {typeof studios[0] === 'string' ? studios[0] : (studios[0] as any)?.name || String(studios[0])}
                                         </span>
                                     )}
                                 </div>
@@ -170,7 +172,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                                 {/* Main CTA Buttons */}
                                 <div className="flex flex-wrap items-center gap-3 mt-4">
-                                    {anime.episodes?.[0] ? (
+                                    {status?.toLowerCase() === 'not yet aired' || status?.toLowerCase() === 'upcoming' ? null : anime.episodes?.[0] ? (
                                         <Link
                                             href={`/watch/${id}/${anime.episodes[0].id}`}
                                             className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-black text-sm transition-all shadow-lg hover:scale-105 active:scale-95"
@@ -272,15 +274,18 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                             <span className="text-[11px] font-bold text-white/40 shrink-0">{label}</span>
                                             {label === 'Genres' && Array.isArray(value) ? (
                                                 <div className="flex flex-wrap justify-end gap-1">
-                                                    {(value as string[]).map((g, i) => (
-                                                        <Link
-                                                            key={i}
-                                                            href={`/genre/${g.toLowerCase().replace(/ /g, '-')}`}
-                                                            className="hover:text-primary transition-colors text-[11px] text-white/80"
-                                                        >
-                                                            {g}{i < (value as string[]).length - 1 ? ',' : ''}
-                                                        </Link>
-                                                    ))}
+                                                    {(value as any[]).map((g, i) => {
+                                                        const genName = typeof g === 'string' ? g : (g?.name || String(g));
+                                                        return (
+                                                            <Link
+                                                                key={i}
+                                                                href={`/genre/${genName.toLowerCase().replace(/ /g, '-')}`}
+                                                                className="hover:text-primary transition-colors text-[11px] text-white/80"
+                                                            >
+                                                                {genName}{i < (value as any[]).length - 1 ? ',' : ''}
+                                                            </Link>
+                                                        )
+                                                    })}
                                                 </div>
                                             ) : (
                                                 <span className="text-[11px] text-white/80 text-right">{String(value)}</span>
@@ -296,7 +301,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     <h3 className="text-[11px] font-black tracking-widest text-white mb-3">Credits</h3>
                                     <div className="flex items-start justify-between gap-2">
                                         <span className="text-[11px] font-bold text-white/40 shrink-0">Studio</span>
-                                        <span className="text-[11px] text-white/80 text-right">{studios.join(', ')}</span>
+                                        <span className="text-[11px] text-white/80 text-right">{studios.map((s: any) => typeof s === 'string' ? s : (s?.name || String(s))).join(', ')}</span>
                                     </div>
                                     {demographics.length > 0 && (
                                         <div className="flex items-start justify-between gap-2 mt-2">
@@ -330,12 +335,59 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                     {/* ─── MAIN CONTENT ─── */}
                     <div className="flex-1 space-y-6 min-w-0">
 
+                        {/* Relations Section */}
+                        {anime.relations && anime.relations.length > 0 && (
+                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                                <div className="flex items-center gap-2 mb-6">
+                                    <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Relations</h2>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {anime.relations.map((rel: any, i: number) => (
+                                        <Link
+                                            key={i}
+                                            href={`/watch/${rel.entry.mal_id}`}
+                                            className="group flex items-center gap-3 bg-[#0b0c10]/40 hover:bg-white/5 transition-all p-3 rounded-lg border border-white/5"
+                                        >
+                                            <div className="w-12 h-16 shrink-0 rounded overflow-hidden">
+                                                <img src={rel.entry.image} alt={rel.entry.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-[12px] font-bold text-white line-clamp-1 group-hover:text-primary transition-colors">{rel.entry.name}</h4>
+                                                <div className="flex flex-wrap gap-x-2 gap-y-1 mt-1">
+                                                    <span className="text-[9px] font-black text-primary/80 uppercase">{rel.relation}</span>
+                                                    <span className="text-[9px] text-white/30 truncate">{rel.entry.type || 'TV'} · {rel.entry.subEpisodes || rel.entry.episodes || '?'} eps</span>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
                         {/* Synopsis */}
-                        <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
-                            <div className="flex items-center gap-2 mb-4">
-                                <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Synopsis</h2>
+                        <section className="bg-white/[0.03] rounded-xl border border-white/5 p-7 md:p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
+                                <h2 className="text-xl md:text-2xl font-black text-white tracking-widest ">Synopsis</h2>
                             </div>
-                            <p className="text-[13px] md:text-sm text-white/60 leading-relaxed font-medium">
+
+                            {/* Quick Info Bar */}
+                            <div className="flex flex-wrap gap-6 mb-6 pb-6 border-b border-white/5">
+                                <div className="flex flex-col">
+                                    <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">Type</span>
+                                    <span className="text-[12px] font-bold text-white/80">{anime.type || 'N/A'}</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">Status</span>
+                                    <span className="text-[12px] font-bold text-white/80">{status || 'N/A'}</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">Studios</span>
+                                    <span className="text-[12px] font-bold text-white/80">{studios.length > 0 ? studios.map((s: any) => typeof s === 'string' ? s : s?.name).join(', ') : 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            <p className="text-[13px] md:text-sm text-white/60 leading-relaxed font-medium whitespace-pre-line">
                                 {synopsis}
                             </p>
                         </section>
@@ -357,10 +409,6 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                 </div>
                             </section>
                         )}
-
-
-
-
 
                         {/* More Seasons Section */}
                         {anime.moreSeasons && anime.moreSeasons.length > 0 && (
@@ -387,7 +435,6 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                 </div>
                             </section>
                         )}
-
 
                         {/* Characters (Mobile) */}
                         <section className="lg:hidden bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">

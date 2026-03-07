@@ -5,6 +5,8 @@ import Navbar from '@/components/Navbar';
 import AnimeCard from '@/components/AnimeCard';
 import FilterPanel from '@/components/FilterPanel';
 
+import { mapCustomToAnime } from '@/lib/consumet';
+
 async function fetchFiltered(params: Record<string, string | undefined>, page: number) {
     const query: Record<string, any> = { page };
 
@@ -31,7 +33,7 @@ async function fetchFiltered(params: Record<string, string | undefined>, page: n
     if (!res.ok) return { data: [], pagination: {} };
     const json = await res.json();
     return {
-        data: json.data?.response || [],
+        data: (json.data?.response || []).map(mapCustomToAnime),
         pagination: {
             has_next_page: json.data?.pageInfo?.hasNextPage,
             last_visible_page: json.data?.pageInfo?.totalPages || 1,
@@ -170,21 +172,9 @@ export default async function FilterPage({
                         {results.length > 0 ? (
                             <>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
-                                    {results.map((item: any, i: number) => {
-                                        const anime = {
-                                            id: item.id?.toString(),
-                                            title: { english: item.title, romaji: item.alternativeTitle || item.title },
-                                            image: item.poster,
-                                            score: item.score ? parseFloat(item.score) : item.MAL_score ? parseFloat(item.MAL_score) : undefined,
-                                            type: item.type,
-                                            status: item.status,
-                                            totalEpisodes: parseInt(item.episodes?.eps || '0'),
-                                            subEpisodes: parseInt(item.episodes?.sub || '0'),
-                                            dubEpisodes: parseInt(item.episodes?.dub || '0'),
-                                            genres: item.genres || [],
-                                        };
-                                        return <AnimeCard key={`${anime.id}-${i}`} anime={anime} variant="portrait" />;
-                                    })}
+                                    {results.map((anime: any, i: number) => (
+                                        <AnimeCard key={`${anime.id}-${i}`} anime={anime} variant="portrait" />
+                                    ))}
                                 </div>
 
                                 {/* Pagination */}

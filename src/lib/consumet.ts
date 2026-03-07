@@ -27,7 +27,7 @@ export const mapCustomToAnime = (item: any): any => ({
         const dub = parseInt(item.episodes?.dub || '0');
         return isNaN(dub) ? 0 : dub;
     })(),
-    genres: item.genres || [],
+    genres: Array.isArray(item.genres) ? item.genres : (item.genres ? [item.genres] : []),
     rating: item.rating,
     score: (() => {
         const s = parseFloat(item.MAL_score);
@@ -44,10 +44,10 @@ export const mapCustomToAnime = (item: any): any => ({
     })(),
     duration: item.duration,
     premiered: item.premiered,
-    studios: item.studios ? [item.studios] : [],
-    producers: item.producers || [],
+    studios: Array.isArray(item.studios) ? item.studios : (item.studios ? [item.studios] : []),
+    producers: Array.isArray(item.producers) ? item.producers : (item.producers ? [item.producers] : []),
     japaneseTitle: item.japanese,
-    synonyms: item.synonyms ? item.synonyms.split(',') : [],
+    synonyms: Array.isArray(item.synonyms) ? item.synonyms : (item.synonyms ? String(item.synonyms).split(',') : []),
 });
 
 export const fetchAnimeInfo = async (id: string): Promise<AnimeInfo | null> => {

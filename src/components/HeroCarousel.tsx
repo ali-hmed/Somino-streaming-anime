@@ -121,7 +121,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             //     'linear-gradient(to bottom, transparent 0%, black 18%)',
                             //     'linear-gradient(to top, transparent 0%, black 18%)',
                             // ].join(', '),
-                            WebkitMaskImage: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'none' : [
+                            WebkitMaskImage: [
                                 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.6) 30%, black 50%)',
                                 'linear-gradient(to bottom, transparent 0%, black 18%)',
                                 'linear-gradient(to top, transparent 0%, black 18%)',
@@ -174,7 +174,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
 
                         {/* Title — scaled down slightly for desktop */}
                         <h1
-                            className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight transition-all duration-500 delay-75 line-clamp-2"
+                            className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight transition-all duration-500 delay-75 line-clamp-1"
                             style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(10px)' : 'translateY(0)' }}
                         >
                             {title}
@@ -255,14 +255,16 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             className="flex items-center gap-3 transition-all duration-500 delay-200"
                             style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(8px)' : 'translateY(0)' }}
                         >
-                            {/* Watch Now — primary teal pill */}
-                            <Link
-                                href={`/watch/${anime.id}/1`}
-                                className="flex items-center gap-2 font-normal text-[11px] px-4 py-1.5 rounded-full transition-all group bg-primary hover:bg-primary-hover text-white"
-                            >
-                                <Play size={10} className="fill-current group-hover:scale-110 transition-transform" />
-                                Watch Now
-                            </Link>
+                            {/* Watch Now — primary teal pill (only if aired) */}
+                            {!(anime.status?.toLowerCase() === 'not yet aired' || anime.status?.toLowerCase() === 'upcoming') && (
+                                <Link
+                                    href={`/watch/${anime.id}/1`}
+                                    className="flex items-center gap-2 font-normal text-[11px] px-4 py-1.5 rounded-full transition-all group bg-primary hover:bg-primary-hover text-white"
+                                >
+                                    <Play size={10} className="fill-current group-hover:scale-110 transition-transform" />
+                                    Watch Now
+                                </Link>
+                            )}
                             {/* Detail — dark pill */}
                             <Link
                                 href={`/watch/${anime.id}`}

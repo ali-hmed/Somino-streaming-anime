@@ -123,7 +123,7 @@ export default function ProfilePage() {
             )}
 
             {/* Edit Profile Box */}
-            <div>
+            <div className="max-w-[680px]">
                 <div className="flex items-center gap-2 mb-5">
                     <div className="w-1 h-5 rounded-full" style={{ background: "var(--primary)" }} />
                     <h2 className="text-[17px] font-bold text-white">Edit Profile</h2>

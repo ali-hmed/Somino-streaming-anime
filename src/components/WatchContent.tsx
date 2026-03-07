@@ -5,9 +5,10 @@ import WatchControls from './WatchControls';
 import EpisodeList from './EpisodeList';
 import WatchComments from './WatchComments';
 import AnimeCard from './AnimeCard';
-import { Mic, MessageSquare, Star, Home, ChevronRight, GitBranch } from 'lucide-react';
+import { Mic, MessageSquare, Star, Home, ChevronRight, ChevronLeft, GitBranch, Trophy, Zap } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { Episode, getTitle } from '@/types/anime';
+import { fetchHomeData } from '@/lib/consumet';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -23,7 +24,24 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
     const [currentEpisodeId, setCurrentEpisodeId] = useState(initialEpisodeId);
     const [isChanging, setIsChanging] = useState(false);
     const [showAllRelations, setShowAllRelations] = useState(false);
+    const [popularAnime, setPopularAnime] = useState<any[]>([]);
     const router = useRouter();
+
+    useEffect(() => {
+        const fetchPopular = async () => {
+            // First check if anime object already has the data
+            if (anime.mostPopular && anime.mostPopular.length > 0) {
+                setPopularAnime(anime.mostPopular.slice(0, 6));
+                return;
+            }
+            // Fallback to fetching home data for the common popular list
+            const hData = await fetchHomeData();
+            if (hData?.mostPopular?.length > 0) {
+                setPopularAnime(hData.mostPopular.slice(0, 6));
+            }
+        };
+        fetchPopular();
+    }, [anime.mostPopular]);
 
     const episodes = anime.episodes || [];
     const currentEpisodeIndex = episodes.findIndex((ep: Episode) => ep.id === currentEpisodeId);
@@ -247,10 +265,36 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                         {/* Watch more seasons — image-style footer */}
                         {anime.moreSeasons && anime.moreSeasons.length > 0 && (
                             <div className="px-6 py-6 border-t border-white/[0.03] bg-black/20">
-                                <h3 className="text-[14px] font-bold text-white/90 mb-4 tracking-tight">
-                                    Watch more seasons of this anime
-                                </h3>
-                                <div className="flex flex-wrap gap-3">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-[14px] font-bold text-white/90 tracking-tight">
+                                        Watch more seasons of this anime
+                                    </h3>
+                                    <div className="flex items-center gap-1.5">
+                                        <button
+                                            onClick={() => {
+                                                const el = document.getElementById('seasons-scroll');
+                                                if (el) el.scrollBy({ left: -200, behavior: 'smooth' });
+                                            }}
+                                            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all active:scale-90"
+                                        >
+                                            <ChevronLeft size={14} />
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                const el = document.getElementById('seasons-scroll');
+                                                if (el) el.scrollBy({ left: 200, behavior: 'smooth' });
+                                            }}
+                                            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all active:scale-90"
+                                        >
+                                            <ChevronRight size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div
+                                    id="seasons-scroll"
+                                    className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth pb-1"
+                                >
                                     {anime.moreSeasons.map((season: any, i: number) => {
                                         // Some seasons might be the current one; highlight it.
                                         const isActive = season.id === id;
@@ -265,7 +309,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                             <Link
                                                 key={i}
                                                 href={`/watch/${season.id}`}
-                                                className={`group relative overflow-hidden rounded-xl h-[52px] w-[130px] md:w-[150px] flex items-center justify-center border-2 transition-all duration-300 ${isActive
+                                                className={`group relative overflow-hidden rounded-xl h-[52px] min-w-[130px] md:min-w-[150px] flex items-center justify-center border-2 transition-all duration-300 shrink-0 ${isActive
                                                     ? 'border-primary shadow-[0_0_20px_rgba(83,204,184,0.15)] scale-[1.02]'
                                                     : 'border-white/[0.05] hover:border-white/20 active:scale-95'
                                                     }`}
@@ -281,7 +325,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                                 </div>
 
                                                 {/* Text Label */}
-                                                <span className={`relative z-10 text-[11px] font-black tracking-widest transition-colors ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white'}`}>
+                                                <span className={`relative z-10 text-[11px] font-black tracking-widest transition-colors text-center px-4 ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white'}`}>
                                                     {displayLabel}
                                                 </span>
                                             </Link>
@@ -295,7 +339,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                 {/* 3. Episode List Panel */}
                 <aside className="w-full lg:w-[320px] shrink-0 order-2 lg:order-3">
-                    <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-xl flex flex-col h-[380px] lg:h-full">
+                    <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-xl flex flex-col h-[540px] lg:h-full">
                         <EpisodeList
                             animeId={id}
                             episodes={episodes}
@@ -379,6 +423,55 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                         </section>
                     )}
 
+                    {/* 2. Most Popular sidebar */}
+                    {popularAnime && popularAnime.length > 0 && (
+                        <section className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-xl">
+                            <div className="flex items-center justify-between p-4 pb-2">
+                                <h3 className="text-[16px] font-bold text-white tracking-tight">Most Popular</h3>
+                            </div>
+                            <div className="flex flex-col">
+                                {popularAnime.map((item, i) => (
+                                    <Link
+                                        key={item.id || i}
+                                        href={`/watch/${item.id}`}
+                                        className="group relative flex items-center p-3 gap-3 hover:bg-white/[0.02] transition-colors border-b border-white/[0.03] last:border-0"
+                                    >
+                                        {/* Left: Square Poster */}
+                                        <div className="w-12 h-16 shrink-0 rounded-[4px] overflow-hidden bg-white/5">
+                                            <img src={item.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="" />
+                                        </div>
+
+                                        {/* Center: Info */}
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="text-[13px] font-bold text-white leading-tight truncate mb-1.5 group-hover:text-primary transition-colors">
+                                                {getTitle(item.title)}
+                                            </h4>
+
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-white/5 border border-white/10">
+                                                    <MessageSquare size={9} className="text-white fill-white/10" />
+                                                    <span className="text-[9px] font-black text-white/50">{item.subEpisodes || item.episodes || item.totalEpisodes || '?'}</span>
+                                                </div>
+                                                {item.dubEpisodes > 0 && (
+                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-white/5 border border-white/10">
+                                                        <Mic size={9} className="text-white fill-white/10" />
+                                                        <span className="text-[9px] font-black text-white/50">{item.dubEpisodes}</span>
+                                                    </div>
+                                                )}
+                                                <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">•</span>
+                                                <span className="text-[10px] font-bold text-white/30">{item.type || 'TV'}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Right: Plus Icon */}
+                                        <div className="shrink-0 text-white/10 group-hover:text-white transition-colors">
+                                            <span className="text-[18px] font-light">+</span>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
+                    )}
                 </aside>
             </div>
 

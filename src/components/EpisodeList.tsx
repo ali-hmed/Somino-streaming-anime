@@ -32,74 +32,61 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
     return (
         <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-2xl flex flex-col h-full">
             {/* compact header */}
-            <div className="p-4 px-5 space-y-4 bg-white/[0.01] border-b border-white/[0.05]">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+            <div className="p-2.5 px-4 bg-white/[0.01] border-b border-white/[0.05]">
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 shrink-0">
                         <List size={14} className="text-primary" />
-                        <h3 className="text-[12px] font-bold text-white">Episodes</h3>
+                        <h3 className="text-[12px] font-bold text-white tracking-tight">Episodes</h3>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="p-1 px-1.5 rounded-[3px] bg-white/5 border border-white/5 text-[9px] font-black text-white/40">cc</div>
-                        <div className="p-1 px-1.5 rounded-[3px] bg-white/5 border border-white/5 text-[9px] font-black text-white/40">en</div>
-                    </div>
-                </div>
 
-                <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={12} />
-                    <input
-                        type="text"
-                        placeholder="find episode..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-black/40 border border-white/[0.05] rounded-[6px] py-2 pl-9 pr-4 text-[11px] text-white placeholder:text-white/20 focus:outline-none focus:border-primary/20 transition-all font-medium"
-                    />
-                </div>
-
-                {/* range indicator */}
-                <div className="flex items-center justify-between px-1">
-                    <div className="flex items-center gap-2">
-                        <button className="text-white/20 hover:text-white transition-colors p-1"><Hash size={12} /></button>
-                        <span className="text-[10px] font-bold text-white/40">001-019</span>
+                    <div className="relative group max-w-[120px] transition-all duration-300 focus-within:max-w-[150px]">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-all" size={10} />
+                        <input
+                            type="text"
+                            placeholder="Find..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-white/5 border border-white/5 rounded-full py-1 pl-7 pr-3 text-[10px] text-white placeholder:text-white/20 focus:outline-none focus:bg-black/40 focus:border-primary/20 transition-all font-medium font-sans"
+                        />
                     </div>
                 </div>
             </div>
 
             {/* List area */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/10">
+            <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/10 p-1">
                 {filteredEpisodes.length > 0 ? (
-                    <div className="divide-y divide-white/[0.02]">
+                    <div className="flex flex-col gap-1">
                         {filteredEpisodes.map((ep, index) => {
                             const isActive = ep.id === currentEpisodeId;
 
                             const content = (
                                 <>
-                                    {/* active indicator side bar */}
-                                    {isActive && (
-                                        <div className="absolute right-0 top-1 bottom-1 w-1 bg-white/40 rounded-l-full" />
-                                    )}
-
-                                    <span className={`text-[11px] font-black w-5 transition-colors ${isActive ? 'text-white' : 'text-white/20 group-hover:text-primary'}`}>
+                                    <span className={`text-[8px] font-bold w-4 tracking-tighter transition-colors shrink-0 ${isActive ? 'text-white' : 'text-white/40 group-hover:text-primary'}`}>
                                         {ep.number}
                                     </span>
 
-                                    <span className={`flex-1 text-[11px] font-bold transition-colors line-clamp-1 ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
-                                        {ep.title || `episode ${ep.number}`}
+                                    <span className={`flex-1 text-[10px] font-medium transition-colors line-clamp-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>
+                                        {ep.title || `Episode ${ep.number}`}
                                     </span>
 
                                     {isActive && (
-                                        <div className="flex-shrink-0">
-                                            <Zap size={14} className="text-white fill-white/20 animate-pulse" />
+                                        <div className="flex-shrink-0 ml-2">
+                                            <Zap size={8} className="text-white fill-white/20 animate-pulse" />
                                         </div>
                                     )}
                                 </>
                             );
+
+                            const baseClass = `w-full flex items-center gap-3 px-3 py-1.5 transition-all group relative overflow-hidden text-left rounded-[4px]`;
+                            const activeClass = `bg-primary text-secondary-foreground`;
+                            const inactiveClass = `bg-white/[0.02] hover:bg-white/[0.05] active:bg-white/[0.08]`;
 
                             if (onEpisodeClick) {
                                 return (
                                     <button
                                         key={ep.id}
                                         onClick={() => onEpisodeClick(ep.id)}
-                                        className={`w-full flex items-center gap-4 px-5 py-3 transition-all group relative overflow-hidden text-left ${isActive ? 'bg-primary' : 'hover:bg-white/[0.03]'}`}
+                                        className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}
                                     >
                                         {content}
                                     </button>
@@ -111,9 +98,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                                     key={ep.id}
                                     ref={isActive ? activeRef : null}
                                     href={`/watch/${animeId}/${ep.id}`}
-                                    className={`flex items-center gap-4 px-5 py-3 transition-all group relative overflow-hidden ${isActive ? 'bg-primary'
-                                        : 'hover:bg-white/[0.03]'
-                                        }`}
+                                    className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}
                                 >
                                     {content}
                                 </Link>
@@ -123,7 +108,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                 ) : (
                     <div className="flex flex-col items-center justify-center py-20 text-white/10 gap-3">
                         <LayoutGrid size={32} />
-                        <p className="text-[10px] font-black tracking-widest">no episodes found</p>
+                        <p className="text-[10px] font-black tracking-widest uppercase">no episodes found</p>
                     </div>
                 )}
             </div>
