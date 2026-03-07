@@ -40,6 +40,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [isInputExpanded, setIsInputExpanded] = useState(false);
 
     const { user, isAuthenticated } = useAuthStore();
     const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
@@ -118,6 +119,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
             if (data.success) {
                 setComment("");
                 setReplyingTo(null);
+                setIsInputExpanded(false);
                 fetchComments();
             }
         } catch (error) {
@@ -265,6 +267,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                             <button
                                 onClick={() => {
                                     setReplyingTo({ id: item._id, username: item.username || 'User', mainId });
+                                    setIsInputExpanded(true);
                                     document.getElementById('comment-input-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                 }}
                                 className="flex items-center gap-1.5 text-[11px] font-bold text-white/30 hover:text-white transition-colors"
@@ -375,7 +378,8 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                     onChange={(e) => setComment(e.target.value)}
                                     placeholder={mounted ? (isAuthenticated ? "Leave a comment" : "Join the discussion...") : "Loading..."}
                                     disabled={!mounted || isPosting}
-                                    className="w-full min-h-[30px] bg-white/[0.02] border border-white/[0.05] rounded-[4px] px-4 py-2 text-[12px] text-white placeholder-white/10 focus:outline-none focus:border-white/10 transition-all resize-none"
+                                    onFocus={() => setIsInputExpanded(true)}
+                                    className={`w-full bg-white/[0.02] border border-white/[0.05] rounded-[4px] px-4 py-2.5 text-[14px] text-white placeholder-white/10 focus:outline-none focus:border-white/10 transition-all resize-none ${isInputExpanded ? 'min-h-[80px]' : 'min-h-[44px]'}`}
                                 />
                                 {mounted && !isAuthenticated && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-[4px] cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
@@ -386,18 +390,35 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                 )}
                             </div>
 
-                            {mounted && isAuthenticated && (
-                                <div className="flex items-center justify-end">
-                                    <button
-                                        onClick={handleSend}
-                                        disabled={!comment.trim() || isPosting}
-                                        className="px-8 py-2.5 bg-primary text-white font-black text-[11px] tracking-widest uppercase rounded-[4px] flex items-center gap-2 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
+                            <AnimatePresence>
+                                {mounted && isAuthenticated && (isInputExpanded || comment.trim().length > 0) && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                        animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                        className="flex items-center justify-end gap-3 overflow-hidden"
                                     >
-                                        {isPosting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                                        Post Comment
-                                    </button>
-                                </div>
-                            )}
+                                        <button
+                                            onClick={() => {
+                                                setIsInputExpanded(false);
+                                                setComment("");
+                                                setReplyingTo(null);
+                                            }}
+                                            className="px-4 py-2 text-white/30 hover:text-white font-bold text-[11px] uppercase tracking-widest transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleSend}
+                                            disabled={!comment.trim() || isPosting}
+                                            className="px-8 py-2.5 bg-primary text-white font-black text-[11px] tracking-widest uppercase rounded-[4px] flex items-center gap-2 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
+                                        >
+                                            {isPosting ? <Loader2 size={10} className="animate-spin" /> : <Send size={10} />}
+                                            Send
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
                 </div>
