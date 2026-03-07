@@ -31,13 +31,13 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
         const fetchPopular = async () => {
             // First check if anime object already has the data
             if (anime.mostPopular && anime.mostPopular.length > 0) {
-                setPopularAnime(anime.mostPopular.slice(0, 6));
+                setPopularAnime(anime.mostPopular.slice(0, 8));
                 return;
             }
             // Fallback to fetching home data for the common popular list
             const hData = await fetchHomeData();
             if (hData?.mostPopular?.length > 0) {
-                setPopularAnime(hData.mostPopular.slice(0, 6));
+                setPopularAnime(hData.mostPopular.slice(0, 8));
             }
         };
         fetchPopular();
@@ -448,14 +448,14 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                             </h4>
 
                                             <div className="flex items-center gap-1.5 flex-wrap">
-                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-white/5 border border-white/10">
-                                                    <MessageSquare size={9} className="text-white fill-white/10" />
-                                                    <span className="text-[9px] font-black text-white/50">{item.subEpisodes || item.episodes || item.totalEpisodes || '?'}</span>
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-primary/10 border border-primary/20">
+                                                    <MessageSquare size={9} className="text-primary fill-primary/10" />
+                                                    <span className="text-[9px] font-black text-primary/80">{item.subEpisodes || item.episodes || item.totalEpisodes || '?'}</span>
                                                 </div>
                                                 {item.dubEpisodes > 0 && (
-                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-white/5 border border-white/10">
-                                                        <Mic size={9} className="text-white fill-white/10" />
-                                                        <span className="text-[9px] font-black text-white/50">{item.dubEpisodes}</span>
+                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-secondary/10 border border-secondary/20">
+                                                        <Mic size={9} className="text-secondary fill-secondary/10" />
+                                                        <span className="text-[9px] font-black text-secondary/80">{item.dubEpisodes}</span>
                                                     </div>
                                                 )}
                                                 <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">•</span>
