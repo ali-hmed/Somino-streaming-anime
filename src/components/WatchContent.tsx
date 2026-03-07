@@ -448,14 +448,14 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                             </h4>
 
                                             <div className="flex items-center gap-1.5 flex-wrap">
-                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-primary/10 border border-primary/20">
-                                                    <MessageSquare size={9} className="text-primary fill-primary/10" />
-                                                    <span className="text-[9px] font-black text-primary/80">{item.subEpisodes || item.episodes || item.totalEpisodes || '?'}</span>
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-[#FF6E9F]/10 border border-[#FF6E9F]/30">
+                                                    <MessageSquare size={9} fill="currentColor" className="text-[#FF6E9F]" />
+                                                    <span className="text-[9px] font-black text-[#FF6E9F]">{item.subEpisodes || item.episodes || item.totalEpisodes || '?'}</span>
                                                 </div>
                                                 {item.dubEpisodes > 0 && (
-                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-secondary/10 border border-secondary/20">
-                                                        <Mic size={9} className="text-secondary fill-secondary/10" />
-                                                        <span className="text-[9px] font-black text-secondary/80">{item.dubEpisodes}</span>
+                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-[#53CCB8]/10 border border-[#53CCB8]/30">
+                                                        <Mic size={9} fill="currentColor" className="text-[#53CCB8]" />
+                                                        <span className="text-[9px] font-black text-[#53CCB8]">{item.dubEpisodes}</span>
                                                     </div>
                                                 )}
                                                 <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">•</span>
