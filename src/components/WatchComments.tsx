@@ -337,8 +337,8 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
     };
 
     return (
-        <div className="space-y-6">
-            <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-2xl">
+        <div className="space-y-6 h-full">
+            <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-2xl flex flex-col lg:max-h-[1050px]">
                 {/* Header */}
                 <div className="px-6 py-5 flex items-center gap-4">
                     <h2 className="text-[20px] font-bold text-white tracking-tight">Comments</h2>
@@ -403,7 +403,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                 </div>
 
                 {/* Comments List */}
-                <div className="px-6 py-8">
+                <div className="px-6 py-8 flex-1 overflow-y-auto custom-scrollbar shadow-inner">
                     {!mounted || isLoading ? (
                         <div className="flex flex-col items-center justify-center py-16">
                             <Loader2 className="w-8 h-8 text-primary/40 animate-spin" />
