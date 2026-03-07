@@ -346,7 +346,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                         <span className="text-[12px] font-black text-primary">
                             {comments.reduce((acc, curr) => acc + 1 + (curr.replies?.length || 0), 0)}
                         </span>
-                        <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Total</span>
+                        <span className="text-[6px] font-bold text-white/20 uppercase tracking-widest">Total</span>
                     </div>
                 </div>
 
@@ -375,7 +375,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                     onChange={(e) => setComment(e.target.value)}
                                     placeholder={mounted ? (isAuthenticated ? "Leave a comment" : "Join the discussion...") : "Loading..."}
                                     disabled={!mounted || isPosting}
-                                    className="w-full min-h-[80px] bg-white/[0.02] border border-white/[0.05] rounded-[4px] px-4 py-3 text-[14px] text-white placeholder-white/10 focus:outline-none focus:border-white/10 transition-all resize-none"
+                                    className="w-full min-h-[30px] bg-white/[0.02] border border-white/[0.05] rounded-[4px] px-4 py-2 text-[12px] text-white placeholder-white/10 focus:outline-none focus:border-white/10 transition-all resize-none"
                                 />
                                 {mounted && !isAuthenticated && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-[4px] cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
