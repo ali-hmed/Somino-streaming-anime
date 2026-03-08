@@ -44,7 +44,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     isLoading = false,
 }) => {
     const router = useRouter();
-    const { user } = useAuthStore();
+    const { user, setWatchHistory } = useAuthStore();
     const [server, setServer] = useState<'megaPlay' | 'vidWish'>('megaPlay');
     const [category, setCategory] = useState<'sub' | 'dub'>('sub');
     const [autoNext, setAutoNext] = useState(false);
@@ -83,6 +83,16 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     }, [subEpisodes, dubEpisodes]);
 
     useEffect(() => {
+        // Reset progress states when episode changes
+        setHasLoadedProgress(false);
+        setInitialTime(0);
+        setCurrentTime(0);
+        currentProgressRef.current = 0;
+    }, [animeId, episodeId]);
+
+    useEffect(() => {
+        if (hasLoadedProgress) return;
+
         // Find progress in user's remote watch history first, then fallback to local
         const remoteProgress = user?.watchHistory?.find(item => item.animeId === animeId && item.episodeId === episodeId);
         const localProgress = getAnimeProgress(animeId);
@@ -99,13 +109,13 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             setInitialTime(savedTime || 0.1); // Small offset to avoid 0 check issues
             setCurrentTime(savedTime);
             currentProgressRef.current = savedTime;
-        } else {
-            setInitialTime(0);
-            setCurrentTime(0);
-            currentProgressRef.current = 0;
         }
-        setHasLoadedProgress(true);
-    }, [animeId, episodeId, user?.watchHistory]);
+
+        // Only set loaded if we have the history data (for logged in users) or if guest
+        if (user === null || user?.watchHistory !== undefined) {
+            setHasLoadedProgress(true);
+        }
+    }, [animeId, episodeId, user?.watchHistory, hasLoadedProgress, initialTime]);
 
     // Timer to estimate progress (one source of truth: local state synced with player)
     useEffect(() => {
@@ -120,8 +130,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         }, 1000);
 
         // Periodically save to localStorage & backend
-        const saveInterval = setInterval(() => {
-            saveWatchProgress({
+        const saveInterval = setInterval(async () => {
+            const updated = await saveWatchProgress({
                 animeId,
                 animeTitle,
                 animeImage,
@@ -130,6 +140,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 currentTime: currentProgressRef.current,
                 duration: 1440 // 24 mins fallback
             }, user?.token);
+
+            if (updated && user?.token) {
+                setWatchHistory(updated);
+            }
         }, 5000);
 
         return () => {
@@ -172,15 +186,22 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             currentProgressRef.current = newTime;
 
             // Immediate save on player update to ensure skips are caught
-            saveWatchProgress({
-                animeId,
-                animeTitle,
-                animeImage,
-                episodeId,
-                episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
-                currentTime: newTime,
-                duration: duration || 1440
-            }, user?.token);
+            const syncProgress = async () => {
+                const updated = await saveWatchProgress({
+                    animeId,
+                    animeTitle,
+                    animeImage,
+                    episodeId,
+                    episodeNumber: typeof episodeNumber === 'string' ? parseInt(episodeNumber) || 1 : episodeNumber,
+                    currentTime: newTime,
+                    duration: duration || 1440
+                }, user?.token);
+
+                if (updated && user?.token) {
+                    setWatchHistory(updated);
+                }
+            };
+            syncProgress();
         }
     };
 

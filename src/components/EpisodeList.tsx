@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Search, PlayCircle, Hash, Zap, LayoutGrid } from 'lucide-react';
+import { Search, LayoutGrid, Zap, ChevronDown } from 'lucide-react';
 import { Episode } from '@/types/anime';
 
 interface EpisodeListProps {
@@ -12,103 +12,193 @@ interface EpisodeListProps {
     onEpisodeClick?: (id: string) => void;
 }
 
+const CHUNK_SIZE = 100;
+
 const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpisodeId, onEpisodeClick }) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const activeRef = useRef<HTMLAnchorElement>(null);
+    const [activeChunk, setActiveChunk] = useState(0);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const activeRef = useRef<HTMLElement>(null);
 
-    // Filter episodes based on search
-    const filteredEpisodes = episodes.filter(ep =>
-        ep.number.toString().includes(searchQuery) ||
-        (ep.title && ep.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    const useGridMode = episodes.length > 18;
+    const totalChunks = Math.ceil(episodes.length / CHUNK_SIZE);
 
-    // Scroll active episode into view on mount
+    // Auto-jump to the chunk containing the active episode
     useEffect(() => {
-        if (activeRef.current) {
-            activeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    }, [currentEpisodeId]);
+        if (!useGridMode) return;
+        const idx = episodes.findIndex(ep => ep.id === currentEpisodeId);
+        if (idx >= 0) setActiveChunk(Math.floor(idx / CHUNK_SIZE));
+    }, [currentEpisodeId, episodes, useGridMode]);
+
+    // Scroll active episode into view
+    useEffect(() => {
+        activeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [currentEpisodeId, activeChunk]);
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    const filteredEpisodes = searchQuery
+        ? episodes.filter(ep =>
+            ep.number.toString().includes(searchQuery) ||
+            (ep.title && ep.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        )
+        : episodes;
+
+    const displayEpisodes = useGridMode && !searchQuery
+        ? episodes.slice(activeChunk * CHUNK_SIZE, (activeChunk + 1) * CHUNK_SIZE)
+        : filteredEpisodes;
+
+    const getChunkLabel = (i: number) => {
+        const start = i * CHUNK_SIZE + 1;
+        const end = Math.min((i + 1) * CHUNK_SIZE, episodes.length);
+        return `EPS: ${String(start).padStart(3, '0')}-${String(end).padStart(3, '0')}`;
+    };
 
     return (
         <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-2xl flex flex-col h-full">
-            {/* compact header */}
-            <div className="p-2.5 px-4 bg-white/[0.01] border-b border-white/[0.05]">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 shrink-0">
-                        <List size={14} className="text-primary" />
-                        <h3 className="text-[12px] font-bold text-white tracking-tight">Episodes</h3>
-                    </div>
 
-                    <div className="relative group max-w-[120px] transition-all duration-300 focus-within:max-w-[150px]">
-                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-all" size={10} />
+            {/* ── Header ─────────────────────────────────────────── */}
+            <div className="px-3 py-2 bg-[#0d0e12] border-b border-white/[0.05]">
+                <p className="text-[10px] font-bold text-white/50 tracking-wide mb-2">List of episodes:</p>
+
+                <div className="flex items-center gap-2">
+                    {/* Range Dropdown */}
+                    {useGridMode && totalChunks > 1 && !searchQuery && (
+                        <div className="relative shrink-0" ref={dropdownRef}>
+                            <button
+                                onClick={() => setDropdownOpen(v => !v)}
+                                className="flex items-center gap-1.5 px-2 py-1 rounded-[4px] bg-white/[0.05] border border-white/[0.06] text-[9px] font-bold text-white/50 hover:text-white hover:border-white/20 transition-all whitespace-nowrap"
+                            >
+                                <MenuIcon />
+                                {getChunkLabel(activeChunk)}
+                                <ChevronDown
+                                    size={9}
+                                    className={`transition-transform duration-200 text-white/30 ${dropdownOpen ? 'rotate-180' : ''}`}
+                                />
+                            </button>
+
+                            {dropdownOpen && (
+                                <div className="absolute top-full left-0 mt-1 z-50 bg-[#1a1c22] border border-white/[0.08] rounded-[6px] shadow-2xl overflow-hidden min-w-[130px]">
+                                    {Array.from({ length: totalChunks }).map((_, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => { setActiveChunk(i); setDropdownOpen(false); }}
+                                            className={`w-full text-left px-3 py-1.5 text-[9px] font-bold transition-colors whitespace-nowrap ${activeChunk === i
+                                                    ? 'bg-primary/20 text-primary'
+                                                    : 'text-white/40 hover:bg-white/[0.05] hover:text-white'
+                                                }`}
+                                        >
+                                            {getChunkLabel(i)}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Search */}
+                    <div className="relative flex-1 group">
+                        <Search
+                            className="absolute left-2 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-all"
+                            size={9}
+                        />
                         <input
                             type="text"
-                            placeholder="Find..."
+                            placeholder="Number of Ep"
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/5 rounded-full py-1 pl-7 pr-3 text-[10px] text-white placeholder:text-white/20 focus:outline-none focus:bg-black/40 focus:border-primary/20 transition-all font-medium font-sans"
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="w-full bg-white/[0.04] border border-white/[0.06] rounded-[4px] py-1 pl-6 pr-2 text-[9px] text-white placeholder:text-white/20 focus:outline-none focus:border-primary/20 focus:bg-black/30 transition-all font-medium"
                         />
                     </div>
                 </div>
             </div>
 
-            {/* List area */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/10 p-1">
-                {filteredEpisodes.length > 0 ? (
-                    <div className="flex flex-col gap-1">
-                        {filteredEpisodes.map((ep, index) => {
-                            const isActive = ep.id === currentEpisodeId;
+            {/* ── Episode Area ────────────────────────────────────── */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
+                {displayEpisodes.length > 0 ? (
+                    useGridMode && !searchQuery ? (
 
-                            const content = (
-                                <>
-                                    <span className={`text-[8px] font-bold w-4 tracking-tighter transition-colors shrink-0 ${isActive ? 'text-white' : 'text-white/40 group-hover:text-primary'}`}>
-                                        {ep.number}
-                                    </span>
+                        /* ── Compact Number Grid (HiAnime style) ─── */
+                        <div className="grid grid-cols-5 gap-[3px]">
+                            {displayEpisodes.map(ep => {
+                                const isActive = ep.id === currentEpisodeId;
+                                const isFiller = ep.isFiller;
 
-                                    <span className={`flex-1 text-[10px] font-medium transition-colors line-clamp-1 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>
-                                        {ep.title || `Episode ${ep.number}`}
-                                    </span>
-
-                                    {isActive && (
-                                        <div className="flex-shrink-0 ml-2">
-                                            <Zap size={8} className="text-white fill-white/20 animate-pulse" />
-                                        </div>
-                                    )}
-                                </>
-                            );
-
-                            const baseClass = `w-full flex items-center gap-3 px-3 py-1.5 transition-all group relative overflow-hidden text-left rounded-[4px]`;
-                            const activeClass = `bg-primary text-secondary-foreground`;
-                            const inactiveClass = `bg-white/[0.02] hover:bg-white/[0.05] active:bg-white/[0.08]`;
-
-                            if (onEpisodeClick) {
                                 return (
-                                    <button
+                                    <EpBox
                                         key={ep.id}
-                                        onClick={() => onEpisodeClick(ep.id)}
+                                        ep={ep}
+                                        isActive={isActive}
+                                        isFiller={!!isFiller}
+                                        animeId={animeId}
+                                        onEpisodeClick={onEpisodeClick}
+                                        activeRef={isActive ? (activeRef as React.RefObject<HTMLElement>) : undefined}
+                                    />
+                                );
+                            })}
+                        </div>
+
+                    ) : (
+
+                        /* ── List Mode (short anime or search) ──── */
+                        <div className="flex flex-col gap-0.5">
+                            {(searchQuery ? filteredEpisodes : episodes).map(ep => {
+                                const isActive = ep.id === currentEpisodeId;
+                                const baseClass = `w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-[4px] transition-all group text-left`;
+                                const activeClass = `bg-primary/20 border border-primary/30`;
+                                const inactiveClass = `bg-white/[0.02] hover:bg-white/[0.05] border border-transparent`;
+
+                                const inner = (
+                                    <>
+                                        <span className={`text-[9px] font-black w-5 shrink-0 ${isActive ? 'text-primary' : 'text-white/25 group-hover:text-primary'}`}>
+                                            {ep.number}
+                                        </span>
+                                        <span className={`flex-1 text-[10px] font-medium line-clamp-1 ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
+                                            {ep.title || `Episode ${ep.number}`}
+                                        </span>
+                                        {isActive && <Zap size={7} className="shrink-0 text-primary fill-primary animate-pulse" />}
+                                    </>
+                                );
+
+                                if (onEpisodeClick) {
+                                    return (
+                                        <button
+                                            key={ep.id}
+                                            ref={isActive ? (activeRef as React.RefObject<HTMLButtonElement>) : undefined}
+                                            onClick={() => onEpisodeClick(ep.id)}
+                                            className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}
+                                        >
+                                            {inner}
+                                        </button>
+                                    );
+                                }
+                                return (
+                                    <Link
+                                        key={ep.id}
+                                        ref={isActive ? (activeRef as React.RefObject<HTMLAnchorElement>) : undefined}
+                                        href={`/watch/${animeId}/${ep.id}`}
                                         className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}
                                     >
-                                        {content}
-                                    </button>
+                                        {inner}
+                                    </Link>
                                 );
-                            }
-
-                            return (
-                                <Link
-                                    key={ep.id}
-                                    ref={isActive ? activeRef : null}
-                                    href={`/watch/${animeId}/${ep.id}`}
-                                    className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}
-                                >
-                                    {content}
-                                </Link>
-                            );
-                        })}
-                    </div>
+                            })}
+                        </div>
+                    )
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-white/10 gap-3">
-                        <LayoutGrid size={32} />
-                        <p className="text-[10px] font-black tracking-widest uppercase">no episodes found</p>
+                    <div className="flex flex-col items-center justify-center py-16 text-white/10 gap-3">
+                        <LayoutGrid size={28} />
+                        <p className="text-[9px] font-black tracking-widest uppercase">no episodes found</p>
                     </div>
                 )}
             </div>
@@ -116,16 +206,62 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
     );
 };
 
-// Sub-components/Icons for the list
-const ChevronRight = ({ size, className }: { size: number, className?: string }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="m9 18 6-6-6-6" />
-    </svg>
-);
+/* ── Episode Box (grid cell) ─────────────────────────────── */
+interface EpBoxProps {
+    ep: Episode;
+    isActive: boolean;
+    isFiller: boolean;
+    animeId: string;
+    onEpisodeClick?: (id: string) => void;
+    activeRef?: React.RefObject<HTMLElement>;
+}
 
-const List = ({ size, className }: { size: number, className?: string }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+const EpBox: React.FC<EpBoxProps> = ({ ep, isActive, isFiller, animeId, onEpisodeClick, activeRef }) => {
+    const boxClass = `
+        relative flex items-center justify-center
+        h-7 w-full rounded-[3px]
+        text-[10px] font-bold select-none
+        transition-all duration-150 active:scale-95
+        ${isActive
+            ? 'bg-[#b8935a] text-[#1a120a] shadow-md shadow-[#b8935a]/30'
+            : isFiller
+                ? 'bg-[#2a2218] text-[#9a7a4a] hover:bg-[#3a3020] hover:text-[#c8a96e]'
+                : 'bg-[#1e2027] text-white/45 hover:bg-[#272a34] hover:text-white/80'
+        }
+        cursor-pointer
+    `;
+
+    if (onEpisodeClick) {
+        return (
+            <button
+                ref={isActive ? (activeRef as React.RefObject<HTMLButtonElement>) : undefined}
+                onClick={() => onEpisodeClick(ep.id)}
+                className={boxClass}
+                title={ep.title || `Episode ${ep.number}`}
+            >
+                {ep.number}
+            </button>
+        );
+    }
+
+    return (
+        <Link
+            ref={isActive ? (activeRef as React.RefObject<HTMLAnchorElement>) : undefined}
+            href={`/watch/${animeId}/${ep.id}`}
+            className={boxClass}
+            title={ep.title || `Episode ${ep.number}`}
+        >
+            {ep.number}
+        </Link>
+    );
+};
+
+/* ── Menu Icon ───────────────────────────────────────────── */
+const MenuIcon = () => (
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="21" y2="18" />
     </svg>
 );
 

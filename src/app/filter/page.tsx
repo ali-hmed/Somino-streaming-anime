@@ -24,7 +24,7 @@ async function fetchFiltered(params: Record<string, string | undefined>, page: n
         Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined).map(([k, v]) => [k, String(v)]))
     ).toString();
 
-    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:3030') + '/api/v1';
     const res = await fetch(`${BASE_URL}/filter?${qStr}`, {
         next: { revalidate: 60 },
         headers: { Accept: 'application/json' },

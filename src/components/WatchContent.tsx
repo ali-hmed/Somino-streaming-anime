@@ -78,7 +78,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
         const currentItem = user.watchlist?.find(item => item.animeId === id);
         if (!currentItem || currentItem.status === 'Planned') {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
             fetch(`${BASE_URL}/auth/watchlist`, {
                 method: 'POST',
                 headers: {

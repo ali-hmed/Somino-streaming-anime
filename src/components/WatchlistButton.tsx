@@ -40,7 +40,7 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
         }
 
         setIsLoading(true);
-        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
 
         try {
             const res = await fetch(`${BASE_URL}/auth/watchlist`, {
@@ -76,7 +76,7 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
 
     const handleRemove = async () => {
         setIsLoading(true);
-        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
 
         try {
             const res = await fetch(`${BASE_URL}/auth/watchlist/${animeId}`, {

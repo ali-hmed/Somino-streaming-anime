@@ -37,7 +37,7 @@ export default function ContinueWatchingPage() {
             return;
         }
 
-        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://somino-backend.vercel.app') + '/api/v1';
+        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
 
         try {
             const res = await fetch(`${BASE_URL}/auth/history/${animeId}`, {
