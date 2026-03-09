@@ -13,6 +13,7 @@ export default function ProfilePage() {
         username: user?.username || "",
         email: user?.email || "",
         avatar: user?.avatar || "",
+        banner: user?.banner || "",
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +31,7 @@ export default function ProfilePage() {
             username: user.username || "",
             email: user.email || "",
             avatar: user.avatar || "",
+            banner: user.banner || "",
         });
         setJoinedAt(user.createdAt || "");
 
@@ -47,6 +49,7 @@ export default function ProfilePage() {
                         username: fresh.username || user.username || "",
                         email: fresh.email || user.email || "",
                         avatar: fresh.avatar || user.avatar || "",
+                        banner: fresh.banner || user.banner || "",
                     });
                     setJoinedAt(fresh.createdAt || user.createdAt || "");
                 }
@@ -76,7 +79,8 @@ export default function ProfilePage() {
                 body: JSON.stringify({
                     username: formData.username,
                     email: formData.email,
-                    avatar: formData.avatar
+                    avatar: formData.avatar,
+                    banner: formData.banner
                 })
             });
 
@@ -196,7 +200,24 @@ export default function ProfilePage() {
                                         onChange={handleChange}
                                         className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium text-white outline-none transition-all"
                                         style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}
-                                        placeholder="https://example.com/image.jpg"
+                                        placeholder="https://example.com/avatar.jpg"
+                                        onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
+                                        onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                                        BANNER URL
+                                    </label>
+                                    <input
+                                        type="url"
+                                        name="banner"
+                                        value={formData.banner}
+                                        onChange={handleChange}
+                                        className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium text-white outline-none transition-all"
+                                        style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}
+                                        placeholder="https://example.com/banner.jpg"
                                         onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
                                         onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
                                     />

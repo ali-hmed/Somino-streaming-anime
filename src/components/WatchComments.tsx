@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { MessageSquare, Send, User, X, Reply, Trash2, Loader2, MessageCircle, ThumbsUp, ThumbsDown, MoreHorizontal, Link2, EyeOff, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
@@ -236,7 +237,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
         return (
             <div id={`comment-${item._id}`} className={`group flex gap-3 ${isReply ? 'ml-12 mt-6' : 'mt-8'} scroll-mt-32 relative`}>
                 {/* Avatar */}
-                <div className={`shrink-0 rounded-full bg-[#1a1b20] border border-white/5 overflow-hidden ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
+                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-[#1a1b20] border border-white/5 overflow-hidden transition-transform hover:scale-110 active:scale-95 ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
                     {item.avatar ? (
                         <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" />
                     ) : (
@@ -244,14 +245,14 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                             <User className="w-1/2 h-1/2 text-white/5" />
                         </div>
                     )}
-                </div>
+                </Link>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[13px] font-bold text-primary cursor-pointer hover:underline">
+                        <Link href={`/user/${item.username}`} className="text-[13px] font-bold text-primary cursor-pointer hover:underline">
                             {item.username || 'User'}
-                        </span>
+                        </Link>
                         <span className="text-[11px] text-white/20 font-medium">
                             {mounted ? timeAgo(item.createdAt) : '...'}
                         </span>

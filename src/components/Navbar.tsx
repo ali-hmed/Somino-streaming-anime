@@ -312,12 +312,12 @@ const Navbar = () => {
                                             {/* Menu Items */}
                                             <div className="px-2 py-1 flex flex-col gap-0.5">
                                                 {([
-                                                    { href: '/profile', icon: User, label: 'Profile' },
+                                                    { href: `/user/${user?.username}`, icon: User, label: 'View Public Profile' },
+                                                    { href: '/profile', icon: Settings, label: 'Profile Settings' },
                                                     { href: '/profile/continue-watching', icon: PlaySquare, label: 'Continue Watching' },
                                                     { href: '/profile/watch-list', icon: Heart, label: 'Watch List' },
                                                     { href: '/profile/notification', icon: Bell, label: 'Notification' },
                                                     { href: '/profile/mal', icon: Film, label: 'MAL Import / Export' },
-                                                    { href: '/profile/settings', icon: Settings, label: 'Settings' },
                                                 ] as const).map(({ href, icon: Icon, label }) => (
                                                     <Link
                                                         key={label}

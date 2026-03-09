@@ -6,6 +6,11 @@ interface User {
     username: string;
     email: string;
     avatar?: string;
+    banner?: string;
+    role?: 'user' | 'moderator' | 'admin';
+    level?: number;
+    power?: number;
+    rank?: string;
     watchlist?: any[];
     watchHistory?: any[];
     createdAt?: string;
