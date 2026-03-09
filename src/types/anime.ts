@@ -59,6 +59,7 @@ export interface Episode {
     image?: string;
     description?: string;
     url?: string;
+    isFiller?: boolean;
 }
 
 export interface SearchResult {

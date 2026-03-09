@@ -12,6 +12,7 @@ export const mapCustomToAnime = (item: any): any => ({
     },
     image: item.poster,
     cover: item.poster,
+    isAdult: !!item.isAdult,
     description: item.synopsis || '',
     status: item.status || 'Unknown',
     releaseDate: item.releaseDate || item.aired?.from || '',

@@ -80,10 +80,15 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                             </div>
                         )}
 
-                        {/* Top Left Badges */}
-                        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10 pointer-events-none">
-                            <span className="bg-[#FF4B12] text-white text-[8px] font-black px-1.5 py-0.5 rounded-[2px] shadow-lg lowercase">18+</span>
-                        </div>
+                        {/* Top Right 18+ Badge */}
+                        {(() => {
+                            const rating = String(anime.rating || '');
+                            const rUpper = rating.toUpperCase();
+                            if (rating === 'R' || rUpper.includes('R+') || rUpper.includes('RX') || rUpper.includes('HENTAI') || rating.includes('R -') || anime.is18 || anime.isAdult) {
+                                return <span className="absolute top-1.5 right-1.5 z-10 bg-[#e5534b] text-white text-[9px] font-black px-1.5 py-0.5 rounded-[3px] shadow pointer-events-none">18+</span>;
+                            }
+                            return null;
+                        })()}
 
                         {/* Hover Play Button */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -147,32 +152,32 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                         </div>
                     )}
 
-                    {/* Left Badges */}
-                    <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
-                        {(() => {
-                            const rating = String(anime.rating || '');
-                            if (rating.includes('R') || rating.includes('18') || rating.includes('17')) {
-                                return <span className="bg-[#FF4B12] text-white text-[10px] font-black px-1.5 py-0.5 rounded-[2px] shadow-lg tracking-tighter">18+</span>;
-                            }
-                            if (showPG13 && rating.includes('PG')) {
-                                return <span className="bg-[#FF4F18]/10 border border-[#FF4F18]/40 backdrop-blur-md text-[8px] font-black px-1.5 py-0.5 rounded-[2px] text-[#FF4F18] tracking-tight">PG 13</span>;
-                            }
-                            return null;
-                        })()}
-                        {anime.episodeNumber && showEpisode && (
+                    {/* Left Badges (episode number) */}
+                    {anime.episodeNumber && showEpisode && (
+                        <div className="absolute top-2 left-2 z-10">
                             <span className="bg-black/60 backdrop-blur-md text-white/60 text-[8px] font-black px-1.5 py-0.5 rounded-[2px] border border-white/10 tracking-tighter">
                                 EP {anime.episodeNumber}
                             </span>
-                        )}
-                    </div>
-
-                    {/* Top Right Score */}
-                    {anime.score && showScore && (
-                        <div className="absolute top-2 right-2 z-10 flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-black/60 backdrop-blur-md border border-white/10 text-[#FFB941] text-[10px] font-black shadow-sm">
-                            <Star size={10} fill="currentColor" className="stroke-0" />
-                            {anime.score}
                         </div>
                     )}
+
+                    {/* Top Right: 18+ badge + Score stacked */}
+                    <div className="absolute top-1.5 right-1.5 z-10 flex flex-col items-end gap-1 pointer-events-none">
+                        {(() => {
+                            const rating = String(anime.rating || '');
+                            const rUpper = rating.toUpperCase();
+                            if (rating === 'R' || rUpper.includes('R+') || rUpper.includes('RX') || rUpper.includes('HENTAI') || rating.includes('R -') || anime.is18 || anime.isAdult) {
+                                return <span className="bg-[#e5534b] text-white text-[9px] font-black px-1.5 py-0.5 rounded-[3px] shadow">18+</span>;
+                            }
+                            return null;
+                        })()}
+                        {anime.score && showScore && (
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-black/60 backdrop-blur-md border border-white/10 text-[#FFB941] text-[10px] font-black shadow-sm">
+                                <Star size={10} fill="currentColor" className="stroke-0" />
+                                {anime.score}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Content Section */}

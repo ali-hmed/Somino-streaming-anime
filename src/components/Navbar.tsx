@@ -102,7 +102,7 @@ const Navbar = () => {
 
                 setSuggestions(mapped);
             } catch (e) {
-                console.error(e);
+                console.log('Error fetching suggestions:', e);
             } finally {
                 setIsSearching(false);
             }
@@ -134,7 +134,7 @@ const Navbar = () => {
                 setUnreadCount(data.data.filter((n: any) => !n.isRead).length);
             }
         } catch (e) {
-            console.error(e);
+            console.log('Error fetching notifications:', e);
         }
     };
 

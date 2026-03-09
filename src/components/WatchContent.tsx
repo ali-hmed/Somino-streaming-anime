@@ -127,13 +127,19 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                 </div>
 
                                 <div className="flex flex-wrap items-center justify-center gap-1.5 mb-5">
-                                    <span className={`px-1.5 py-0.5 rounded-[2px] ${String(anime.rating || '').includes('R') || String(anime.rating || '').includes('18') ? 'bg-[#FF4B12] text-white shadow-lg' : 'bg-primary/10 border border-primary/30 text-primary'} text-[8px] font-black tracking-tighter`}>
-                                        {(() => {
-                                            const r = String(anime.rating || '');
-                                            if (r.includes('R') || r.includes('18')) return '18+';
-                                            return 'PG 13';
-                                        })()}
-                                    </span>
+                                    {(() => {
+                                        const r = String(anime.rating || '');
+                                        const rUpper = r.toUpperCase();
+                                        const is18 = r === 'R' || rUpper.includes('R+') || rUpper.includes('RX') || rUpper.includes('HENTAI') || r.includes('R -') || anime.is18 || anime.isAdult;
+
+                                        if (!is18) return null;
+
+                                        return (
+                                            <span className="px-1.5 py-0.5 rounded-sm bg-[#e5534b] text-white shadow-sm text-[10px] font-black tracking-tighter">
+                                                18+
+                                            </span>
+                                        );
+                                    })()}
                                     <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 border border-[#FF6E9F]/30 text-[#FF6E9F] text-[8px] font-black tracking-tighter">
                                         <MessageSquare size={9} fill="currentColor" />
                                         {anime.subEpisodes || episodes.length || 0}
@@ -262,78 +268,135 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             isLoading={isChanging}
                         />
 
-                        {/* Watch more seasons — image-style footer */}
-                        {anime.moreSeasons && anime.moreSeasons.length > 0 && (
-                            <div className="px-6 py-6 border-t border-white/[0.03] bg-black/20">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-[14px] font-bold text-white/90 tracking-tight">
-                                        Watch more seasons of this anime
-                                    </h3>
-                                    <div className="flex items-center gap-1.5">
-                                        <button
-                                            onClick={() => {
-                                                const el = document.getElementById('seasons-scroll');
-                                                if (el) el.scrollBy({ left: -200, behavior: 'smooth' });
-                                            }}
-                                            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all active:scale-90"
-                                        >
-                                            <ChevronLeft size={14} />
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                const el = document.getElementById('seasons-scroll');
-                                                if (el) el.scrollBy({ left: 200, behavior: 'smooth' });
-                                            }}
-                                            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all active:scale-90"
-                                        >
-                                            <ChevronRight size={14} />
-                                        </button>
+                        {/* ── More from this Franchise (seasons + relations merged) ── */}
+                        {(() => {
+                            const TYPE_ORDER: Record<string, number> = {
+                                prequel: 0, sequel: 1, 'alternative version': 2, season: 3,
+                                movie: 4, special: 5, ova: 6, ona: 7, music: 8, spinoff: 9, other: 10
+                            };
+
+                            const seasonItems = (anime.moreSeasons || []).map((s: any) => ({
+                                id: s.id?.toString(),
+                                name: getTitle(s.title),
+                                image: s.image || anime.image,
+                                relationType: 'Season',
+                                sortKey: 3,
+                            }));
+
+                            const relItems = (anime.relations || []).map((rel: any) => {
+                                const rType = (rel.relation || 'other').toLowerCase();
+                                return {
+                                    id: rel.entry.mal_id?.toString(),
+                                    name: rel.entry.name,
+                                    image: rel.entry.image || anime.image,
+                                    relationType: rel.relation || 'Related',
+                                    sortKey: TYPE_ORDER[rType] ?? 10,
+                                };
+                            });
+
+                            const seenIds = new Set<string>();
+                            const merged = [...seasonItems, ...relItems]
+                                .filter(item => {
+                                    if (!item.id || seenIds.has(item.id)) return false;
+                                    seenIds.add(item.id);
+                                    return true;
+                                })
+                                .sort((a, b) => a.sortKey - b.sortKey);
+
+                            if (merged.length === 0) return null;
+
+                            // Counter per label type for numbered suffixes (Movie 2, OVA 3, etc.)
+                            const labelCount: Record<string, number> = {};
+                            const getShortLabel = (name: string, relationType: string, idx: number): string => {
+                                // 1. Try to extract "Season X" or "Part X" from the title
+                                const seasonMatch = name.match(/Season\s*\d+|Part\s*\d+|Cour\s*\d+|\bS(\d+)\b/i);
+                                if (seasonMatch) return seasonMatch[0];
+
+                                // 2. If it has an explicit ordinal number in the title (e.g. "2nd Season")
+                                const ordinalMatch = name.match(/(\d+(?:st|nd|rd|th)\s+Season)/i);
+                                if (ordinalMatch) return ordinalMatch[1];
+
+                                // 3. For non-TV types use the type as the label, numbered if multiple
+                                const rType = relationType.toLowerCase();
+                                const shortTypeMap: Record<string, string> = {
+                                    movie: 'Movie', special: 'Special', ova: 'OVA',
+                                    ona: 'ONA', music: 'Music', spinoff: 'Spin-off',
+                                };
+                                const typeLabel = shortTypeMap[rType];
+                                if (typeLabel) {
+                                    labelCount[typeLabel] = (labelCount[typeLabel] || 0) + 1;
+                                    return labelCount[typeLabel] > 1 ? `${typeLabel} ${labelCount[typeLabel]}` : typeLabel;
+                                }
+
+                                // 4. Fallback: first meaningful word-segment up to 13 chars
+                                const clean = name.replace(/^[^:·—]+[:\s·—]+/u, '').trim() || name;
+                                return clean.length > 13 ? clean.slice(0, 12) + '…' : clean;
+                            };
+
+                            return (
+                                <div className="px-6 py-6 border-t border-white/[0.03] bg-black/20">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-[14px] font-bold text-white/90 tracking-tight">
+                                            Watch more seasons of this anime
+                                        </h3>
+                                        <div className="flex items-center gap-1.5">
+                                            <button
+                                                onClick={() => {
+                                                    const el = document.getElementById('seasons-scroll');
+                                                    if (el) el.scrollBy({ left: -200, behavior: 'smooth' });
+                                                }}
+                                                className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all active:scale-90"
+                                            >
+                                                <ChevronLeft size={14} />
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const el = document.getElementById('seasons-scroll');
+                                                    if (el) el.scrollBy({ left: 200, behavior: 'smooth' });
+                                                }}
+                                                className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all active:scale-90"
+                                            >
+                                                <ChevronRight size={14} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        id="seasons-scroll"
+                                        className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth pb-1"
+                                    >
+                                        {merged.map((item, i) => {
+                                            const isActive = item.id === id;
+                                            return (
+                                                <Link
+                                                    key={`franchise-${item.id ?? i}`}
+                                                    href={`/watch/${item.id}`}
+                                                    className={`group relative overflow-hidden rounded-xl h-[52px] min-w-[130px] md:min-w-[150px] flex items-center justify-center border-2 transition-all duration-300 shrink-0 ${isActive
+                                                        ? 'border-primary shadow-[0_0_20px_rgba(83,204,184,0.15)] scale-[1.02]'
+                                                        : 'border-white/[0.05] hover:border-white/20 active:scale-95'
+                                                        }`}
+                                                >
+                                                    {/* Blurred cover background */}
+                                                    <div className="absolute inset-0 z-0">
+                                                        <img
+                                                            src={item.image}
+                                                            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-125 ${isActive ? 'opacity-50 blur-[1px]' : 'opacity-30 blur-[2px]'}`}
+                                                            alt=""
+                                                        />
+                                                        <div className={`absolute inset-0 bg-black/40 ${isActive ? 'bg-black/10' : ''}`} />
+                                                    </div>
+
+                                                    {/* Text Label */}
+                                                    <span className={`relative z-10 text-[11px] font-black tracking-widest transition-colors text-center px-4 ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white'}`}>
+                                                        {getShortLabel(item.name, item.relationType, i)}
+                                                    </span>
+                                                </Link>
+                                            );
+                                        })}
                                     </div>
                                 </div>
-
-                                <div
-                                    id="seasons-scroll"
-                                    className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth pb-1"
-                                >
-                                    {anime.moreSeasons.map((season: any, i: number) => {
-                                        // Some seasons might be the current one; highlight it.
-                                        const isActive = season.id === id;
-                                        const seasonTitle = getTitle(season.title);
-
-                                        // Attempt to extract season number or just use index
-                                        const displayLabel = seasonTitle.toLowerCase().includes('season')
-                                            ? (seasonTitle.match(/Season\s+\d+/i)?.[0] || seasonTitle)
-                                            : `Season ${i + 1}`;
-
-                                        return (
-                                            <Link
-                                                key={i}
-                                                href={`/watch/${season.id}`}
-                                                className={`group relative overflow-hidden rounded-xl h-[52px] min-w-[130px] md:min-w-[150px] flex items-center justify-center border-2 transition-all duration-300 shrink-0 ${isActive
-                                                    ? 'border-primary shadow-[0_0_20px_rgba(83,204,184,0.15)] scale-[1.02]'
-                                                    : 'border-white/[0.05] hover:border-white/20 active:scale-95'
-                                                    }`}
-                                            >
-                                                {/* Blurred cover background */}
-                                                <div className="absolute inset-0 z-0">
-                                                    <img
-                                                        src={season.image || anime.image}
-                                                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-125 ${isActive ? 'opacity-50 blur-[1px]' : 'opacity-30 blur-[2px]'}`}
-                                                        alt=""
-                                                    />
-                                                    <div className={`absolute inset-0 bg-black/40 ${isActive ? 'bg-black/10' : ''}`} />
-                                                </div>
-
-                                                {/* Text Label */}
-                                                <span className={`relative z-10 text-[11px] font-black tracking-widest transition-colors text-center px-4 ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white'}`}>
-                                                    {displayLabel}
-                                                </span>
-                                            </Link>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
+                            );
+                        })()}
                     </div>
                 </div>
 
