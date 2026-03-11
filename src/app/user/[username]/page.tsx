@@ -230,15 +230,42 @@ const PublicProfilePage = () => {
     }
 
     const ranks = [
-        { name: 'New', requirement: "Let's Go", minLevel: 0, icon: 'shield-check' },
-        { name: 'Angelfish', requirement: '60K ZRC', minLevel: 5, icon: 'chevron-up' },
-        { name: 'Crab', requirement: '120K ZRC', minLevel: 15, icon: 'chevrons-up' },
-        { name: 'Starfish', requirement: '180K ZRC', minLevel: 30, icon: 'chevrons-up' },
-        { name: 'Dolphin', requirement: '240K ZRC', minLevel: 50, icon: 'chevron-down' },
+        { name: 'The Casual', requirement: '10,000 XP', minXP: 0, maxXP: 10000, icon: 'shield-check' },
+        { name: 'The Seeker', requirement: '45,000 XP', minXP: 10001, maxXP: 45000, icon: 'chevron-up' },
+        { name: 'The Otaku', requirement: '100,000 XP', minXP: 45001, maxXP: 100000, icon: 'chevrons-up' },
+        { name: 'The Enthusiast', requirement: '175,000 XP', minXP: 100001, maxXP: 175000, icon: 'chevrons-up' },
+        { name: 'The Historian', requirement: '252,610 XP', minXP: 175001, maxXP: 252610, icon: 'chevron-down' },
     ];
 
-    const currentRankIndex = ranks.findIndex(r => r.name === userData.rank) || 0;
-    const progressToNext = (userData.level % 10) * 10; // Mock progress logic
+    const totalXP = (userData as any).totalXP ?? userData.power ?? 0;
+    
+    let currentRankIndex = ranks.findIndex(r => totalXP >= r.minXP && totalXP <= r.maxXP);
+    if (currentRankIndex === -1 && totalXP > 252610) currentRankIndex = ranks.length - 1; // Cap at max rank
+    if (currentRankIndex === -1) currentRankIndex = 0; // Fallback
+
+    const currentRank = ranks[currentRankIndex];
+    let progressToNext = 100;
+    
+    if (currentRankIndex < ranks.length - 1) {
+        const nextRank = ranks[currentRankIndex + 1];
+        const range = nextRank.minXP - currentRank.minXP;
+        const earnedInRank = totalXP - currentRank.minXP;
+        progressToNext = Math.max(0, Math.min(100, (earnedInRank / range) * 100));
+    } else {
+        const maxPlatformXP = 252610;
+        if (totalXP >= maxPlatformXP) {
+            progressToNext = 100;
+        } else {
+            const range = maxPlatformXP - currentRank.minXP;
+            const earnedInRank = totalXP - currentRank.minXP;
+            progressToNext = Math.min(100, Math.max(0, (earnedInRank / range) * 100));
+        }
+    }
+
+    let overallProgress = 0;
+    if (currentRankIndex > 0) {
+        overallProgress = ((currentRankIndex - 1) * 25) + ((progressToNext / 100) * 25);
+    }
 
     return (
         <div className="min-h-screen bg-[#0F1115] text-white flex flex-col">
@@ -361,15 +388,15 @@ const PublicProfilePage = () => {
             </div>
 
             {/* 2. Content Sections */}
-            <div className="max-w-[1290px] mx-auto w-full px-0 md:px-6 pt-0 pb-6 md:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
+            <div className="max-w-[1280px] mx-auto w-full px-0 md:px-6 pt-0 pb-6 md:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
                 {/* Left Side: Rank System & Watchlist */}
                 <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
 
                     {/* Horizontal Rank Progression (Precisely 720x148 for content area) */}
-                    <div className="bg-[#151821] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center">
+                    <div className="bg-[#151821] rounded-[10px] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center">
                         <div className="role-line w-full overflow-x-auto no-scrollbar">
-                            <div className="role-line-wrap flex w-[720px] h-[148px] mx-auto relative z-20">
+                            <div className="role-line-wrap flex w-[720px] h-[138px] mx-auto relative z-20">
                                 {ranks.map((rank, idx) => {
                                     const isReached = idx <= currentRankIndex;
                                     const isCurrent = idx === currentRankIndex;
@@ -377,7 +404,7 @@ const PublicProfilePage = () => {
                                     return (
                                         <div key={rank.name} className="rlw-point w-[144px] h-[148px] flex flex-col items-center justify-center relative group">
                                             {/* Rank Name */}
-                                            <span className={`text-[16px] font-black mb-1.5 transition-colors duration-500 ${isReached ? 'text-white' : 'text-white/20'}`}>
+                                            <span className={`text-[13px] font-black mb-1.5 transition-colors duration-500 ${isReached ? 'text-white' : 'text-white/20'}`}>
                                                 {rank.name}
                                             </span>
 
@@ -388,30 +415,30 @@ const PublicProfilePage = () => {
                                                         Z
                                                     </div>
                                                 )}
-                                                <span className={`text-[11px] font-bold tracking-tight transition-colors duration-500 ${isReached ? 'text-[#717282]' : 'text-white/10'}`}>
+                                                <span className={`text-[10px] font-bold tracking-tight transition-colors duration-500 ${isReached ? 'text-[#717282]' : 'text-white/10'}`}>
                                                     {rank.requirement}
                                                 </span>
                                             </div>
 
                                             {/* Icon Section */}
-                                            <div className="h-12 flex items-center justify-center">
-                                                <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 text-[#0F1115] shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
+                                            <div className="h-10 flex items-center justify-center">
+                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 text-[#0F1115] shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
                                                     isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30] text-yellow-400 border border-white/10 shadow-lg' :
                                                         'bg-[#1a1b20] text-white/5 border border-white/[0.02]'
                                                     }`}>
                                                     {rank.icon === 'shield-check' && (
-                                                        <div className={`w-6 h-6 ${!isReached ? 'opacity-10 grayscale' : 'opacity-40'}`} style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'currentColor' }} />
+                                                        <div className={`w-5 h-5 ${!isReached ? 'opacity-10 grayscale' : 'opacity-40'}`} style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'currentColor' }} />
                                                     )}
-                                                    {rank.icon === 'chevron-up' && <ChevronUp size={24} strokeWidth={4} />}
+                                                    {rank.icon === 'chevron-up' && <ChevronUp size={20} strokeWidth={4} />}
                                                     {rank.icon === 'chevrons-up' && (
-                                                        <div className="flex flex-col -space-y-3.5">
-                                                            <ChevronUp size={24} strokeWidth={4} />
-                                                            <ChevronUp size={24} strokeWidth={4} />
+                                                        <div className="flex flex-col -space-y-3">
+                                                            <ChevronUp size={20} strokeWidth={4} />
+                                                            <ChevronUp size={20} strokeWidth={4} />
                                                         </div>
                                                     )}
                                                     {rank.icon === 'chevron-down' && (
-                                                        <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-[#0F1115] shadow-inner">
-                                                            <ChevronDown size={20} strokeWidth={4} />
+                                                        <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-[#0F1115] shadow-inner">
+                                                            <ChevronDown size={14} strokeWidth={4} />
                                                         </div>
                                                     )}
                                                 </div>
@@ -429,13 +456,13 @@ const PublicProfilePage = () => {
                                 <div className="h-[2px] w-full bg-white/10 rounded-full relative">
                                     <motion.div
                                         initial={{ width: 0 }}
-                                        animate={{ width: `${(currentRankIndex / (ranks.length - 1)) * 100}%` }}
+                                        animate={{ width: `${overallProgress}%` }}
                                         className="h-full bg-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.7)]"
                                     />
 
                                     <motion.div
                                         initial={{ left: 0 }}
-                                        animate={{ left: `${(currentRankIndex / (ranks.length - 1)) * 100}%` }}
+                                        animate={{ left: `${overallProgress}%` }}
                                         className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-50"
                                     >
                                         <div className="w-11 h-11 rounded-full p-[2px] bg-[#151821] border-[2.5px] border-white shadow-2xl overflow-hidden">
