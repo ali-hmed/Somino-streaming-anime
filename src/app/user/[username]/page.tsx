@@ -90,7 +90,7 @@ const PublicProfilePage = () => {
                                     ...item,
                                     subEpisodes: info.episodes?.sub || 0,
                                     dubEpisodes: info.episodes?.dub || 0,
-                                    totalEpisodes: info.episodes?.eps || 0,
+                                    totalEpisodes: info.episodes?.eps || info.episodes?.sub || 0,
                                     type: info.type || item.type || 'TV',
                                     animeImage: item.animeImage || info.poster,
                                 };
@@ -461,26 +461,26 @@ const PublicProfilePage = () => {
                         {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).length > 0 ? (
                             <div className="space-y-10">
                                 {/* Compact Grid: exactly 5 cols = 2 rows of 5 */}
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
-                                    {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).slice(0, watchlistLimit).map((item) => (
-                                        <AnimeCard
-                                            key={item.animeId}
-                                            anime={{
-                                                id: item.animeId,
-                                                title: item.animeTitle,
-                                                poster: item.animeImage,
-                                                type: item.type || 'TV',
-                                                duration: item.duration,
-                                                status: item.status,
-                                                subEpisodes: item.subEpisodes || 0,
-                                                dubEpisodes: item.dubEpisodes || 0,
-                                                episodes: item.totalEpisodes || 0
-                                            }}
-                                            variant="portrait"
-                                            isSharp={true}
-                                        />
-                                    ))}
-                                </div>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
+                                        {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).slice(0, watchlistLimit).map((item) => (
+                                            <AnimeCard
+                                                key={item.animeId}
+                                                anime={{
+                                                    id: item.animeId,
+                                                    title: item.animeTitle,
+                                                    poster: item.animeImage,
+                                                    type: item.type || 'TV',
+                                                    duration: item.duration,
+                                                    status: item.status,
+                                                    subEpisodes: item.subEpisodes,
+                                                    dubEpisodes: item.dubEpisodes,
+                                                    totalEpisodes: item.totalEpisodes || item.episodeNumber
+                                                }}
+                                                variant="portrait"
+                                                isSharp={true}
+                                            />
+                                        ))}
+                                    </div>
 
                                 {userData.watchlist.length > watchlistLimit && (
                                     <button
