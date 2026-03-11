@@ -45,6 +45,7 @@ interface Activity {
     text: string;
     animeId?: string;
     animeTitle?: string;
+    animeImage?: string;
     episodeNumber?: number;
     createdAt: string;
 }
@@ -56,8 +57,10 @@ const PublicProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [watchlistLimit, setWatchlistLimit] = useState(10);
+    const [enrichedWatchlist, setEnrichedWatchlist] = useState<any[]>([]);
 
     const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+    const CONSUMET_API = API_URL; // same base
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -69,6 +72,42 @@ const PublicProfilePage = () => {
                 if (data.success) {
                     setUserData(data.data.user);
                     setActivities(data.data.activities);
+
+                    // Enrich watchlist with anime details (sub/dub/episodes)
+                    const watchlist = data.data.user.watchlist || [];
+                    const watchlistMap: Record<string, string> = {};
+                    watchlist.forEach((w: any) => { if (w.animeId) watchlistMap[w.animeId] = w.animeImage; });
+
+                    const enriched = await Promise.all(
+                        watchlist.map(async (item: any) => {
+                            try {
+                                const animeRes = await fetch(`${API_URL}/anime/${item.animeId}`);
+                                if (!animeRes.ok) return item;
+                                const animeData = await animeRes.json();
+                                // API returns: { success: true, data: { episodes: { sub, dub, eps }, type, poster, ... } }
+                                const info = animeData?.data || {};
+                                return {
+                                    ...item,
+                                    subEpisodes: info.episodes?.sub || 0,
+                                    dubEpisodes: info.episodes?.dub || 0,
+                                    totalEpisodes: info.episodes?.eps || 0,
+                                    type: info.type || item.type || 'TV',
+                                    animeImage: item.animeImage || info.poster,
+                                };
+                            } catch {
+                                return item;
+                            }
+                        })
+                    );
+                    setEnrichedWatchlist(enriched);
+
+                    // Enrich activities with anime images from watchlist map
+                    const enrichedActivities = (data.data.activities || []).map((act: any) => ({
+                        ...act,
+                        animeImage: act.animeId ? (watchlistMap[act.animeId] || null) : null,
+                    }));
+                    setActivities(enrichedActivities);
+                    return; // already set activities above
                 } else {
                     setError(data.message || 'User not found');
                 }
@@ -241,8 +280,8 @@ const PublicProfilePage = () => {
                             <div className="flex flex-row items-center gap-5 md:contents w-full justify-center md:w-auto">
                                 {/* Left: Avatar with Ring */}
                                 <div className="relative shrink-0 flex items-center md:min-w-[100px] justify-center md:justify-end md:pr-4">
-                                    <div className="w-[90px] h-[90px] rounded-[50%] p-1 bg-gradient-to-tr from-primary via-primary/50 to-pink-500 shadow-[0_0_15px_rgba(83,204,184,0.25)]">
-                                        <div className="w-full h-full rounded-[50%] border-[3px] border-[#161618] bg-[#1a1b20] overflow-hidden">
+                                    <div className="w-[95px] h-[95px] rounded-[50%] p-0 md:p-1 bg-none md:bg-gradient-to-tr md:from-primary md:via-primary/50 md:to-pink-500 shadow-none md:shadow-[0_0_15px_rgba(83,204,184,0.25)]">
+                                        <div className="w-full h-full rounded-[50%] border-0 md:border-[1px] md:border-[#161618] bg-[#1a1b20] overflow-hidden">
                                             {userData.avatar ? (
                                                 <img src={userData.avatar} className="w-full h-full object-cover shadow-inner" alt={userData.username} />
                                             ) : (
@@ -260,7 +299,7 @@ const PublicProfilePage = () => {
                                         <div className="hidden md:flex w-5 h-5 rounded-full bg-yellow-500/20 items-center justify-center border border-yellow-500/30">
                                             <ChevronRight size={12} className="text-yellow-500 -rotate-90" />
                                         </div>
-                                        <h1 className="text-[22px] md:text-xl font-black tracking-tight text-white uppercase drop-shadow-xl italic text-left">
+                                        <h1 className="text-[22px] md:text-xl font-black tracking-tight text-white drop-shadow-xl italic text-left">
                                             {userData.username}
                                         </h1>
                                     </div>
@@ -410,7 +449,7 @@ const PublicProfilePage = () => {
                     {/* Watch List Section (Requested: smaller cards section) */}
                     <div className="space-y-8 px-4 md:px-0">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-black uppercase tracking-tighter flex items-center gap-3 text-white/90">
+                            <h2 className="text-xl font-black tracking-tight flex items-center gap-3 text-white/90">
                                 <Grid className="text-primary" />
                                 Watch List
                             </h2>
@@ -419,11 +458,11 @@ const PublicProfilePage = () => {
                             </span>
                         </div>
 
-                        {userData.watchlist.length > 0 ? (
+                        {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).length > 0 ? (
                             <div className="space-y-10">
-                                {/* Compact Grid (Requested: smaller cards) */}
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-x-3 gap-y-7">
-                                    {userData.watchlist.slice(0, watchlistLimit).map((item) => (
+                                {/* Compact Grid: exactly 5 cols = 2 rows of 5 */}
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
+                                    {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).slice(0, watchlistLimit).map((item) => (
                                         <AnimeCard
                                             key={item.animeId}
                                             anime={{
@@ -432,7 +471,10 @@ const PublicProfilePage = () => {
                                                 poster: item.animeImage,
                                                 type: item.type || 'TV',
                                                 duration: item.duration,
-                                                status: item.status
+                                                status: item.status,
+                                                subEpisodes: item.subEpisodes || 0,
+                                                dubEpisodes: item.dubEpisodes || 0,
+                                                episodes: item.totalEpisodes || 0
                                             }}
                                             variant="portrait"
                                             isSharp={true}
@@ -461,52 +503,62 @@ const PublicProfilePage = () => {
 
                 {/* Right Side: Activity Sidebar Section */}
                 <div className="lg:col-span-4 space-y-8 px-4 md:px-0">
-                    <div className="sticky top-28 space-y-8">
-                        <div className="bg-[#1e1e22]/50 border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl">
-                            <div className="px-8 py-6 border-b border-white/5 flex items-center gap-4 bg-white/[0.01]">
-                                <History size={20} className="text-primary" />
-                                <h3 className="text-[14px] font-black uppercase tracking-widest">Latest Activities</h3>
-                            </div>
+                    <div className="space-y-6">
 
-                            <div className="divide-y divide-white/5">
-                                {activities.length > 0 ? (
-                                    activities.map((activity: Activity) => (
-                                        <div key={activity._id} className="p-6 flex gap-4 group hover:bg-white/[0.02] transition-all">
-                                            <div className="shrink-0 w-9 h-9 rounded-full bg-[#1a1b20] border border-white/10 flex items-center justify-center shadow-inner group-hover:border-primary/30 transition-colors">
-                                                {activity.activityType === 'comment' && <MessageSquare size={16} className="text-blue-400" />}
-                                                {activity.activityType === 'reply' && <Reply size={16} className="text-green-400" />}
-                                                {activity.activityType === 'like' && <ThumbsUp size={16} className="text-pink-400" />}
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <div className="flex items-center gap-2 mb-1.5">
-                                                    <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-[3px] ${activity.activityType === 'comment' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                                                        activity.activityType === 'reply' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                                                            'bg-pink-500/10 text-pink-400 border border-pink-500/20'
-                                                        }`}>
-                                                        {activity.activityType}
-                                                    </span>
-                                                    {activity.animeTitle && (
-                                                        <span className="text-[10px] font-bold text-white/30 truncate">
-                                                            on {activity.animeTitle} {activity.episodeNumber ? `Ep ${activity.episodeNumber}` : ''}
-                                                        </span>
-                                                    )}
+                        {/* HiAnime-style title: left accent bar + title */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-1 self-stretch bg-primary rounded-full" />
+                            <h3 className="text-[18px] font-black text-white">Latest Activities</h3>
+                        </div>
+
+                        {/* Activity List — no card, no bg, HiAnime style with anime image */}
+                        <div className="flex flex-col gap-5">
+                            {activities.length > 0 ? (
+                                activities.map((activity: Activity) => (
+                                    <div key={activity._id} className="flex gap-3 group">
+                                        {/* Anime poster thumbnail (like HiAnime) */}
+                                        <div className="shrink-0 w-[52px] h-[68px] rounded-[4px] overflow-hidden bg-white/5 border border-white/[0.06]">
+                                            {activity.animeImage ? (
+                                                <img
+                                                    src={activity.animeImage}
+                                                    alt={activity.animeTitle || ''}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    {activity.activityType === 'comment' && <MessageSquare size={16} className="text-blue-400/50" />}
+                                                    {activity.activityType === 'reply' && <Reply size={16} className="text-green-400/50" />}
+                                                    {activity.activityType === 'like' && <ThumbsUp size={16} className="text-pink-400/50" />}
                                                 </div>
-                                                <p className="text-[12px] text-white/70 leading-relaxed mb-2 group-hover:text-white transition-colors line-clamp-2 italic">
-                                                    "{activity.text}"
-                                                </p>
-                                                <div className="flex items-center gap-2 text-[10px] font-bold text-white/20 uppercase tracking-widest">
-                                                    <span>{timeAgo(activity.createdAt)}</span>
-                                                </div>
-                                            </div>
+                                            )}
                                         </div>
-                                    ))
-                                ) : (
-                                    <div className="p-16 text-center opacity-10">
-                                        <History size={40} className="mx-auto mb-4" />
-                                        <p className="text-[10px] uppercase font-black tracking-widest">No Recent Activity</p>
+
+                                        {/* Content */}
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-1.5 mb-1 text-[11px] text-white/30 font-medium">
+                                                <MessageSquare size={10} className="shrink-0" />
+                                                <span>{timeAgo(activity.createdAt)}</span>
+                                            </div>
+                                            <p className="text-[13px] text-white/80 leading-snug group-hover:text-white transition-colors">
+                                                <span className="font-bold text-white">
+                                                    {activity.activityType === 'comment' ? 'commented' : activity.activityType === 'reply' ? 'replied' : 'liked'}
+                                                </span>
+                                                {activity.animeTitle && (
+                                                    <> on Anime <span className="text-primary font-semibold">{activity.animeTitle}</span>
+                                                        {activity.episodeNumber ? ` Ep ${activity.episodeNumber}` : ''}
+                                                    </>
+                                                )}
+                                            </p>
+
+                                        </div>
                                     </div>
-                                )}
-                            </div>
+                                ))
+                            ) : (
+                                <div className="py-10 text-center opacity-20">
+                                    <History size={36} className="mx-auto mb-3" />
+                                    <p className="text-[11px] font-black tracking-widest">No Recent Activity</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
