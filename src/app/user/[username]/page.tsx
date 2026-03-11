@@ -82,20 +82,27 @@ const PublicProfilePage = () => {
                         watchlist.map(async (item: any) => {
                             try {
                                 const animeRes = await fetch(`${API_URL}/anime/${item.animeId}`);
-                                if (!animeRes.ok) return item;
+                                if (!animeRes.ok) return {
+                                    ...item,
+                                    subEpisodes: item.episodeNumber || 0,
+                                    totalEpisodes: item.episodeNumber || 0
+                                };
                                 const animeData = await animeRes.json();
-                                // API returns: { success: true, data: { episodes: { sub, dub, eps }, type, poster, ... } }
                                 const info = animeData?.data || {};
                                 return {
                                     ...item,
-                                    subEpisodes: info.episodes?.sub || 0,
+                                    subEpisodes: info.episodes?.sub || item.episodeNumber || 0,
                                     dubEpisodes: info.episodes?.dub || 0,
-                                    totalEpisodes: info.episodes?.eps || info.episodes?.sub || 0,
+                                    totalEpisodes: info.episodes?.eps || info.episodes?.sub || item.episodeNumber || 0,
                                     type: info.type || item.type || 'TV',
                                     animeImage: item.animeImage || info.poster,
                                 };
                             } catch {
-                                return item;
+                                return {
+                                    ...item,
+                                    subEpisodes: item.episodeNumber || 0,
+                                    totalEpisodes: item.episodeNumber || 0
+                                };
                             }
                         })
                     );
@@ -460,7 +467,7 @@ const PublicProfilePage = () => {
 
                         {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).length > 0 ? (
                             <div className="space-y-10">
-                                {/* Compact Grid: exactly 5 cols = 2 rows of 5 */}
+                                {/* Compact Grid: 2 columns on mobile, exactly 5 columns on desktop (2x5 layout) */}
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
                                     {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).slice(0, watchlistLimit).map((item) => (
                                         <AnimeCard
@@ -474,6 +481,7 @@ const PublicProfilePage = () => {
                                                 status: item.status,
                                                 subEpisodes: item.subEpisodes,
                                                 dubEpisodes: item.dubEpisodes,
+                                                episodeNumber: item.episodeNumber,
                                                 totalEpisodes: item.totalEpisodes || item.episodeNumber
                                             }}
                                             variant="portrait"

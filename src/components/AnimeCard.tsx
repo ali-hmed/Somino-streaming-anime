@@ -37,7 +37,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
         ? availableEpisodes
         : (plannedEpisodes || anime.episodeNumber || 0);
 
-    const subCount = anime.subEpisodes || displayEpisodes;
+    const subCount = anime.subEpisodes || displayEpisodes || anime.episodeNumber || 0;
     const dubCount = anime.dubEpisodes || 0;
 
     const currentEpisodeNum = anime.episodeNumber || (availableEpisodes && Math.floor(availableEpisodes * 0.4)) || 1;
@@ -186,19 +186,19 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                         {title}
                     </h3>
 
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
+                    <div className="flex items-center justify-between gap-1 overflow-hidden">
+                        <div className="flex items-center gap-1 min-w-0">
                             {!isUpcoming && (
                                 <>
                                     {subCount > 0 && (
-                                        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 border border-[#FF6E9F]/30 text-[9px] font-black text-[#FF6E9F] items-center">
-                                            <MessageSquare size={9} fill="currentColor" />
+                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 border border-[#FF6E9F]/30 text-[9px] font-black text-[#FF6E9F] shrink-0">
+                                            <MessageSquare size={8} fill="currentColor" />
                                             {subCount}
                                         </div>
                                     )}
                                     {dubCount > 0 && (
-                                        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-[#53CCB8]/10 border border-[#53CCB8]/30 text-[9px] font-black text-[#53CCB8] items-center">
-                                            <Mic size={9} fill="currentColor" />
+                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#53CCB8]/10 border border-[#53CCB8]/30 text-[9px] font-black text-[#53CCB8] shrink-0">
+                                            <Mic size={8} fill="currentColor" />
                                             {dubCount}
                                         </div>
                                     )}
@@ -212,7 +212,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <span className="px-1.5 py-0.5 rounded-[2px] bg-white/[0.03] border border-white/5 text-white/20 text-[8px] font-black tracking-tighter">{anime.type || 'tv'}</span>
+                            <span className="px-1.5 py-0.5 rounded-[2px] bg-white/5 border border-white/10 text-white/50 text-[8px] font-black uppercase tracking-wider">{anime.type || 'tv'}</span>
                         </div>
                     </div>
                 </div>
