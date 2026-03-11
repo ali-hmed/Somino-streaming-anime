@@ -10,7 +10,11 @@ import { getTitle } from '@/types/anime';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
 
-const Navbar = () => {
+interface NavbarProps {
+    className?: string;
+}
+
+const Navbar = ({ className }: NavbarProps) => {
     const [query, setQuery] = useState('');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -168,7 +172,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className={`absolute top-0 w-full z-[100] border-none shadow-none outline-none py-6 bg-gradient-to-b from-black/60 via-black/20 to-transparent`}>
+            <nav className={`absolute top-0 w-full z-[100] border-none shadow-none outline-none py-6 bg-gradient-to-b from-black/60 via-black/20 to-transparent ${className || ''}`}>
                 <div className="container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
                     {/* Left Section: Menu (Mobile) + Logo */}
                     <div className="flex items-center gap-2 md:gap-4 h-full">

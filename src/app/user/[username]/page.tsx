@@ -16,7 +16,10 @@ import {
     ShieldCheck,
     History,
     Grid,
-    Clock
+    Clock,
+    ChevronUp,
+    ChevronsUp,
+    ChevronDown
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
@@ -82,8 +85,83 @@ const PublicProfilePage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#161618] flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <div className="min-h-screen bg-[#161618] text-white flex flex-col">
+                <Navbar className="bg-[#161618]/50 backdrop-blur-md !py-2 md:!py-3" />
+
+                {/* Hero Skeleton */}
+                <div className="relative w-full overflow-hidden h-[66vh]">
+                    <div className="absolute inset-0 bg-[#1a1b20] animate-pulse" />
+                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#161618] to-transparent z-[3]" />
+                    <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
+                        <div className="w-full px-4">
+                            <div className="w-full max-w-[896px] h-auto md:h-[142px] mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
+                                <div className="flex flex-row items-center gap-5 md:contents w-full justify-center md:w-auto">
+                                    {/* Left: Avatar Skeleton */}
+                                    <div className="relative shrink-0 flex items-center md:min-w-[100px] justify-center md:justify-end md:pr-4">
+                                        <div className="w-[90px] h-[90px] rounded-[50%] bg-white/5 animate-pulse" />
+                                    </div>
+
+                                    {/* Center: Info Column Skeleton */}
+                                    <div className="flex flex-col items-start justify-center space-y-3 md:space-y-4 w-auto md:w-[200px]">
+                                        <div className="flex items-center gap-2">
+                                            <div className="hidden md:flex w-5 h-5 rounded-full bg-white/5 animate-pulse" />
+                                            <div className="h-6 w-32 bg-white/5 rounded-md animate-pulse" />
+                                        </div>
+                                        <div className="flex flex-col items-start gap-2 md:gap-3">
+                                            <div className="h-4 w-16 bg-white/5 rounded-[3px] animate-pulse" />
+                                            <div className="h-3 w-24 bg-white/5 rounded-md animate-pulse" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right: Stats Column Skeleton */}
+                                <div className="shrink-0 w-full md:w-[240px] flex flex-col items-center md:items-start justify-center space-y-4 md:space-y-5 pt-4 md:pt-0 border-t border-white/5 md:border-transparent">
+                                    <div className="flex items-center justify-center md:justify-start gap-3">
+                                        <div className="h-5 w-16 bg-white/5 rounded-md animate-pulse" />
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-5 h-5 rounded-full bg-white/5 animate-pulse" />
+                                            <div className="h-6 w-12 bg-white/5 rounded-md animate-pulse" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3 flex flex-col items-center md:items-start w-full">
+                                        <div className="flex items-center justify-center md:justify-start gap-3 w-full">
+                                            <div className="h-[5px] w-[120px] bg-white/5 rounded-full animate-pulse" />
+                                            <div className="h-3 w-8 bg-white/5 rounded-md animate-pulse" />
+                                        </div>
+                                        <div className="h-2 w-20 bg-white/5 rounded-md animate-pulse" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content Sections Skeleton */}
+                <div className="max-w-[1290px] mx-auto w-full px-0 md:px-6 pt-0 pb-6 md:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
+                    {/* Left Side: Rank System & Watchlist */}
+                    <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
+                        {/* Rank Progression Skeleton */}
+                        <div className="bg-[#1f2029] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center pt-10 pb-14 h-[280px] animate-pulse" />
+
+                        {/* Watch List Section Skeleton */}
+                        <div className="space-y-8 px-4 md:px-0">
+                            <div className="flex items-center justify-between">
+                                <div className="h-6 w-32 bg-white/5 rounded-md animate-pulse" />
+                                <div className="h-6 w-20 bg-white/5 rounded-full animate-pulse" />
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-x-3 gap-y-7">
+                                {[...Array(14)].map((_, i) => (
+                                    <div key={i} className="aspect-[3/4] bg-white/5 rounded-xl animate-pulse" />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Side: Activity Sidebar Section */}
+                    <div className="lg:col-span-4 space-y-8 px-4 md:px-0">
+                        <div className="bg-[#1e1e22]/50 border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl h-[500px] animate-pulse" />
+                    </div>
+                </div>
             </div>
         );
     }
@@ -106,11 +184,11 @@ const PublicProfilePage = () => {
     }
 
     const ranks = [
-        { name: 'New', icon: '🐟', minLevel: 1 },
-        { name: 'Angelfish', icon: '🐠', minLevel: 5 },
-        { name: 'Crab', icon: '🦀', minLevel: 15 },
-        { name: 'Starfish', icon: '⭐', minLevel: 30 },
-        { name: 'Dolphin', icon: '🐬', minLevel: 50 },
+        { name: 'New', requirement: "Let's Go", minLevel: 0, icon: 'shield-check' },
+        { name: 'Angelfish', requirement: '60K ZRC', minLevel: 5, icon: 'chevron-up' },
+        { name: 'Crab', requirement: '120K ZRC', minLevel: 15, icon: 'chevrons-up' },
+        { name: 'Starfish', requirement: '180K ZRC', minLevel: 30, icon: 'chevrons-up' },
+        { name: 'Dolphin', requirement: '240K ZRC', minLevel: 50, icon: 'chevron-down' },
     ];
 
     const currentRankIndex = ranks.findIndex(r => r.name === userData.rank) || 0;
@@ -118,171 +196,233 @@ const PublicProfilePage = () => {
 
     return (
         <div className="min-h-screen bg-[#161618] text-white flex flex-col">
-            <Navbar />
+            <Navbar className="bg-[#161618]/50 backdrop-blur-md !py-2 md:!py-3" />
 
             {/* 1. Profile Hero Section */}
-            <div className="relative w-full overflow-hidden h-[45vh] md:h-[55vh]">
+            <div className="relative w-full overflow-hidden h-[66vh]">
                 {/* Background Hero Image with Layers */}
                 <div className="absolute inset-0">
-                    {/* Blurred ambient bg */}
+                    {/* Banner-style Hero Background (Requested: like banner, fill the space) */}
                     <div
-                        className="absolute inset-0 scale-110"
+                        className="absolute inset-0"
                         style={{
                             backgroundImage: `url(${userData.banner || userData.avatar || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop'})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            filter: 'blur(50px) brightness(0.15)',
+                            backgroundSize: 'cover', // Fills the banner area completely
+                            backgroundPosition: 'center 30%', // Focused slightly higher for better framing
+                            filter: 'brightness(0.6) blur(7px)', // Added a subtle blur as requested
                         }}
                     />
 
-                    {/* Main Banner Image */}
+                    {/* Dotted Pattern Overlay with Backdrop Blur (Requested: points as blur to hide image) */}
                     <div
-                        className="absolute inset-0 opacity-40 md:opacity-60"
+                        className="absolute inset-0 z-[2] opacity-[0.75]"
                         style={{
-                            backgroundImage: `url(${userData.banner || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop'})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
+                            backgroundImage: 'radial-gradient(rgba(46, 46, 46, 0.55) 0.8px, transparent 0)',
+                            backgroundSize: '5px 5px',
+                            backdropFilter: 'blur(25px)',
+                            WebkitBackdropFilter: 'blur(25px)',
                         }}
                     />
 
                     {/* Gradients like HeroCarousel & Globals.css */}
-                    <div className="absolute inset-0 hero-bottom-gradient" />
-                    <div className="absolute inset-0 hero-gradient" />
-                    <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[#161618] to-transparent" />
+                    {/* Deep Bottom Fade (Requested: connect to below seamlessly) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#161618] via-[#161618]/40 to-transparent z-[2]" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#161618]/40 via-transparent to-[#161618]/40 z-[1]" />
                 </div>
+                {/* Top/Bottom Edge Smoothing */}
+                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#161618] to-transparent z-[3]" />
+                <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[#161618] to-transparent z-[3]" />
 
-                {/* Profile Info Content Overlay */}
-                <div className="relative z-10 h-full flex items-end pb-8 md:pb-12">
-                    <div className="max-w-[1550px] mx-auto w-full px-4 md:px-12 flex flex-col items-center md:items-start md:flex-row gap-6 md:gap-8">
-                        {/* Avatar */}
-                        <div className="relative group shrink-0">
-                            <div className="w-32 h-32 md:w-44 md:h-44 rounded-full border-4 border-[#161618] bg-[#1a1b20] overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-105">
-                                {userData.avatar ? (
-                                    <img src={userData.avatar} className="w-full h-full object-cover" alt={userData.username} />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                        <span className="text-4xl font-black text-white/5 uppercase">{userData.username[0]}</span>
+                {/* Profile Info Content Overlay (Requested: two-column design style) */}
+                <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
+                    <div className="w-full px-4">
+                        <div className="w-full max-w-[896px] h-auto md:h-[142px] mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
+                            
+                            <div className="flex flex-row items-center gap-5 md:contents w-full justify-center md:w-auto">
+                                {/* Left: Avatar with Ring */}
+                                <div className="relative shrink-0 flex items-center md:min-w-[100px] justify-center md:justify-end md:pr-4">
+                                    <div className="w-[90px] h-[90px] rounded-[50%] p-1 bg-gradient-to-tr from-primary via-primary/50 to-pink-500 shadow-[0_0_15px_rgba(83,204,184,0.25)]">
+                                        <div className="w-full h-full rounded-[50%] border-[3px] border-[#161618] bg-[#1a1b20] overflow-hidden">
+                                            {userData.avatar ? (
+                                                <img src={userData.avatar} className="w-full h-full object-cover shadow-inner" alt={userData.username} />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center rounded-[50%]">
+                                                    <span className="text-3xl font-black text-white/5 uppercase">{userData.username[0]}</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                            <div className="absolute bottom-2 right-2 w-8 h-8 md:w-10 md:h-10 bg-primary rounded-full border-4 border-[#161618] flex items-center justify-center shadow-lg">
-                                <Zap size={16} className="text-[#161618] fill-current" />
-                            </div>
-                        </div>
+                                </div>
 
-                        {/* Stats & Name */}
-                        <div className="flex-1 text-center md:text-left md:pb-4">
-                            <div className="flex flex-col md:flex-row items-center gap-3 mb-3">
-                                <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-white drop-shadow-2xl">
-                                    {userData.username}
-                                </h1>
-                                {userData.role !== 'user' && (
-                                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-lg ${userData.role === 'admin' ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-primary/10 border-primary/20 text-primary'
-                                        }`}>
-                                        {userData.role === 'admin' ? <ShieldCheck size={12} /> : <CheckCircle2 size={12} />}
-                                        {userData.role}
+                                {/* Center: Info Column */}
+                                <div className="flex flex-col items-start justify-center space-y-1.5 md:space-y-4 w-auto md:w-[200px]">
+                                    <div className="flex items-center gap-2">
+                                        <div className="hidden md:flex w-5 h-5 rounded-full bg-yellow-500/20 items-center justify-center border border-yellow-500/30">
+                                            <ChevronRight size={12} className="text-yellow-500 -rotate-90" />
+                                        </div>
+                                        <h1 className="text-[22px] md:text-xl font-black tracking-tight text-white uppercase drop-shadow-xl italic text-left">
+                                            {userData.username}
+                                        </h1>
                                     </div>
-                                )}
-                            </div>
 
-                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 text-white/60 text-[12px] font-bold tracking-wide">
-                                <div className="flex items-center gap-2">
-                                    <Calendar size={14} className="text-primary" />
-                                    <span>Joined {new Date(userData.createdAt).toLocaleDateString()}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Award size={14} className="text-primary" />
-                                    <span>Level {userData.level}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <TrendingUp size={14} className="text-primary" />
-                                    <span>{userData.power} Power</span>
+                                    <div className="flex flex-col items-start gap-1.5 md:gap-3">
+                                        {/* Styled Role Badge */}
+                                        <div className="inline-block px-1.5 py-[1px] rounded-[3px] border border-white/50 text-[10px] md:text-[8px] font-bold uppercase tracking-wider text-white bg-transparent leading-none">
+                                            {userData.role?.toLowerCase() === 'user' || !userData.role ? 'MEMBER' : userData.role.toUpperCase()}
+                                        </div>
+
+                                        <div className="text-[12px] font-bold text-[#717282] tracking-tight text-left">
+                                            Joined: {new Date(userData.createdAt).toISOString().split('T')[0]}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Level Progress Bar (Small) */}
-                            <div className="mt-5 max-w-xs mx-auto md:mx-0">
-                                <div className="flex items-center justify-between mb-2 text-[10px] font-black uppercase tracking-widest text-white/30">
-                                    <span>Rank Progress</span>
-                                    <span className="text-primary">{progressToNext}%</span>
+                            {/* Right: Stats Column */}
+                            <div className="shrink-0 w-full md:w-[240px] flex flex-col items-center md:items-start justify-center space-y-4 md:space-y-5 pt-4 md:pt-0 border-t border-white/5 md:border-transparent">
+                                {/* Power Display */}
+                                <div className="flex items-center justify-center md:justify-start gap-3">
+                                    <span className="text-sm md:text-base font-bold uppercase tracking-tight text-white/90">Power:</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-black text-primary border border-white/10 shadow-lg">Z</div>
+                                        <span className="text-xl font-black text-white tracking-tighter shadow-sm">
+                                            {userData.power >= 1000 ? `${(userData.power / 1000).toFixed(0)}K` : userData.power}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${progressToNext}%` }}
-                                        className="h-full bg-primary shadow-[0_0_10px_rgba(83,204,184,0.5)]"
-                                    />
+
+                                {/* Sub-Stats / Earning link */}
+                                <div className="space-y-3 flex flex-col items-center md:items-start">
+                                    <div className="flex items-center justify-center md:justify-start gap-3">
+                                        <div className="h-[5px] w-[120px] bg-white/5 rounded-full overflow-hidden border border-white/[0.03]">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${progressToNext}%` }}
+                                                className="h-full bg-white opacity-90 shadow-[0_0_10px_white] rounded-full"
+                                            />
+                                        </div>
+                                        <span className="text-[11px] font-black text-white/70 min-w-[40px] text-right md:text-left">{progressToNext.toFixed(2)}%</span>
+                                    </div>
+                                    <button className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40 hover:text-primary transition-colors block text-center md:text-left w-full md:w-auto mt-1 md:mt-0">
+                                        Earning History
+                                    </button>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* 2. Content Sections */}
-            <div className="max-w-[1550px] mx-auto w-full px-4 md:px-12 py-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="max-w-[1290px] mx-auto w-full px-0 md:px-6 pt-0 pb-6 md:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
-                {/* Left Side: Rank & Watchlist */}
-                <div className="lg:col-span-8 space-y-12">
+                {/* Left Side: Rank System & Watchlist */}
+                <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
 
-                    {/* Rank System Section */}
-                    <div className="bg-[#1e1e22] border border-white/[0.02] rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
-                            <Award size={120} />
-                        </div>
-                        <h2 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-3">
-                            <Award className="text-primary" />
-                            Rank Progression
-                        </h2>
-
-                        <div className="relative py-4">
-                            {/* Horizontal Line */}
-                            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -translate-y-1/2" />
-                            <div className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 transition-all duration-1000"
-                                style={{ width: `${(currentRankIndex / (ranks.length - 1)) * 100}%` }}
-                            />
-
-                            <div className="relative flex justify-between items-center">
+                    {/* Horizontal Rank Progression (Precisely 720x148 for content area) */}
+                    <div className="bg-[#1f2029] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center">
+                        <div className="role-line w-full overflow-x-auto no-scrollbar">
+                            <div className="role-line-wrap flex w-[720px] h-[148px] mx-auto relative z-20">
                                 {ranks.map((rank, idx) => {
-                                    const isActive = idx <= currentRankIndex;
+                                    const isReached = idx <= currentRankIndex;
                                     const isCurrent = idx === currentRankIndex;
 
                                     return (
-                                        <div key={rank.name} className="flex flex-col items-center gap-3">
-                                            <div className={`w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center text-xl md:text-2xl z-10 transition-all duration-500 ${isCurrent ? 'bg-primary scale-110 shadow-[0_0_20px_rgba(83,204,184,0.4)] text-[#161618]' :
-                                                isActive ? 'bg-[#1a1b20] border-2 border-primary/50 text-white' :
-                                                    'bg-[#1a1b20] border-2 border-white/5 text-white/10'
-                                                }`}>
-                                                {rank.icon}
-                                            </div>
-                                            <span className={`text-[9px] md:text-[11px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' :
-                                                isActive ? 'text-white/60' :
-                                                    'text-white/10'
-                                                }`}>
+                                        <div key={rank.name} className="rlw-point w-[144px] h-[148px] flex flex-col items-center justify-center relative group">
+                                            {/* Rank Name */}
+                                            <span className={`text-[16px] font-black mb-1.5 transition-colors duration-500 ${isReached ? 'text-white' : 'text-white/20'}`}>
                                                 {rank.name}
                                             </span>
+
+                                            {/* Requirement with Z Icon */}
+                                            <div className="flex items-center gap-1.5 mb-4">
+                                                {idx > 0 && (
+                                                    <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black border ${isReached ? 'bg-[#717282] border-white/20 text-white' : 'bg-white/5 border-white/5 text-white/5'}`}>
+                                                        Z
+                                                    </div>
+                                                )}
+                                                <span className={`text-[11px] font-bold tracking-tight transition-colors duration-500 ${isReached ? 'text-[#717282]' : 'text-white/10'}`}>
+                                                    {rank.requirement}
+                                                </span>
+                                            </div>
+
+                                            {/* Icon Section */}
+                                            <div className="h-12 flex items-center justify-center">
+                                                <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 text-[#161618] shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
+                                                    isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30] text-yellow-400 border border-white/10 shadow-lg' :
+                                                        'bg-[#1a1b20] text-white/5 border border-white/[0.02]'
+                                                    }`}>
+                                                    {rank.icon === 'shield-check' && (
+                                                        <div className={`w-6 h-6 ${!isReached ? 'opacity-10 grayscale' : 'opacity-40'}`} style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'currentColor' }} />
+                                                    )}
+                                                    {rank.icon === 'chevron-up' && <ChevronUp size={24} strokeWidth={4} />}
+                                                    {rank.icon === 'chevrons-up' && (
+                                                        <div className="flex flex-col -space-y-3.5">
+                                                            <ChevronUp size={24} strokeWidth={4} />
+                                                            <ChevronUp size={24} strokeWidth={4} />
+                                                        </div>
+                                                    )}
+                                                    {rank.icon === 'chevron-down' && (
+                                                        <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-[#161618] shadow-inner">
+                                                            <ChevronDown size={20} strokeWidth={4} />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Vertical Dash Line */}
+                                            <div className="absolute top-[108px] h-10 w-[1px] border-r border-dashed border-white/[0.15]" />
                                         </div>
                                     );
                                 })}
                             </div>
+
+                            {/* Bottom Progress Bar Section (Positioned for no extra padding) */}
+                            <div className="role-line-load w-[720px] mx-auto relative h-12 z-40 px-[72px] flex items-center">
+                                <div className="h-[2px] w-full bg-white/10 rounded-full relative">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${(currentRankIndex / (ranks.length - 1)) * 100}%` }}
+                                        className="h-full bg-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.7)]"
+                                    />
+
+                                    <motion.div
+                                        initial={{ left: 0 }}
+                                        animate={{ left: `${(currentRankIndex / (ranks.length - 1)) * 100}%` }}
+                                        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-50"
+                                    >
+                                        <div className="w-11 h-11 rounded-full p-[2px] bg-[#1f2029] border-[2.5px] border-white shadow-2xl overflow-hidden">
+                                            <div className="w-full h-full rounded-full border border-yellow-400 overflow-hidden">
+                                                <img
+                                                    src={userData.avatar || 'https://via.placeholder.com/150'}
+                                                    className="w-full h-full object-cover"
+                                                    alt="Progress"
+                                                />
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Watch List Grid */}
-                    <div className="space-y-6">
+                    {/* Watch List Section (Requested: smaller cards section) */}
+                    <div className="space-y-8 px-4 md:px-0">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-black uppercase tracking-tighter flex items-center gap-3">
+                            <h2 className="text-xl font-black uppercase tracking-tighter flex items-center gap-3 text-white/90">
                                 <Grid className="text-primary" />
                                 Watch List
                             </h2>
-                            <div className="text-[10px] font-black text-white/20 uppercase tracking-widest">
-                                {userData.watchlist.length} Total
-                            </div>
+                            <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-white/40 uppercase tracking-widest">
+                                {userData.watchlist.length} Title{userData.watchlist.length !== 1 ? 's' : ''}
+                            </span>
                         </div>
 
                         {userData.watchlist.length > 0 ? (
-                            <>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                            <div className="space-y-10">
+                                {/* Compact Grid (Requested: smaller cards) */}
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-x-3 gap-y-7">
                                     {userData.watchlist.slice(0, watchlistLimit).map((item) => (
                                         <AnimeCard
                                             key={item.animeId}
@@ -303,54 +443,67 @@ const PublicProfilePage = () => {
                                 {userData.watchlist.length > watchlistLimit && (
                                     <button
                                         onClick={() => setWatchlistLimit(prev => prev + 10)}
-                                        className="w-full py-4 bg-[#1e1e22] border border-white/[0.05] rounded-xl text-[11px] font-black uppercase tracking-[0.2em] text-white/40 hover:text-white hover:bg-white/[0.02] transition-all flex items-center justify-center gap-2 group"
+                                        className="w-full py-5 bg-[#1e1e22]/50 border border-white/5 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#1e1e22] transition-all flex items-center justify-center gap-3 group"
                                     >
-                                        View More
-                                        <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                        View All List Items
+                                        <ChevronRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
                                     </button>
                                 )}
-                            </>
+                            </div>
                         ) : (
-                            <div className="bg-[#1e1e22]/50 border-2 border-dashed border-white/[0.02] rounded-2xl py-16 flex flex-col items-center justify-center opacity-20">
+                            <div className="bg-[#1e1e22]/30 border border-white/5 rounded-[2rem] py-20 flex flex-col items-center justify-center opacity-25">
                                 <Clock size={48} className="mb-4" />
-                                <span className="font-bold uppercase tracking-widest text-sm">Watchlist is empty</span>
+                                <span className="font-bold uppercase tracking-widest text-sm">List is currently empty</span>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Right Side: Activity Sidebar */}
-                <div className="lg:col-span-4 space-y-8">
+                {/* Right Side: Activity Sidebar Section */}
+                <div className="lg:col-span-4 space-y-8 px-4 md:px-0">
                     <div className="sticky top-28 space-y-8">
-                        <div className="bg-[#1e1e22] border border-white/[0.02] rounded-2xl overflow-hidden shadow-2xl">
-                            <div className="px-6 py-5 border-b border-white/[0.02] flex items-center gap-3">
-                                <History size={18} className="text-primary" />
+                        <div className="bg-[#1e1e22]/50 border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl">
+                            <div className="px-8 py-6 border-b border-white/5 flex items-center gap-4 bg-white/[0.01]">
+                                <History size={20} className="text-primary" />
                                 <h3 className="text-[14px] font-black uppercase tracking-widest">Latest Activities</h3>
                             </div>
 
-                            <div className="divide-y divide-white/[0.02]">
+                            <div className="divide-y divide-white/5">
                                 {activities.length > 0 ? (
-                                    activities.map((activity) => (
-                                        <div key={activity._id} className="p-5 flex gap-4 group hover:bg-white/[0.01] transition-colors">
-                                            <div className="shrink-0 w-8 h-8 rounded-full bg-[#1a1b20] border border-white/5 flex items-center justify-center">
-                                                {activity.activityType === 'comment' && <MessageSquare size={14} className="text-blue-400" />}
-                                                {activity.activityType === 'reply' && <Reply size={14} className="text-green-400" />}
-                                                {activity.activityType === 'like' && <ThumbsUp size={14} className="text-pink-400" />}
+                                    activities.map((activity: Activity) => (
+                                        <div key={activity._id} className="p-6 flex gap-4 group hover:bg-white/[0.02] transition-all">
+                                            <div className="shrink-0 w-9 h-9 rounded-full bg-[#1a1b20] border border-white/10 flex items-center justify-center shadow-inner group-hover:border-primary/30 transition-colors">
+                                                {activity.activityType === 'comment' && <MessageSquare size={16} className="text-blue-400" />}
+                                                {activity.activityType === 'reply' && <Reply size={16} className="text-green-400" />}
+                                                {activity.activityType === 'like' && <ThumbsUp size={16} className="text-pink-400" />}
                                             </div>
-                                            <div className="min-w-0">
-                                                <p className="text-[12px] text-white/70 leading-relaxed mb-1.5 group-hover:text-white transition-colors">
-                                                    {activity.text}
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex items-center gap-2 mb-1.5">
+                                                    <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-[3px] ${activity.activityType === 'comment' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                                                        activity.activityType === 'reply' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                                            'bg-pink-500/10 text-pink-400 border border-pink-500/20'
+                                                        }`}>
+                                                        {activity.activityType}
+                                                    </span>
+                                                    {activity.animeTitle && (
+                                                        <span className="text-[10px] font-bold text-white/30 truncate">
+                                                            on {activity.animeTitle} {activity.episodeNumber ? `Ep ${activity.episodeNumber}` : ''}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-[12px] text-white/70 leading-relaxed mb-2 group-hover:text-white transition-colors line-clamp-2 italic">
+                                                    "{activity.text}"
                                                 </p>
-                                                <div className="flex items-center gap-2 text-[10px] font-bold text-white/20">
+                                                <div className="flex items-center gap-2 text-[10px] font-bold text-white/20 uppercase tracking-widest">
                                                     <span>{timeAgo(activity.createdAt)}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="p-12 text-center opacity-10">
-                                        <History size={32} className="mx-auto mb-3" />
-                                        <p className="text-[10px] uppercase font-black tracking-widest">No activity</p>
+                                    <div className="p-16 text-center opacity-10">
+                                        <History size={40} className="mx-auto mb-4" />
+                                        <p className="text-[10px] uppercase font-black tracking-widest">No Recent Activity</p>
                                     </div>
                                 )}
                             </div>

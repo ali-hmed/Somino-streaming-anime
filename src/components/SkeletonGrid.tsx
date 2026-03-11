@@ -2,9 +2,9 @@ import React from 'react';
 
 const SkeletonCard = () => (
     <div className="flex flex-col gap-2 animate-pulse">
-        <div className="aspect-[2/3] w-full bg-white/5 border border-white/10" />
-        <div className="h-4 w-3/4 bg-white/10" />
-        <div className="h-3 w-1/2 bg-white/5" />
+        <div className="aspect-[2/3] w-full bg-[#1e1e22]/80 border border-white/5 rounded-xl shadow-lg" />
+        <div className="h-4 w-3/4 bg-white/10 rounded-md" />
+        <div className="h-3 w-1/2 bg-white/5 rounded-md" />
     </div>
 );
 
