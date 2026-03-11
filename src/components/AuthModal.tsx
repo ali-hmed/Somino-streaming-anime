@@ -75,7 +75,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     initial={{ opacity: 0, scale: 0.9, y: 15 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 15 }}
-                    className="relative w-full max-w-[340px] bg-[#0f1012] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden p-6"
+                    className="relative w-full max-w-[340px] bg-[#151821] border border-[#232736] rounded-2xl shadow-2xl overflow-hidden p-6"
                 >
                     <button
                         onClick={onClose}
@@ -120,7 +120,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                                     required
                                     value={formData.username}
                                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                    className="w-full bg-white/[0.02] border border-white/5 focus:border-primary/30 rounded-xl py-2.5 pl-10 pr-4 text-[13px] text-white placeholder-white/5 outline-none transition-all"
+                                    className="w-full bg-[#1B1F2A] border border-[#232736] focus:border-primary/30 rounded-xl py-2.5 pl-10 pr-4 text-[13px] text-white placeholder-white/5 outline-none transition-all"
                                     placeholder="Username"
                                 />
                             </div>
@@ -135,7 +135,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                                 required
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                className="w-full bg-white/[0.02] border border-white/5 focus:border-primary/30 rounded-xl py-2.5 pl-10 pr-4 text-[13px] text-white placeholder-white/5 outline-none transition-all"
+                                className="w-full bg-[#1B1F2A] border border-[#232736] focus:border-primary/30 rounded-xl py-2.5 pl-10 pr-4 text-[13px] text-white placeholder-white/5 outline-none transition-all"
                                 placeholder="Email Address"
                             />
                         </div>
@@ -149,7 +149,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                                 required
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                className="w-full bg-white/[0.02] border border-white/5 focus:border-primary/30 rounded-xl py-2.5 pl-10 pr-10 text-[13px] text-white placeholder-white/5 outline-none transition-all"
+                                className="w-full bg-[#1B1F2A] border border-[#232736] focus:border-primary/30 rounded-xl py-2.5 pl-10 pr-10 text-[13px] text-white placeholder-white/5 outline-none transition-all"
                                 placeholder="Password"
                             />
                             <button
@@ -177,7 +177,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                         </button>
                     </form>
 
-                    <div className="mt-8 pt-5 border-t border-white/5 text-center flex flex-col gap-2.5">
+                    <div className="mt-8 pt-5 border-t border-[#232736] text-center flex flex-col gap-2.5">
                         <p className="text-white/20 text-[10px] font-bold uppercase tracking-wider">
                             {isLogin ? "No account?" : "Have an account?"}
                             <button

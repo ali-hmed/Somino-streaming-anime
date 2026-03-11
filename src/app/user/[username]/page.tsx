@@ -124,13 +124,13 @@ const PublicProfilePage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#161618] text-white flex flex-col">
-                <Navbar className="bg-[#161618]/50 backdrop-blur-md !py-2 md:!py-3" />
+            <div className="min-h-screen bg-[#0F1115] text-white flex flex-col">
+                <Navbar className="bg-[#0F1115]/50 backdrop-blur-md !py-2 md:!py-3" />
 
                 {/* Hero Skeleton */}
                 <div className="relative w-full overflow-hidden h-[66vh]">
                     <div className="absolute inset-0 bg-[#1a1b20] animate-pulse" />
-                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#161618] to-transparent z-[3]" />
+                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#0F1115] to-transparent z-[3]" />
                     <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
                         <div className="w-full px-4">
                             <div className="w-full max-w-[896px] h-auto md:h-[142px] mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
@@ -180,7 +180,7 @@ const PublicProfilePage = () => {
                     {/* Left Side: Rank System & Watchlist */}
                     <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
                         {/* Rank Progression Skeleton */}
-                        <div className="bg-[#1f2029] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center pt-10 pb-14 h-[280px] animate-pulse" />
+                        <div className="bg-[#151821] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center pt-10 pb-14 h-[280px] animate-pulse" />
 
                         {/* Watch List Section Skeleton */}
                         <div className="space-y-8 px-4 md:px-0">
@@ -198,7 +198,7 @@ const PublicProfilePage = () => {
 
                     {/* Right Side: Activity Sidebar Section */}
                     <div className="lg:col-span-4 space-y-8 px-4 md:px-0">
-                        <div className="bg-[#1e1e22]/50 border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl h-[500px] animate-pulse" />
+                        <div className="bg-[#12151D]/50 border border-[#232736] rounded-[2rem] overflow-hidden shadow-2xl h-[500px] animate-pulse" />
                     </div>
                 </div>
             </div>
@@ -207,7 +207,7 @@ const PublicProfilePage = () => {
 
     if (error || !userData) {
         return (
-            <div className="min-h-screen bg-[#161618] flex flex-col items-center justify-center text-center px-4">
+            <div className="min-h-screen bg-[#0F1115] flex flex-col items-center justify-center text-center px-4">
                 <Navbar />
                 <div className="mt-20">
                     <h2 className="text-2xl font-bold text-white mb-4">{error || 'User not found'}</h2>
@@ -234,8 +234,8 @@ const PublicProfilePage = () => {
     const progressToNext = (userData.level % 10) * 10; // Mock progress logic
 
     return (
-        <div className="min-h-screen bg-[#161618] text-white flex flex-col">
-            <Navbar className="bg-[#161618]/50 backdrop-blur-md !py-2 md:!py-3" />
+        <div className="min-h-screen bg-[#0F1115] text-white flex flex-col">
+            <Navbar className="bg-[#0F1115]/50 backdrop-blur-md !py-2 md:!py-3" />
 
             {/* 1. Profile Hero Section */}
             <div className="relative w-full overflow-hidden h-[66vh]">
@@ -265,18 +265,18 @@ const PublicProfilePage = () => {
 
                     {/* Gradients like HeroCarousel & Globals.css */}
                     {/* Deep Bottom Fade (Requested: connect to below seamlessly) */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#161618] via-[#161618]/40 to-transparent z-[2]" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#161618]/40 via-transparent to-[#161618]/40 z-[1]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F1115] via-[#0F1115]/40 to-transparent z-[2]" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#0F1115]/40 via-transparent to-[#0F1115]/40 z-[1]" />
                 </div>
                 {/* Top/Bottom Edge Smoothing */}
-                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#161618] to-transparent z-[3]" />
-                <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[#161618] to-transparent z-[3]" />
+                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#0F1115] to-transparent z-[3]" />
+                <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[#0F1115] to-transparent z-[3]" />
 
                 {/* Profile Info Content Overlay (Requested: two-column design style) */}
                 <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
                     <div className="w-full px-4">
                         <div className="w-full max-w-[896px] h-auto md:h-[142px] mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
-                            
+
                             <div className="flex flex-row items-center gap-5 md:contents w-full justify-center md:w-auto">
                                 {/* Left: Avatar with Ring */}
                                 <div className="relative shrink-0 flex items-center md:min-w-[100px] justify-center md:justify-end md:pr-4">
@@ -360,7 +360,7 @@ const PublicProfilePage = () => {
                 <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
 
                     {/* Horizontal Rank Progression (Precisely 720x148 for content area) */}
-                    <div className="bg-[#1f2029] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center">
+                    <div className="bg-[#151821] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center">
                         <div className="role-line w-full overflow-x-auto no-scrollbar">
                             <div className="role-line-wrap flex w-[720px] h-[148px] mx-auto relative z-20">
                                 {ranks.map((rank, idx) => {
@@ -388,7 +388,7 @@ const PublicProfilePage = () => {
 
                                             {/* Icon Section */}
                                             <div className="h-12 flex items-center justify-center">
-                                                <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 text-[#161618] shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
+                                                <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 text-[#0F1115] shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
                                                     isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30] text-yellow-400 border border-white/10 shadow-lg' :
                                                         'bg-[#1a1b20] text-white/5 border border-white/[0.02]'
                                                     }`}>
@@ -403,7 +403,7 @@ const PublicProfilePage = () => {
                                                         </div>
                                                     )}
                                                     {rank.icon === 'chevron-down' && (
-                                                        <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-[#161618] shadow-inner">
+                                                        <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-[#0F1115] shadow-inner">
                                                             <ChevronDown size={20} strokeWidth={4} />
                                                         </div>
                                                     )}
@@ -431,7 +431,7 @@ const PublicProfilePage = () => {
                                         animate={{ left: `${(currentRankIndex / (ranks.length - 1)) * 100}%` }}
                                         className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-50"
                                     >
-                                        <div className="w-11 h-11 rounded-full p-[2px] bg-[#1f2029] border-[2.5px] border-white shadow-2xl overflow-hidden">
+                                        <div className="w-11 h-11 rounded-full p-[2px] bg-[#151821] border-[2.5px] border-white shadow-2xl overflow-hidden">
                                             <div className="w-full h-full rounded-full border border-yellow-400 overflow-hidden">
                                                 <img
                                                     src={userData.avatar || 'https://via.placeholder.com/150'}
@@ -461,31 +461,31 @@ const PublicProfilePage = () => {
                         {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).length > 0 ? (
                             <div className="space-y-10">
                                 {/* Compact Grid: exactly 5 cols = 2 rows of 5 */}
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
-                                        {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).slice(0, watchlistLimit).map((item) => (
-                                            <AnimeCard
-                                                key={item.animeId}
-                                                anime={{
-                                                    id: item.animeId,
-                                                    title: item.animeTitle,
-                                                    poster: item.animeImage,
-                                                    type: item.type || 'TV',
-                                                    duration: item.duration,
-                                                    status: item.status,
-                                                    subEpisodes: item.subEpisodes,
-                                                    dubEpisodes: item.dubEpisodes,
-                                                    totalEpisodes: item.totalEpisodes || item.episodeNumber
-                                                }}
-                                                variant="portrait"
-                                                isSharp={true}
-                                            />
-                                        ))}
-                                    </div>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
+                                    {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).slice(0, watchlistLimit).map((item) => (
+                                        <AnimeCard
+                                            key={item.animeId}
+                                            anime={{
+                                                id: item.animeId,
+                                                title: item.animeTitle,
+                                                poster: item.animeImage,
+                                                type: item.type || 'TV',
+                                                duration: item.duration,
+                                                status: item.status,
+                                                subEpisodes: item.subEpisodes,
+                                                dubEpisodes: item.dubEpisodes,
+                                                totalEpisodes: item.totalEpisodes || item.episodeNumber
+                                            }}
+                                            variant="portrait"
+                                            isSharp={true}
+                                        />
+                                    ))}
+                                </div>
 
                                 {userData.watchlist.length > watchlistLimit && (
                                     <button
                                         onClick={() => setWatchlistLimit(prev => prev + 10)}
-                                        className="w-full py-5 bg-[#1e1e22]/50 border border-white/5 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#1e1e22] transition-all flex items-center justify-center gap-3 group"
+                                        className="w-full py-5 bg-[#151821]/50 border border-[#232736] rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#151821] transition-all flex items-center justify-center gap-3 group"
                                     >
                                         View All List Items
                                         <ChevronRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
@@ -493,7 +493,7 @@ const PublicProfilePage = () => {
                                 )}
                             </div>
                         ) : (
-                            <div className="bg-[#1e1e22]/30 border border-white/5 rounded-[2rem] py-20 flex flex-col items-center justify-center opacity-25">
+                            <div className="bg-[#151821]/30 border border-[#232736] rounded-[2rem] py-20 flex flex-col items-center justify-center opacity-25">
                                 <Clock size={48} className="mb-4" />
                                 <span className="font-bold uppercase tracking-widest text-sm">List is currently empty</span>
                             </div>

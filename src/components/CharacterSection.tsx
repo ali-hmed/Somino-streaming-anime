@@ -10,7 +10,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ char }) => {
     const va = char.voiceActors?.[0];
 
     return (
-        <div className="flex items-center justify-between p-1.5 rounded-md bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] transition-all group overflow-hidden">
+        <div className="flex items-center justify-between p-1.5 rounded-md bg-[#1B1F2A] border border-[#232736] hover:bg-[#232736] transition-all group overflow-hidden">
             <div className="flex items-center gap-2 min-w-0">
                 <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden border border-white/10 ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
                     <img
@@ -68,7 +68,7 @@ export default function CharacterSection({ characters }: CharacterSectionProps) 
                         <CharacterCard key={`${char.id || i}-${i}`} char={char} />
                     ))
                 ) : (
-                    <div className="py-8 text-center bg-white/[0.02] border border-dashed border-white/5 rounded-lg">
+                    <div className="py-8 text-center bg-[#1B1F2A] border border-dashed border-[#232736] rounded-lg">
                         <p className="text-[10px] font-black tracking-widest text-white/20">no characters data available</p>
                     </div>
                 )}

@@ -35,7 +35,7 @@ const BottomSections: React.FC<BottomSectionsProps> = ({ topAiring, mostPopular,
                             </h3>
                             <ChevronRight size={14} className="text-primary/60" />
                         </div>
-                        <div className="bg-[#1a1c22] border border-white/5 rounded-[8px] flex flex-col shadow-xl">
+                        <div className="bg-[#151821] border border-[#232736] rounded-[8px] flex flex-col shadow-xl">
                             {section.data.map((item, i) => (
                                 <ReleaseItem key={`${item.id}-${i}`} anime={item} />
                             ))}
@@ -60,7 +60,7 @@ const BottomSections: React.FC<BottomSectionsProps> = ({ topAiring, mostPopular,
 
                 {/* Card Container */}
                 {/* Card Container */}
-                <div className="bg-[#1a1c22] border border-white/5 rounded-[8px] mx-1 md:mx-0 shadow-2xl relative overflow-hidden">
+                <div className="bg-[#151821] border border-[#232736] rounded-[8px] mx-1 md:mx-0 shadow-2xl relative overflow-hidden">
                     <div className="flex flex-col">
                         {dataSections[activeIndex].data.map((item, i) => (
                             <ReleaseItem key={`${item.id}-${i}`} anime={item} />

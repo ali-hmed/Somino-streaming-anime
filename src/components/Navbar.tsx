@@ -172,7 +172,7 @@ const Navbar = ({ className }: NavbarProps) => {
 
     return (
         <>
-            <nav className={`absolute top-0 w-full z-[100] border-none shadow-none outline-none py-6 bg-gradient-to-b from-black/60 via-black/20 to-transparent ${className || ''}`}>
+            <nav className={`absolute top-0 w-full z-[100] border-none shadow-none outline-none py-6 bg-gradient-to-b from-[#0F1115]/60 via-[#0F1115]/20 to-transparent ${className || ''}`}>
                 <div className="container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
                     {/* Left Section: Menu (Mobile) + Logo */}
                     <div className="flex items-center gap-2 md:gap-4 h-full">
@@ -217,7 +217,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                 {/* Desktop Dropdown (Genre) */}
                                 {item.hasDropdown && isGenresOpen && (
                                     <div className="absolute top-full left-0 pt-3 animate-in fade-in slide-in-from-top-2 duration-300 z-50">
-                                        <div className="bg-[#1a1c22]/98 border border-white/5 rounded-[1.2rem] shadow-2xl p-5 w-[450px] backdrop-blur-3xl">
+                                        <div className="bg-[#1B1F2A]/98 border border-[#232736] rounded-[1.2rem] shadow-2xl p-5 w-[450px] backdrop-blur-3xl">
                                             <div className="grid grid-cols-4 gap-x-4 gap-y-2">
                                                 {genres.map((g) => (
                                                     <Link
@@ -391,9 +391,9 @@ const Navbar = ({ className }: NavbarProps) => {
                             onClick={() => setIsSearchOpen(false)}
                         />
                         <div className="relative w-full max-w-xl animate-in zoom-in-95 slide-in-from-top-4 duration-300">
-                            <form
+                             <form
                                 onSubmit={handleSearch}
-                                className="group relative bg-[#131314] rounded-2xl shadow-2xl overflow-hidden"
+                                className="group relative bg-[#12151D] rounded-2xl shadow-2xl overflow-hidden"
                             >
                                 <div className="flex items-center h-14 px-5">
                                     <Search className="text-white/40 group-focus-within:text-primary transition-colors duration-300" size={18} strokeWidth={2.5} />
@@ -426,7 +426,7 @@ const Navbar = ({ className }: NavbarProps) => {
 
                                 {/* Autocomplete Dropdown */}
                                 {(query.trim().length >= 2) && (
-                                    <div className="bg-[#131314] max-h-[400px] overflow-y-auto custom-scrollbar border-t border-white/5">
+                                    <div className="bg-[#12151D] max-h-[400px] overflow-y-auto custom-scrollbar border-t border-[#232736]">
                                         {isSearching ? (
                                             <div className="p-4 text-center text-white/40 text-[12px] font-medium tracking-wide">Searching...</div>
                                         ) : suggestions.length > 0 ? (
@@ -489,7 +489,7 @@ const Navbar = ({ className }: NavbarProps) => {
                             className="absolute inset-0 bg-transparent"
                             onClick={() => setIsMenuOpen(false)}
                         />
-                        <motion.div
+                            <motion.div
                             initial={{ opacity: 0, y: -10, scale: 0.95 }}
                             animate={{
                                 opacity: 1,
@@ -499,7 +499,7 @@ const Navbar = ({ className }: NavbarProps) => {
                             }}
                             exit={{ opacity: 0, y: -10, scale: 0.95 }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
-                            className="absolute top-16 left-4 bg-[#1a1c22]/95 backdrop-blur-xl border border-white/[0.05] rounded-[0.3rem] shadow-2xl overflow-hidden py-4 z-[120]"
+                            className="absolute top-16 left-4 bg-[#1B1F2A]/95 backdrop-blur-xl border border-[#232736] rounded-[0.3rem] shadow-2xl overflow-hidden py-4 z-[120]"
                         >
                             <div className="flex flex-col">
                                 {navLinks.map((item) => (

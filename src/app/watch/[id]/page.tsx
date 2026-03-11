@@ -22,7 +22,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
     if (!anime) {
         return (
-            <div className="min-h-screen bg-[#161618] flex flex-col items-center justify-center p-4 text-center">
+            <div className="min-h-screen bg-[#0F1115] flex flex-col items-center justify-center p-4 text-center">
                 <img src="/miku-not-found.png" alt="Not Found" className="w-44 h-44 object-contain mb-2 opacity-90 select-none" draggable={false} />
                 <h1 className="text-2xl font-bold mb-2 text-white/40">Anime Not Found</h1>
                 <p className="text-white/30 text-sm mb-6">The series you&apos;re looking for might have been moved or doesn&apos;t exist.</p>
@@ -81,7 +81,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         .slice(0, 18);
 
     return (
-        <main className="min-h-screen bg-[#161618] text-white pb-20">
+        <main className="min-h-screen bg-[#0F1115] text-white pb-20">
             <Navbar />
 
             {/* Blurred Background Hero */}
@@ -92,7 +92,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                         alt=""
                         className="w-full h-full object-cover blur-[8px] scale-125 opacity-40"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#161618]/60 via-[#161618]/80 to-[#161618]" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#0F1115]/60 via-[#0F1115]/80 to-[#0F1115]" />
                 </div>
 
                 {/* Breadcrumbs */}
@@ -233,7 +233,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                     {/* ─── LEFT SIDEBAR ─── */}
                     <aside className="lg:w-[260px] xl:w-[280px] flex-shrink-0 space-y-0 lg:self-start lg:sticky lg:top-24">
-                        <div className="bg-[#1e1e22] rounded-xl border border-white/5 overflow-hidden">
+                        <div className="bg-[#12151D] rounded-xl border border-[#232736] overflow-hidden">
 
                             {/* Alternative Titles */}
                             <div className="px-5 py-4 border-b border-white/5">
@@ -337,7 +337,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* Relations Section */}
                         {anime.relations && anime.relations.length > 0 && (
-                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
                                 <div className="flex items-center gap-2 mb-6">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Relations</h2>
                                 </div>
@@ -365,7 +365,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                         )}
 
                         {/* Synopsis */}
-                        <section className="bg-white/[0.03] rounded-xl border border-white/5 p-7 md:p-8">
+                        <section className="bg-[#151821] rounded-xl border border-[#232736] p-7 md:p-8">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
                                 <h2 className="text-xl md:text-2xl font-black text-white tracking-widest ">Synopsis</h2>
@@ -394,7 +394,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* Trailer */}
                         {trailer?.embedUrl && (
-                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
                                 <div className="flex items-center gap-2 mb-4">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Trailer</h2>
                                 </div>
@@ -412,7 +412,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* More Seasons Section */}
                         {anime.moreSeasons && anime.moreSeasons.length > 0 && (
-                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">More Seasons</h2>
                                 </div>
@@ -443,7 +443,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* Recommended Section */}
                         {cleanRecommended.length > 0 && (
-                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
                                     <h2 className="text-xl md:text-2xl font-black text-white ">Recommended for you</h2>
@@ -458,7 +458,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* Most Popular Section */}
                         {anime.mostPopular && anime.mostPopular.length > 0 && (
-                            <section className="bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Most Popular</h2>
                                 </div>

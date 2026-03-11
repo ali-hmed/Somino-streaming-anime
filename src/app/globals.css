@@ -2,13 +2,13 @@
 
 :root {
   /* ── Core Palette (matches detail page) ── */
-  --background: #161618;
+  --background: #0F1115;
   /* unified site bg */
-  --surface: #1e1e22;
-  /* cards, panels, sidebars */
-  --surface-raised: #252529;
-  /* hover states, tooltips */
-  --border: rgba(255, 255, 255, 0.06);
+  --surface: #151821;
+  /* sections, panels */
+  --surface-raised: #1B1F2A;
+  /* cards */
+  --border: #232736;
   --border-strong: rgba(255, 255, 255, 0.12);
 
   /* ── Text ── */
@@ -28,9 +28,9 @@
   --gold: #FFB941;
 
   /* ── Aliases for component classes ── */
-  --card-bg: var(--surface);
-  --sidebar-bg: var(--surface);
-  --glass: rgba(22, 22, 24, 0.92);
+  --card-bg: #1B1F2A;
+  --sidebar-bg: #12151D;
+  --glass: rgba(15, 17, 21, 0.92);
 }
 
 @theme inline {
@@ -40,8 +40,8 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-accent: var(--accent);
-  --color-card: var(--surface);
-  --color-sidebar: var(--surface);
+  --color-card: var(--card-bg);
+  --color-sidebar: var(--sidebar-bg);
   --color-muted: var(--text-muted);
   --color-surface: var(--surface);
 
@@ -199,17 +199,17 @@ body {
 ───────────────────────────────────────── */
 .hero-gradient {
   background: linear-gradient(90deg,
-      #161618 0%,
-      rgba(22, 22, 24, 0.7) 55%,
-      rgba(22, 22, 24, 0) 100%);
+      #0F1115 0%,
+      rgba(15, 17, 21, 0.7) 55%,
+      rgba(15, 17, 21, 0) 100%);
 }
 
 .hero-bottom-gradient {
-  background: linear-gradient(0deg, #161618 0%, rgba(22, 22, 24, 0) 100%);
+  background: linear-gradient(0deg, #0F1115 0%, rgba(15, 17, 21, 0) 100%);
 }
 
 .anime-card-gradient {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.88) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(27, 31, 42, 0.88) 100%);
 }
 
 /* ─────────────────────────────────────────

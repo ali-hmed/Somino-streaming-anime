@@ -104,12 +104,12 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                 {/* 1. Anime Info Panel */}
                 <aside className="w-full lg:w-[260px] shrink-0 order-3 lg:order-1">
-                    <div className="bg-[#0f1115] rounded-[8px] overflow-hidden shadow-2xl border border-white/[0.02] flex flex-col h-full">
+                    <div className="bg-[#12151D] rounded-[8px] overflow-hidden shadow-2xl border border-[#232736] flex flex-col h-full">
                         <div className="flex-1 overflow-y-auto custom-scrollbar">
                             <div className="relative h-32 flex items-center justify-center overflow-hidden shrink-0">
                                 <div className="absolute inset-0 z-0">
                                     <img src={anime.cover || anime.image} className="w-full h-full object-cover blur-2xl opacity-40 scale-150" alt="" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f1115] to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#12151D] to-transparent" />
                                 </div>
                                 <div className="relative z-10 w-24 aspect-[2/3] rounded-[8px] overflow-hidden shadow-2xl border border-white/10 mt-4">
                                     <img src={anime.image} alt={title} className="w-full h-full object-cover" />
@@ -213,7 +213,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             </div>
                         </div>
 
-                        <div className="bg-[#0b0c10] px-5 py-6 text-center shrink-0 border-t border-white/[0.02]">
+                        <div className="bg-[#0B0C10] px-5 py-6 text-center shrink-0 border-t border-[#232736]">
                             <h4 className="text-[12px] font-black text-primary mb-1 leading-tight">How&apos;d you rate this?</h4>
                             <div className="flex items-center justify-center gap-1 px-2">
                                 {[1, 2, 3, 4, 5].map(i => (
@@ -226,7 +226,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                 {/* 2. Video Player Panel */}
                 <div className="flex-1 min-w-0 flex flex-col order-1 lg:order-2 h-full">
-                    <div className="bg-[#141519]/80 backdrop-blur-xl rounded-[8px] overflow-hidden shadow-2xl border border-white/[0.03] flex flex-col relative">
+                    <div className="bg-[#151821]/80 backdrop-blur-xl rounded-[8px] overflow-hidden shadow-2xl border border-[#232736] flex flex-col relative">
                         {isChanging && (
                             <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
                                 <div className="flex flex-col items-center gap-4">
@@ -237,7 +237,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                         )}
 
                         {/* Player Header */}
-                        <div className="px-5 py-3 h-10 flex items-center bg-[#0b0c10]/40 border-b border-white/[0.03]">
+                        <div className="px-5 py-3 h-10 flex items-center bg-[#0F1115]/40 border-b border-[#232736]">
                             <div className="flex items-center gap-2 text-[10px] font-black text-white/30 tracking-widest">
                                 <Link href="/" className="hover:text-primary transition-colors flex items-center gap-1.5 focus:outline-none">
                                     <Home size={11} /> Home
@@ -334,7 +334,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             };
 
                             return (
-                                <div className="px-6 py-6 border-t border-white/[0.03] bg-black/20">
+                                <div className="px-6 py-6 border-t border-[#232736] bg-[#1B1F2A]/20">
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="text-[14px] font-bold text-white/90 tracking-tight">
                                             Watch more seasons of this anime
@@ -432,7 +432,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                 <aside className="w-full lg:w-[320px] shrink-0 space-y-10">
                     {/* 1. relations sidebar */}
                     {sidebarRelations && sidebarRelations.length > 0 && (
-                        <section className="rounded-2xl bg-[#0c0d10] border border-white/[0.05] overflow-hidden shadow-xl">
+                        <section className="rounded-2xl bg-[#12151D] border border-[#232736] overflow-hidden shadow-xl">
                             <div className="flex items-center justify-between p-5 pb-3">
                                 <div className="flex items-center gap-2">
                                     <GitBranch size={16} className="text-primary" />
@@ -453,7 +453,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                     <Link
                                         key={i}
                                         href={`/watch/${rel.id}`}
-                                        className="group relative flex h-[76px] bg-[#0c0d10] hover:bg-white/[0.03] border border-white/[0.05] rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
+                                        className="group relative flex h-[76px] bg-[#1B1F2A] hover:bg-[#232736] border border-[#232736] rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
                                     >
                                         {/* Left Content */}
                                         <div className="relative z-10 flex flex-col justify-center pl-4 pr-2 w-[70%] h-full">
@@ -477,7 +477,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                                         {/* Right Image Overlay */}
                                         <div className="absolute top-0 right-0 w-[45%] h-full">
-                                            <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#0c0d10] via-[#0c0d10]/60 to-transparent" />
+                                            <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#1B1F2A] via-[#1B1F2A]/60 to-transparent" />
                                             <img src={rel.image} className="w-full h-full object-cover transition-all duration-700 opacity-60 group-hover:opacity-100" alt="" />
                                         </div>
                                     </Link>
@@ -488,7 +488,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                     {/* 2. Most Popular sidebar */}
                     {popularAnime && popularAnime.length > 0 && (
-                        <section className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-xl">
+                        <section className="bg-[#12151D] rounded-[6px] border border-[#232736] overflow-hidden shadow-xl">
                             <div className="flex items-center justify-between p-4 pb-2">
                                 <h3 className="text-[16px] font-bold text-white tracking-tight">Most Popular</h3>
                             </div>
@@ -497,7 +497,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                     <Link
                                         key={item.id || i}
                                         href={`/watch/${item.id}`}
-                                        className="group relative flex items-center p-3 gap-3 hover:bg-white/[0.02] transition-colors border-b border-white/[0.03] last:border-0"
+                                        className="group relative flex items-center p-3 gap-3 hover:bg-[#1B1F2A] transition-colors border-b border-[#232736] last:border-0"
                                     >
                                         {/* Left: Square Poster */}
                                         <div className="w-12 h-16 shrink-0 rounded-[4px] overflow-hidden bg-white/5">

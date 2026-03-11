@@ -31,7 +31,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
     if (!anime) {
         return (
-            <div className="min-h-screen bg-[#0b0b0c] flex items-center justify-center p-4">
+            <div className="min-h-screen bg-[#0F1115] flex items-center justify-center p-4">
                 <div className="flex flex-col items-center gap-6 text-center">
                     <img src="/miku-not-found.png" alt="Not Found" className="w-64 h-auto opacity-50" />
                     <h1 className="text-xl font-black text-white/40 tracking-widest uppercase">Anime not found</h1>
@@ -58,7 +58,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         .slice(0, 18);
 
     return (
-        <main className="min-h-screen bg-[#161618] text-white/90 font-sans selection:bg-primary/30 relative">
+        <main className="min-h-screen bg-[#0F1115] text-white/90 font-sans selection:bg-primary/30 relative">
             <Navbar />
 
             {/* Blurred Background Hero */}
@@ -69,7 +69,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                     className="w-full h-full object-cover blur-[8px] scale-125 opacity-40"
                     draggable={false}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#161618]/60 via-[#161618]/80 to-[#161618]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0F1115]/60 via-[#0F1115]/80 to-[#0F1115]" />
             </div>
 
             {/* main content container */}

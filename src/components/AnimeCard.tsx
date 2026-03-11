@@ -63,7 +63,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                     className="group cursor-pointer w-full"
                 >
                     {/* Poster with badges */}
-                    <div className={`relative aspect-video ${roundedClass} overflow-hidden bg-[#1a1a1e] border border-white/[0.02] shadow-xl mb-3`}>
+                    <div className={`relative aspect-video ${roundedClass} overflow-hidden bg-[#1B1F2A] border border-[#232736] shadow-xl mb-3`}>
                         {displayImage && !imgError ? (
                             <img
                                 src={displayImage}
@@ -72,7 +72,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                             />
                         ) : (
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1e] to-[#252529] flex flex-col items-center justify-center p-4">
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#1B1F2A] to-[#151821] flex flex-col items-center justify-center p-4">
                                 <RotateCcw className="text-white/10 mb-2" size={24} />
                                 <span className="text-[10px] font-bold text-white/20 text-center line-clamp-2 px-2">
                                     {title}
@@ -132,7 +132,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                 className="group cursor-pointer w-full"
             >
                 {/* Image Container */}
-                <div className={`relative aspect-[2/3] ${roundedClass} overflow-hidden bg-[#1a1a1e] border border-white/[0.05] shadow-lg mb-3`}>
+                <div className={`relative aspect-[2/3] ${roundedClass} overflow-hidden bg-[#1B1F2A] border border-[#232736] shadow-lg mb-3`}>
                     {displayImage ? (
                         <img
                             src={displayImage}
@@ -140,7 +140,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                     ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1e] to-[#252529]" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#1B1F2A] to-[#151821]" />
                     )}
 
                     {/* Interaction Overlay (only if aired) */}

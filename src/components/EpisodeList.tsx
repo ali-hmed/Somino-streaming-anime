@@ -65,10 +65,10 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
     };
 
     return (
-        <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-2xl flex flex-col h-full">
+        <div className="bg-[#12151D] rounded-[6px] border border-[#232736] overflow-hidden shadow-2xl flex flex-col h-full">
 
             {/* ── Header ─────────────────────────────────────────── */}
-            <div className="px-3 py-2 bg-[#0d0e12] border-b border-white/[0.05]">
+            <div className="px-3 py-2 bg-[#151821] border-b border-[#232736]">
                 <p className="text-[10px] font-bold text-white/50 tracking-wide mb-2">List of episodes:</p>
 
                 <div className="flex items-center gap-2">
@@ -77,7 +77,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                         <div className="relative shrink-0" ref={dropdownRef}>
                             <button
                                 onClick={() => setDropdownOpen(v => !v)}
-                                className="flex items-center gap-1.5 px-2 py-1 rounded-[4px] bg-white/[0.05] border border-white/[0.06] text-[9px] font-bold text-white/50 hover:text-white hover:border-white/20 transition-all whitespace-nowrap"
+                                className="flex items-center gap-1.5 px-2 py-1 rounded-[4px] bg-[#1B1F2A] border border-[#232736]/50 text-[9px] font-bold text-white/50 hover:text-white hover:border-white/20 transition-all whitespace-nowrap"
                             >
                                 <MenuIcon />
                                 {getChunkLabel(activeChunk)}
@@ -88,7 +88,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                             </button>
 
                             {dropdownOpen && (
-                                <div className="absolute top-full left-0 mt-1 z-50 bg-[#1a1c22] border border-white/[0.08] rounded-[6px] shadow-2xl overflow-hidden min-w-[130px]">
+                                <div className="absolute top-full left-0 mt-1 z-50 bg-[#1B1F2A] border border-[#232736] rounded-[6px] shadow-2xl overflow-hidden min-w-[130px]">
                                     {Array.from({ length: totalChunks }).map((_, i) => (
                                         <button
                                             key={i}
@@ -117,7 +117,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                             placeholder="Number of Ep"
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/[0.04] border border-white/[0.06] rounded-[4px] py-1 pl-6 pr-2 text-[9px] text-white placeholder:text-white/20 focus:outline-none focus:border-primary/20 focus:bg-black/30 transition-all font-medium"
+                            className="w-full bg-[#1B1F2A] border border-[#232736]/50 rounded-[4px] py-1 pl-6 pr-2 text-[9px] text-white placeholder:text-white/20 focus:outline-none focus:border-primary/20 focus:bg-[#232736] transition-all font-medium"
                         />
                     </div>
                 </div>
@@ -156,7 +156,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                                 const isActive = ep.id === currentEpisodeId;
                                 const baseClass = `w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-[4px] transition-all group text-left`;
                                 const activeClass = `bg-primary/20 border border-primary/30`;
-                                const inactiveClass = `bg-white/[0.02] hover:bg-white/[0.05] border border-transparent`;
+                                const inactiveClass = `bg-[#1B1F2A]/40 hover:bg-[#1B1F2A] border border-[#232736]/30`;
 
                                 const inner = (
                                     <>
@@ -226,7 +226,7 @@ const EpBox: React.FC<EpBoxProps> = ({ ep, isActive, isFiller, animeId, onEpisod
             ? 'bg-[#b8935a] text-[#1a120a] shadow-md shadow-[#b8935a]/30'
             : isFiller
                 ? 'bg-[#2a2218] text-[#9a7a4a] hover:bg-[#3a3020] hover:text-[#c8a96e]'
-                : 'bg-[#1e2027] text-white/45 hover:bg-[#272a34] hover:text-white/80'
+                : 'bg-[#1B1F2A] text-white/45 hover:bg-[#232736] hover:text-white/80'
         }
         cursor-pointer
     `;

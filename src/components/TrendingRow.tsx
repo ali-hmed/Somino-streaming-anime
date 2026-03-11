@@ -100,7 +100,7 @@ const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending'
 
                             {/* Poster */}
                             <div
-                                className="relative overflow-hidden bg-white/5 flex-shrink-0 ring-1 ring-white/10 group-hover:ring-primary/40 transition-all"
+                                className="relative overflow-hidden bg-[#1B1F2A] flex-shrink-0 ring-1 ring-[#232736] group-hover:ring-primary/40 transition-all"
                                 style={{ width: CARD_W, height: CARD_H }}
                             >
                                 <img

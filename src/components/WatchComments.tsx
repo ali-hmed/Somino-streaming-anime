@@ -237,7 +237,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
         return (
             <div id={`comment-${item._id}`} className={`group flex gap-3 ${isReply ? 'ml-12 mt-6' : 'mt-8'} scroll-mt-32 relative`}>
                 {/* Avatar */}
-                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-[#1a1b20] border border-white/5 overflow-hidden transition-transform hover:scale-110 active:scale-95 ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
+                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-[#1B1F2A] border border-[#232736] overflow-hidden transition-transform hover:scale-110 active:scale-95 ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
                     {item.avatar ? (
                         <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" />
                     ) : (
@@ -314,7 +314,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                         initial={{ opacity: 0, scale: 0.98, y: 5 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.98, y: 5 }}
-                                        className="absolute top-full left-0 mt-2 w-40 bg-[#1f2026] border border-white/5 rounded-[4px] shadow-2xl z-50 overflow-hidden py-1"
+                                        className="absolute top-full left-0 mt-2 w-40 bg-[#1B1F2A] border border-[#232736] rounded-[4px] shadow-2xl z-50 overflow-hidden py-1"
                                     >
                                         <button
                                             onClick={() => handleCopyLink(item._id)}
@@ -342,11 +342,11 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
 
     return (
         <div className="space-y-6 h-full">
-            <div className="bg-[#141519] rounded-[6px] border border-white/[0.03] overflow-hidden shadow-2xl flex flex-col lg:max-h-[1050px]">
+            <div className="bg-[#151821] rounded-[6px] border border-[#232736] overflow-hidden shadow-2xl flex flex-col lg:max-h-[1050px]">
                 {/* Header */}
                 <div className="px-6 py-5 flex items-center gap-4">
                     <h2 className="text-[20px] font-bold text-white tracking-tight">Comments</h2>
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-[4px] bg-white/[0.03] border border-white/5">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-[4px] bg-[#1B1F2A] border border-[#232736]">
                         <span className="text-[12px] font-black text-primary">
                             {comments.reduce((acc, curr) => acc + 1 + (curr.replies?.length || 0), 0)}
                         </span>
@@ -355,9 +355,9 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                 </div>
 
                 {/* Input Area */}
-                <div id="comment-input-area" className="px-6 pb-8 border-b border-white/[0.02]">
+                <div id="comment-input-area" className="px-6 pb-8 border-b border-[#232736]">
                     <div className="flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-[#1a1b20] border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+                        <div className="w-12 h-12 rounded-full bg-[#1B1F2A] border border-[#232736] flex items-center justify-center shrink-0 overflow-hidden">
                             {mounted && user?.avatar ? (
                                 <img src={user.avatar} className="w-full h-full object-cover" />
                             ) : (
@@ -380,7 +380,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                     placeholder={mounted ? (isAuthenticated ? "Leave a comment" : "Join the discussion...") : "Loading..."}
                                     disabled={!mounted || isPosting}
                                     onFocus={() => setIsInputExpanded(true)}
-                                    className={`w-full bg-white/[0.02] border border-white/[0.05] rounded-[4px] px-4 py-2.5 text-[14px] text-white placeholder-white/10 focus:outline-none focus:border-white/10 transition-all resize-none ${isInputExpanded ? 'min-h-[80px]' : 'min-h-[44px]'}`}
+                                    className={`w-full bg-[#1B1F2A] border border-[#232736]/50 rounded-[4px] px-4 py-2.5 text-[14px] text-white placeholder-white/10 focus:outline-none focus:border-white/10 transition-all resize-none ${isInputExpanded ? 'min-h-[80px]' : 'min-h-[44px]'}`}
                                 />
                                 {mounted && !isAuthenticated && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-[4px] cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
@@ -433,7 +433,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                     ) : comments.length > 0 ? (
                         <div className="space-y-1">
                             {comments.map((main) => (
-                                <div key={main._id} className="pb-8 last:pb-0 border-b border-white/[0.02] last:border-0">
+                                <div key={main._id} className="pb-8 last:pb-0 border-b border-[#232736]">
                                     <CommentItem item={main} mainId={main._id} />
                                     {main.replies && main.replies.map(reply => (
                                         <CommentItem key={reply._id} item={reply} isReply={true} mainId={main._id} />

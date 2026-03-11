@@ -28,7 +28,7 @@ const Relations: React.FC<RelationsProps> = ({ relations }) => {
     const displayRelations = showAll ? relations : relations.slice(0, 3);
 
     return (
-        <div className="mt-10 rounded-2xl bg-[#0c0d10] border border-white/[0.05] overflow-hidden shadow-xl">
+        <div className="mt-10 rounded-2xl bg-[#151821] border border-[#232736] overflow-hidden shadow-xl">
             <div className="flex items-center justify-between p-6 pb-4">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
@@ -51,7 +51,7 @@ const Relations: React.FC<RelationsProps> = ({ relations }) => {
                     <Link
                         key={idx}
                         href={`/watch/${rel.entry.mal_id}`}
-                        className="group relative flex h-[80px] bg-[#0c0d10] hover:bg-white/[0.03] border border-white/[0.05] rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
+                        className="group relative flex h-[80px] bg-[#1B1F2A] hover:bg-[#232736] border border-[#232736] rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
                     >
                         {/* Left Content */}
                         <div className="relative z-10 flex flex-col justify-center pl-6 pr-2 w-[70%] h-full">
@@ -77,7 +77,7 @@ const Relations: React.FC<RelationsProps> = ({ relations }) => {
 
                         {/* Right Image Overlay */}
                         <div className="absolute top-0 right-0 w-[45%] h-full">
-                            <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#0c0d10] via-[#0c0d10]/60 to-transparent" />
+                            <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#1B1F2A] via-[#1B1F2A]/60 to-transparent" />
                             <img
                                 src={rel.entry.image}
                                 className="w-full h-full object-cover transition-all duration-700 opacity-60 group-hover:opacity-100"

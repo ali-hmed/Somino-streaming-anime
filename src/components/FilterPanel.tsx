@@ -61,10 +61,10 @@ function CustomDropdown({
             <button
                 type="button"
                 onClick={() => setOpen(p => !p)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[7px] border transition-all text-left min-w-[110px] ${open ? 'bg-[#1e1e22] border-primary/50'
+                className={`flex items-center gap-2 px-4 py-2 rounded-[7px] border transition-all text-left min-w-[110px] ${open ? 'bg-[#232736] border-primary/50'
                     : isActive
-                        ? 'bg-[#1e1e22] border-primary/30'
-                        : 'bg-[#1a1c22] border-white/[0.07] hover:border-white/20'
+                        ? 'bg-[#232736] border-primary/30'
+                        : 'bg-[#1B1F2A] border-[#232736]/50 hover:border-white/20'
                     }`}
             >
                 <span className="text-[10px] font-bold text-white/40 shrink-0">{label}</span>
@@ -80,7 +80,7 @@ function CustomDropdown({
 
             {/* Panel */}
             {open && (
-                <div className="absolute top-[calc(100%+5px)] left-0 z-50 min-w-[140px] bg-[#161618] border border-white/[0.08] rounded-[7px] shadow-2xl shadow-black/60 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute top-[calc(100%+5px)] left-0 z-50 min-w-[140px] bg-[#12151D] border border-[#232736] rounded-[7px] shadow-2xl shadow-black/60 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
                     <button
                         type="button"
                         onClick={() => { onChange(ALL); setOpen(false); }}
@@ -161,7 +161,7 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
     const hasAny = type !== ALL || status !== ALL || rating !== ALL || sort !== ALL || season !== ALL || score !== ALL || language !== ALL || selectedGenres.length > 0;
 
     return (
-        <div className="bg-[#141519] border border-white/[0.04] rounded-[10px] p-6 shadow-xl">
+        <div className="bg-[#151821] border border-[#232736] rounded-[10px] p-6 shadow-xl">
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
@@ -198,11 +198,11 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
                     {genres.map(g => {
                         const active = selectedGenres.includes(String(g.id));
                         return (
-                            <button
+                             <button
                                 key={g.id}
                                 onClick={() => toggleGenre(g.id)}
                                 className={`px-2.5 py-1 rounded-[5px] text-[10px] font-semibold transition-all border ${active ? 'bg-primary/15 border-primary/50 text-primary'
-                                    : 'bg-white/[0.03] border-white/[0.06] text-white/40 hover:border-white/20 hover:text-white hover:bg-white/[0.05]'
+                                    : 'bg-[#1B1F2A] border-[#232736]/50 text-white/40 hover:border-white/20 hover:text-white hover:bg-[#232736]'
                                     }`}
                             >
                                 {g.name}

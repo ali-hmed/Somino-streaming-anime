@@ -109,9 +109,9 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                     >
-                                        <Link
+                                         <Link
                                             href={`/watch/${anime.id}`}
-                                            className="relative flex items-center h-[80px] group cursor-pointer rounded-[8px] overflow-hidden bg-[#161618] border border-white/[0.03] transition-all"
+                                            className="relative flex items-center h-[80px] group cursor-pointer rounded-[8px] overflow-hidden bg-[#1B1F2A] border border-[#232736] transition-all"
                                         >
                                             {/* Claw Marks Background Overlay */}
                                             {rank <= 3 && (
@@ -124,7 +124,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
 
                                             {/* Rank Circle */}
                                             <div className="flex-shrink-0 w-14 flex items-center justify-center z-10">
-                                                <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center bg-white/[0.02] group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                                                <div className="w-8 h-8 rounded-full border border-[#232736] flex items-center justify-center bg-[#151821] group-hover:bg-primary group-hover:border-primary transition-all duration-300">
                                                     <span className="text-[12px] font-black text-white/90">{rank}</span>
                                                 </div>
                                             </div>
@@ -173,7 +173,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                                 <div
                                                     className="absolute inset-0"
                                                     style={{
-                                                        background: 'linear-gradient(to right, #161618 10%, rgba(22,22,24,0.8) 40%, rgba(22,22,24,0.2) 70%, transparent 100%)'
+                                                        background: 'linear-gradient(to right, #0F1017 10%, rgba(17, 19, 26, 0.8) 40%, rgba(11, 13, 18, 0.2) 70%, transparent 100%)'
                                                     }}
                                                 />
                                             </div>

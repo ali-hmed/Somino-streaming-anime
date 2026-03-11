@@ -84,7 +84,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
     }, [selectedDateIndex]);
 
     return (
-        <div className="bg-[#111114] border border-white/5 rounded-[4px] overflow-hidden shadow-2xl">
+        <div className="bg-[#12151D] border border-[#232736] rounded-[4px] overflow-hidden shadow-2xl">
             {/* Day Selector Header */}
             <div className="p-3 pb-4 flex items-center justify-between bg-white/[0.01]">
                 <button
@@ -108,7 +108,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
                                 <span className={`text-[10px] font-black tracking-widest transition-colors ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>
                                     {day.name}
                                 </span>
-                                <div className={`w-11 h-9 rounded-xl flex items-center justify-center text-[12px] font-black transition-all ${isActive ? 'bg-primary text-white shadow-neon' : 'bg-[#1e1e21] text-white/30 group-hover:bg-[#252529]'}`}>
+                                <div className={`w-11 h-9 rounded-xl flex items-center justify-center text-[12px] font-black transition-all ${isActive ? 'bg-primary text-white shadow-neon' : 'bg-[#151821] text-white/30 group-hover:bg-[#1B1F2A]'}`}>
                                     {day.date}
                                 </div>
                             </button>
@@ -170,7 +170,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
             </div>
 
             {/* Footer Clock & More Button */}
-            <div className="px-5 py-4 bg-[#111114] flex items-center justify-between border-t border-white/5">
+            <div className="px-5 py-4 bg-[#12151D] flex items-center justify-between border-t border-[#232736]">
                 <p className="text-[11px] font-bold text-white/20 font-mono tracking-tighter">
                     {currentTime}
                 </p>
