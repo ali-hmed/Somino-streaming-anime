@@ -50,6 +50,7 @@ interface Activity {
     episodeNumber?: number;
     commentId?: string;
     content?: string;
+    parentCommentAuthor?: string;
     createdAt: string;
 }
 
@@ -647,7 +648,13 @@ const PublicProfilePage = () => {
                                                 <p className="text-[13px] text-white/80 leading-snug group-hover:text-white transition-colors line-clamp-2">
                                                     <span className="font-bold text-white mr-1.5">{userData?.username}</span>
                                                     <span className="text-white/50">
-                                                        {activity.activityType === 'comment' ? 'commented' : activity.activityType === 'reply' ? 'replied' : 'liked'}
+                                                        {activity.activityType === 'reply' && activity.parentCommentAuthor ? (
+                                                            <>
+                                                                replied to <span className="text-white font-bold">{activity.parentCommentAuthor}'s</span> comment
+                                                            </>
+                                                        ) : (
+                                                            activity.activityType === 'comment' ? 'commented' : activity.activityType === 'reply' ? 'replied' : 'liked'
+                                                        )}
                                                     </span>
                                                     {activity.animeTitle && (
                                                         <> on <span className="text-primary font-semibold">{activity.animeTitle}</span></>
