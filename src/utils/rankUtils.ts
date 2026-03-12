@@ -15,8 +15,8 @@ export const RANKS: Rank[] = [
     { name: 'The Casual',    minXP: 10001,  maxXP: 45000,  icon: '/The_Casual1.png',        color: '#ffffff' },
     { name: 'The Seeker',    minXP: 45001,  maxXP: 100000, icon: '/The_seeker2.png',        color: '#00e5ff' },
     { name: 'The Otaku',     minXP: 100001, maxXP: 175000, icon: '/The_otaku-3.png',        color: '#00e676' },
-    { name: 'The Enthusiast',minXP: 175001, maxXP: 250000, icon: '/The_Enthusiast-4.png',   color: '#bb86fc' },
-    { name: 'The Historian', minXP: 250001, maxXP: 1000000, icon: '/The_Histraions-5.png', color: '#ffb300' },
+    { name: 'The Enthusiast',minXP: 175001, maxXP: 252609, icon: '/The_Enthusiast-4.png',   color: '#bb86fc' },
+    { name: 'The Historian', minXP: 252610, maxXP: 1000000, icon: '/The_Histraions-5.png', color: '#ffb300' },
 ];
 
 /** Returns the full Rank object by name (case-insensitive). */

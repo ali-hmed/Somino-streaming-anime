@@ -231,8 +231,8 @@ const PublicProfilePage = () => {
         { name: 'The Casual', requirement: '10,000 XP', minXP: 10001, maxXP: 45000, icon: '/The_Casual1.png' },
         { name: 'The Seeker', requirement: '45,000 XP', minXP: 45001, maxXP: 100000, icon: '/The_seeker2.png' },
         { name: 'The Otaku', requirement: '100,000 XP', minXP: 100001, maxXP: 175000, icon: '/The_otaku-3.png' },
-        { name: 'The Enthusiast', requirement: '175,000 XP', minXP: 175001, maxXP: 250000, icon: '/The_Enthusiast-4.png' },
-        { name: 'The Historian', requirement: '250,000 XP', minXP: 250001, maxXP: 1000000, icon: '/The_Histraions-5.png' },
+        { name: 'The Enthusiast', requirement: '175,000 XP', minXP: 175001, maxXP: 252609, icon: '/The_Enthusiast-4.png' },
+        { name: 'The Historian', requirement: '252,610 XP', minXP: 252610, maxXP: 1000000, icon: '/The_Histraions-5.png' },
     ];
 
     const totalXP = (userData as any).totalXP ?? userData.power ?? 0;
