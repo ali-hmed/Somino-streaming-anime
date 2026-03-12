@@ -55,6 +55,7 @@ const PublicProfilePage = () => {
     const [error, setError] = useState<string | null>(null);
     const [watchlistLimit, setWatchlistLimit] = useState(10);
     const [enrichedWatchlist, setEnrichedWatchlist] = useState<any[]>([]);
+    const [showExactPower, setShowExactPower] = useState(false);
 
     const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
     const CONSUMET_API = API_URL; // same base
@@ -381,10 +382,26 @@ const PublicProfilePage = () => {
                                 {/* Power Display */}
                                 <div className="flex items-center justify-center md:justify-start gap-3">
                                     <span className="text-sm md:text-base font-bold uppercase tracking-tight text-white/90">Power:</span>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-black text-primary border border-white/10 shadow-lg">Z</div>
-                                        <span className="text-xl font-black text-white tracking-tighter shadow-sm">
-                                            {userData.power >= 1000 ? `${(userData.power / 1000).toFixed(0)}K` : userData.power}
+                                    <div 
+                                        className="flex items-center gap-2"
+                                        onMouseEnter={() => setShowExactPower(true)}
+                                        onMouseLeave={() => setShowExactPower(false)}
+                                    >
+                                        <div 
+                                            className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-black text-primary border border-white/10 shadow-lg cursor-pointer hover:bg-white/20 transition-all select-none"
+                                            onClick={() => setShowExactPower(!showExactPower)}
+                                            title="Exact XP"
+                                        >
+                                            Z
+                                        </div>
+                                        <span 
+                                            className="text-xl font-black text-white tracking-tighter shadow-sm cursor-pointer select-none"
+                                            onClick={() => setShowExactPower(!showExactPower)}
+                                        >
+                                            {showExactPower 
+                                                ? userData.power.toLocaleString() 
+                                                : (userData.power >= 1000 ? `${(userData.power / 1000).toFixed(0)}K` : userData.power)
+                                            }
                                         </span>
                                     </div>
                                 </div>
