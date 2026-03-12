@@ -548,7 +548,7 @@ const PublicProfilePage = () => {
                                             variant="portrait"
                                             isSharp={true}
                                             showEpisode={!!item.episodeNumber}
-                                            showScore={true}
+                                            showScore={false}
                                         />
                                     ))}
                                 </div>
