@@ -14,6 +14,7 @@ interface User {
     watchlist?: any[];
     watchHistory?: any[];
     createdAt?: string;
+    isWatchlistPublic?: boolean;
     token: string;
 }
 
@@ -26,6 +27,7 @@ interface AuthState {
     setWatchlist: (watchlist: any[]) => void;
     setWatchHistory: (watchHistory: any[]) => void;
     setAuthModalOpen: (isOpen: boolean) => void;
+    updateUser: (data: Partial<User>) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -39,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
             setWatchlist: (watchlist) => set((state) => ({ user: state.user ? { ...state.user, watchlist } : null })),
             setWatchHistory: (watchHistory) => set((state) => ({ user: state.user ? { ...state.user, watchHistory } : null })),
             setAuthModalOpen: (isAuthModalOpen) => set({ isAuthModalOpen }),
+            updateUser: (data) => set((state) => ({ user: state.user ? { ...state.user, ...data } : null })),
         }),
         {
             name: 'auth-storage',

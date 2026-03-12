@@ -16,6 +16,7 @@ import {
     History,
     Grid,
     Clock,
+    EyeOff,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
@@ -34,6 +35,7 @@ interface UserData {
     power: number;
     rank: string;
     watchlist: any[];
+    isWatchlistPublic?: boolean;
 }
 
 interface Activity {
@@ -523,59 +525,74 @@ const PublicProfilePage = () => {
                     </div>
 
                     {/* Watch List Section (Requested: smaller cards section) */}
-                    <div className="space-y-8 px-4 md:px-0">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-black tracking-tight flex items-center gap-3 text-white/90">
-                                <Grid className="text-primary" />
-                                Watch List
-                            </h2>
-                            <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-black text-white/20 uppercase tracking-widest">
-                                {userData.watchlist.length} Title{userData.watchlist.length !== 1 ? 's' : ''}
-                            </span>
-                        </div>
+                    {userData.isWatchlistPublic !== false ? (
+                        <div className="space-y-8 px-4 md:px-0">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-black tracking-tight flex items-center gap-3 text-white/90">
+                                    <Grid className="text-primary" />
+                                    Watch List
+                                </h2>
+                                <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-black text-white/20 uppercase tracking-widest">
+                                    {userData.watchlist.length} Title{userData.watchlist.length !== 1 ? 's' : ''}
+                                </span>
+                            </div>
 
-                        {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData!.watchlist).length > 0 ? (
-                            <div className="space-y-10">
-                                {/* Compact Grid: 2 columns on mobile, exactly 5 columns on desktop (2x5 layout) */}
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
-                                    {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData!.watchlist).slice(0, watchlistLimit).map((item) => (
-                                        <AnimeCard
-                                            key={item.animeId}
-                                            anime={{
-                                                ...item,
-                                                id: item.animeId,
-                                                title: item.animeTitle,
-                                                poster: item.animeImage,
-                                                sub: item.subEpisodes,
-                                                dub: item.dubEpisodes,
-                                                score: item.score || item.MAL_score,
-                                                totalEpisodes: item.totalEpisodes || item.subEpisodes || item.episodeNumber
-                                            }}
-                                            variant="portrait"
-                                            isSharp={true}
-                                            showEpisode={!!item.episodeNumber}
-                                            showScore={false}
-                                        />
-                                    ))}
+                            {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData!.watchlist).length > 0 ? (
+                                <div className="space-y-10">
+                                    {/* Compact Grid: 2 columns on mobile, exactly 5 columns on desktop (2x5 layout) */}
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
+                                        {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData!.watchlist).slice(0, watchlistLimit).map((item) => (
+                                            <AnimeCard
+                                                key={item.animeId}
+                                                anime={{
+                                                    ...item,
+                                                    id: item.animeId,
+                                                    title: item.animeTitle,
+                                                    poster: item.animeImage,
+                                                    sub: item.subEpisodes,
+                                                    dub: item.dubEpisodes,
+                                                    score: item.score || item.MAL_score,
+                                                    totalEpisodes: item.totalEpisodes || item.subEpisodes || item.episodeNumber
+                                                }}
+                                                variant="portrait"
+                                                isSharp={true}
+                                                showEpisode={!!item.episodeNumber}
+                                                showScore={false}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {userData!.watchlist.length > watchlistLimit && (
+                                        <button
+                                            onClick={() => setWatchlistLimit(prev => prev + 10)}
+                                            className="w-full py-5 bg-[#101010] rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#181818] transition-all flex items-center justify-center gap-3 group"
+                                        >
+                                            View All List Items
+                                            <ChevronRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
+                                        </button>
+                                    )}
                                 </div>
-
-                                {userData!.watchlist.length > watchlistLimit && (
-                                    <button
-                                        onClick={() => setWatchlistLimit(prev => prev + 10)}
-                                        className="w-full py-5 bg-[#101010] rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#181818] transition-all flex items-center justify-center gap-3 group"
-                                    >
-                                        View All List Items
-                                        <ChevronRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
-                                    </button>
-                                )}
+                            ) : (
+                                <div className="bg-[#101010] rounded-[2rem] py-20 flex flex-col items-center justify-center opacity-25">
+                                    <Clock size={48} className="mb-4" />
+                                    <span className="font-bold uppercase tracking-widest text-sm">List is currently empty</span>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="space-y-8 px-4 md:px-0">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-black tracking-tight flex items-center gap-3 text-white/90">
+                                    <Grid className="text-primary" />
+                                    Watch List
+                                </h2>
                             </div>
-                        ) : (
                             <div className="bg-[#101010] rounded-[2rem] py-20 flex flex-col items-center justify-center opacity-25">
-                                <Clock size={48} className="mb-4" />
-                                <span className="font-bold uppercase tracking-widest text-sm">List is currently empty</span>
+                                <EyeOff size={48} className="mb-4" />
+                                <span className="font-bold uppercase tracking-widest text-sm">Watchlist is private</span>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Side: Activity Sidebar Section */}

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/store/authStore";
-import { Heart, Bookmark, ChevronLeft, ChevronRight, MoreVertical, Check } from "lucide-react";
+import { Heart, Bookmark, ChevronLeft, ChevronRight, MoreVertical, Check, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimeCard from "@/components/AnimeCard";
 
@@ -77,7 +77,7 @@ function StatusMenu({
 
 // ── Main Page ───────────────────────────────────────────────────────────────
 export default function WatchListPage() {
-    const { user, setWatchlist } = useAuthStore();
+    const { user, setWatchlist, updateUser } = useAuthStore();
     const [activeTab, setActiveTab] = useState<WatchlistStatus>('All');
     const [page, setPage] = useState(1);
     const [mounted, setMounted] = useState(false);
@@ -133,6 +133,24 @@ export default function WatchListPage() {
         } catch (e) { console.error(e); }
     };
 
+    const handleToggleVisibility = async () => {
+        if (!user?.token) return;
+        const newValue = user.isWatchlistPublic === false ? true : false;
+        try {
+            const res = await fetch(`${BASE_URL}/auth/me`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${user.token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isWatchlistPublic: newValue })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success) {
+                    updateUser({ isWatchlistPublic: newValue });
+                }
+            }
+        } catch (e) { console.error(e); }
+    };
+
     // Map watchlist items to the exact shape AnimeCard uses across the site
     const toAnimeShape = (item: typeof uniqueWatchlist[0]) => ({
         id: item.animeId,
@@ -153,12 +171,31 @@ export default function WatchListPage() {
     return (
         <div className="space-y-8 pb-16">
             {/* Header */}
-            <div className="flex items-center gap-3">
-                <Heart size={24} className="text-white fill-white" />
-                <h2 className="text-[22px] font-black text-white tracking-tight">Watch List</h2>
-                <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-black">
-                    {filteredList.length}
-                </span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <Heart size={24} className="text-white fill-white" />
+                    <h2 className="text-[22px] font-black text-white tracking-tight">Watch List</h2>
+                    <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-black">
+                        {filteredList.length}
+                    </span>
+                </div>
+
+                <button
+                    onClick={handleToggleVisibility}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl transition-all self-start"
+                >
+                    {user?.isWatchlistPublic !== false ? (
+                        <>
+                            <Eye size={16} className="text-primary" />
+                            <span className="text-[11px] font-black text-white/50 uppercase tracking-widest">Public</span>
+                        </>
+                    ) : (
+                        <>
+                            <EyeOff size={16} className="text-red-400" />
+                            <span className="text-[11px] font-black text-white/50 uppercase tracking-widest">Private</span>
+                        </>
+                    )}
+                </button>
             </div>
 
             {/* Status Tabs */}
