@@ -113,7 +113,7 @@ const PublicProfilePage = () => {
                     // Enrich activities with anime images from watchlist map
                     const enrichedActivities = (data.data.activities || []).map((act: any) => ({
                         ...act,
-                        animeImage: act.animeId ? (watchlistMap[act.animeId] || null) : null,
+                        animeImage: act.animeImage || (act.animeId ? (watchlistMap[act.animeId] || null) : null),
                     }));
                     setActivities(enrichedActivities);
                     return;

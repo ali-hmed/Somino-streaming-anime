@@ -422,6 +422,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             episodeId={currentEpisodeId}
                             animeId={id}
                             animeTitle={title}
+                            animeImage={anime.image}
                             episodeNumber={currentEpisode?.number || 1}
                             key={currentEpisodeId}
                         />

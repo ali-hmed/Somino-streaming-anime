@@ -32,10 +32,11 @@ interface WatchCommentsProps {
     episodeId: string;
     animeId: string;
     animeTitle: string;
+    animeImage: string;
     episodeNumber: number;
 }
 
-const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchCommentsProps) => {
+const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumber }: WatchCommentsProps) => {
     const [mounted, setMounted] = useState(false);
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState<CommentType[]>([]);
@@ -116,6 +117,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                     parentCommentId: replyingTo?.mainId || null,
                     animeId,
                     animeTitle,
+                    animeImage,
                     episodeNumber
                 })
             });
