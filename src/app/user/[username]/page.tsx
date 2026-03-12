@@ -482,7 +482,7 @@ const PublicProfilePage = () => {
                                         animate={{ left: `${overallProgress}%` }}
                                         className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-50"
                                     >
-                                        <div className="w-11 h-11 rounded-full p-[2px] bg-[#151821] border-[2.5px] border-white shadow-2xl overflow-hidden">
+                                        <div className="w-11 h-11 rounded-full shadow-2xl overflow-hidden">
                                             <div className="w-full h-full rounded-full border border-yellow-400 overflow-hidden">
                                                         <img
                                                             src={userData!.avatar || 'https://via.placeholder.com/150'}
