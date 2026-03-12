@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import {
     Calendar,
     Award,
@@ -45,7 +46,10 @@ interface Activity {
     animeId?: string;
     animeTitle?: string;
     animeImage?: string;
+    episodeId?: string;
     episodeNumber?: number;
+    commentId?: string;
+    content?: string;
     createdAt: string;
 }
 
@@ -608,45 +612,67 @@ const PublicProfilePage = () => {
                         {/* Activity List — no card, no bg, HiAnime style with anime image */}
                         <div className="flex flex-col gap-5">
                             {activities.length > 0 ? (
-                                activities.map((activity: Activity) => (
-                                    <div key={activity._id} className="flex gap-3 group">
-                                        {/* Anime poster thumbnail (like HiAnime) */}
-                                        <div className="shrink-0 w-[52px] h-[68px] rounded-[4px] overflow-hidden bg-white/5">
-                                            {activity.animeImage ? (
-                                                <img
-                                                    src={activity.animeImage}
-                                                    alt={activity.animeTitle || ''}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center">
-                                                    {activity.activityType === 'comment' && <MessageSquare size={16} className="text-blue-400/50" />}
-                                                    {activity.activityType === 'reply' && <Reply size={16} className="text-green-400/50" />}
-                                                    {activity.activityType === 'like' && <ThumbsUp size={16} className="text-pink-400/50" />}
-                                                </div>
-                                            )}
-                                        </div>
+                                activities.map((activity: Activity) => {
+                                    const activityLink = activity.animeId 
+                                        ? (activity.episodeId 
+                                            ? `/watch/${activity.animeId}/${activity.episodeId}${activity.commentId ? `#comment-${activity.commentId}` : ''}`
+                                            : `/watch/${activity.animeId}`)
+                                        : null;
 
-                                        {/* Content */}
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-1.5 mb-1 text-[11px] text-white/30 font-medium">
-                                                <MessageSquare size={10} className="shrink-0" />
-                                                <span>{timeAgo(activity.createdAt)}</span>
-                                            </div>
-                                            <p className="text-[13px] text-white/80 leading-snug group-hover:text-white transition-colors">
-                                                <span className="font-bold text-white">
-                                                    {activity.activityType === 'comment' ? 'commented' : activity.activityType === 'reply' ? 'replied' : 'liked'}
-                                                </span>
-                                                {activity.animeTitle && (
-                                                    <> on Anime <span className="text-primary font-semibold">{activity.animeTitle}</span>
-                                                        {activity.episodeNumber ? ` Ep ${activity.episodeNumber}` : ''}
-                                                    </>
+                                    const ActivityContent = (
+                                        <div className="flex gap-3 group cursor-pointer">
+                                            {/* Anime poster thumbnail (like HiAnime) */}
+                                            <div className="shrink-0 w-[52px] h-[68px] rounded-[4px] overflow-hidden bg-white/5">
+                                                {activity.animeImage ? (
+                                                    <img
+                                                        src={activity.animeImage}
+                                                        alt={activity.animeTitle || ''}
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        {activity.activityType === 'comment' && <MessageSquare size={16} className="text-blue-400/50" />}
+                                                        {activity.activityType === 'reply' && <Reply size={16} className="text-green-400/50" />}
+                                                        {activity.activityType === 'like' && <ThumbsUp size={16} className="text-pink-400/50" />}
+                                                    </div>
                                                 )}
-                                            </p>
+                                            </div>
 
+                                            {/* Content */}
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex items-center gap-1.5 mb-1 text-[11px] text-white/30 font-medium">
+                                                    {activity.activityType === 'like' ? <ThumbsUp size={10} /> : <MessageSquare size={10} />}
+                                                    <span>{timeAgo(activity.createdAt)}</span>
+                                                </div>
+                                                <p className="text-[13px] text-white/80 leading-snug group-hover:text-white transition-colors line-clamp-2">
+                                                    <span className="font-bold text-white">
+                                                        {activity.activityType === 'comment' ? 'commented' : activity.activityType === 'reply' ? 'replied' : 'liked'}
+                                                    </span>
+                                                    {activity.animeTitle && (
+                                                        <> on <span className="text-primary font-semibold">{activity.animeTitle}</span>
+                                                            {activity.episodeNumber ? ` Ep ${activity.episodeNumber}` : ''}
+                                                        </>
+                                                    )}
+                                                </p>
+                                                {activity.content && (
+                                                    <p className="text-[12px] text-white/40 italic mt-1.5 line-clamp-1 border-l border-white/10 pl-2 group-hover:text-white/60 transition-colors">
+                                                        "{activity.content}"
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))
+                                    );
+
+                                    return activityLink ? (
+                                        <Link key={activity._id} href={activityLink}>
+                                            {ActivityContent}
+                                        </Link>
+                                    ) : (
+                                        <div key={activity._id}>
+                                            {ActivityContent}
+                                        </div>
+                                    );
+                                })
                             ) : (
                                 <div className="py-10 text-center opacity-20">
                                     <History size={36} className="mx-auto mb-3" />
