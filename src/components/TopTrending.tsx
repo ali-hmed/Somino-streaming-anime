@@ -102,6 +102,16 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                 const title = getTitle(anime.title);
                                 const rank = index + 1;
 
+                                // Colors for the outlined numbers - Using site theme
+                                const getRankColor = (r: number) => {
+                                    if (r === 1) return '#53CCB8'; // Site Primary
+                                    if (r === 2) return '#FF6E9F'; // Site Pink
+                                    if (r === 3) return '#FFB941'; // Site Gold
+                                    return 'rgba(255,255,255,0.08)'; // Muted
+                                };
+
+                                const rankColor = getRankColor(rank);
+
                                 return (
                                     <motion.div
                                         key={anime.id}
@@ -109,75 +119,64 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                     >
-                                         <Link
+                                        <Link
                                             href={`/watch/${anime.id}`}
-                                            className="relative flex items-center h-[80px] group cursor-pointer rounded-[8px] overflow-hidden bg-card transition-all"
+                                            className="flex items-center gap-3 py-3.5 group cursor-pointer border-b border-white/[0.03] last:border-0 hover:bg-white/[0.01] transition-all pr-2"
                                         >
-                                            {/* Claw Marks Background Overlay */}
-                                            {rank <= 3 && (
-                                                <div className="absolute inset-x-0 top-0 h-full pointer-events-none opacity-[0.08] mix-blend-screen -translate-x-4">
-                                                    <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                                        <path d="M0 20 L40 -20 M15 35 L55 -5 M30 50 L70 10" stroke="#2ECC71" strokeWidth="8" strokeLinecap="round" />
-                                                    </svg>
-                                                </div>
-                                            )}
-
-                                            {/* Rank Circle */}
-                                            <div className="flex-shrink-0 w-14 flex items-center justify-center z-10">
-                                                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-background group-hover:bg-primary transition-all duration-300">
-                                                    <span className="text-[12px] font-black text-white/90">{rank}</span>
-                                                </div>
+                                            {/* Rank Number (Stylish Outline) */}
+                                            <div className="flex-shrink-0 w-11 text-center">
+                                                <span 
+                                                    className="text-4xl font-black italic select-none tracking-tighter transition-all duration-300 group-hover:scale-110 block"
+                                                    style={{ 
+                                                        WebkitTextStroke: `1.5px ${rankColor}`,
+                                                        color: 'transparent',
+                                                        fontFamily: 'system-ui, sans-serif',
+                                                        filter: rank <= 3 ? `drop-shadow(0 0 8px ${rankColor}33)` : 'none',
+                                                        opacity: rank <= 3 ? 1 : 0.6
+                                                    }}
+                                                >
+                                                    {rank}
+                                                </span>
                                             </div>
 
-                                            {/* Content Area */}
-                                            <div className="flex-1 min-w-0 z-10 pl-2">
-                                                <h3 className="text-[15px] font-bold text-white transition-colors line-clamp-1 leading-tight tracking-tight pr-22">
-                                                    {title}
-                                                </h3>
-
-                                                <div className="flex items-center gap-2 mt-2">
-                                                    {/* CC Badge */}
-                                                    <div className="flex items-center gap-1 bg-[#FF6E9F]/10 text-[#FF6E9F] text-[9px] font-black px-1.5 py-0.5 rounded items-center">
-                                                        <MessageSquare size={9} fill="currentColor" /> {anime.subEpisodes || anime.totalEpisodes || (rank + 5)}
-                                                    </div>
-
-                                                    {/* Dub Badge */}
-                                                    {anime.dubEpisodes > 0 && (
-                                                        <div className="flex items-center gap-1 bg-[#53CCB8]/10 text-[#53CCB8] text-[9px] font-black px-1.5 py-0.5 rounded items-center">
-                                                            <Mic size={9} fill="currentColor" /> {anime.dubEpisodes}
-                                                        </div>
-                                                    )}
-
-                                                    {/* Score Badge */}
-                                                    {anime.score && (
-                                                        <div className="flex items-center gap-1 bg-[#FFB941]/10 text-[#FFB941] text-[9px] font-black px-1.5 py-0.5 rounded items-center">
-                                                            <Star size={9} fill="currentColor" /> {anime.score}
-                                                        </div>
-                                                    )}
-
-                                                    {/* Type */}
-                                                    <span className="px-1.5 py-0.5 rounded-[2px] bg-white/[0.03] text-white/20 text-[8px] font-black tracking-tighter">
-                                                        {anime.type || 'tv'}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            {/* Right Side Image with Fade Overlay */}
-                                            <div className="absolute top-0 right-0 h-full w-40 overflow-hidden pointer-events-none flex justify-end">
+                                            {/* Small Stylish Poster */}
+                                            <div className="flex-shrink-0 w-[52px] h-[70px] rounded-[4px] overflow-hidden bg-white/5 relative group-hover:shadow-[0_0_15px_rgba(83,204,184,0.15)] transition-all duration-300">
                                                 <img
                                                     src={anime.image}
                                                     alt={title}
-                                                    className="h-full w-32 object-cover object-center transition-transform duration-700"
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                 />
-                                                {/* Mask Overlay */}
-                                                <div
-                                                    className="absolute inset-0"
-                                                    style={{
-                                                        background: 'linear-gradient(to right, #181818 10%, rgba(24, 24, 24, 0.8) 40%, rgba(24, 24, 24, 0.2) 70%, transparent 100%)'
-                                                    }}
-                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
 
+                                            {/* Info Area */}
+                                            <div className="flex-1 min-w-0 ml-1">
+                                                <h3 className="text-[14px] font-bold text-white/80 group-hover:text-primary transition-colors line-clamp-2 leading-[1.3] mb-2.5">
+                                                    {title}
+                                                </h3>
+
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    {/* CC Badge - Primary Tint */}
+                                                    <div className="flex items-center gap-1 bg-primary/10 text-primary text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-primary/5">
+                                                        <MessageSquare size={9} fill="currentColor" /> 
+                                                        {anime.subEpisodes || anime.totalEpisodes || '?'}
+                                                    </div>
+
+                                                    {/* Dub Badge - Gold/Pink switch based on availability */}
+                                                    {anime.dubEpisodes > 0 && (
+                                                        <div className="flex items-center gap-1 bg-gold/10 text-gold text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-gold/5">
+                                                            <Mic size={9} fill="currentColor" /> 
+                                                            {anime.dubEpisodes}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Type - TV/Movie */}
+                                                    <div className="flex items-center gap-1 text-white/30 text-[9px] font-black uppercase tracking-wider ml-auto">
+                                                        <span>•</span>
+                                                        <span>{anime.type || 'TV'}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </Link>
                                     </motion.div>
                                 );
