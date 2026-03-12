@@ -30,7 +30,7 @@
   /* ── Aliases for component classes ── */
   --card-bg: #181818;
   --sidebar-bg: #101010;
-  --footer-bg: #060606;
+  --footer-bg: #000000;
   --glass: rgba(10, 10, 10, 0.95);
 }
 
@@ -48,6 +48,7 @@
   --color-pink: var(--pink);
   --color-gold: var(--gold);
   --color-green: var(--green);
+  --color-footer: var(--footer-bg);
 
   --shadow-neon: none;
   --shadow-neon-pink: none;
