@@ -45,6 +45,9 @@
   --color-sidebar: var(--sidebar-bg);
   --color-muted: var(--text-muted);
   --color-surface: var(--surface);
+  --color-pink: var(--pink);
+  --color-gold: var(--gold);
+  --color-green: var(--green);
 
   --shadow-neon: none;
   --shadow-neon-pink: none;

@@ -151,28 +151,27 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
 
                                             {/* Info Area */}
                                             <div className="flex-1 min-w-0 ml-1">
-                                                <h3 className="text-[14px] font-bold text-white/80 group-hover:text-primary transition-colors line-clamp-1 leading-[1.3] mb-2.5">
+                                                <h3 className="text-[15px] font-bold text-white group-hover:text-primary transition-colors line-clamp-1 leading-[1.3] mb-3 font-display tracking-tight">
                                                     {title}
                                                 </h3>
 
                                                 <div className="flex items-center gap-2 flex-wrap">
-                                                    {/* CC Badge - Pink Tint */}
-                                                    <div className="flex items-center gap-1 bg-pink/10 text-pink text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-pink/5">
-                                                        <MessageSquare size={9} fill="currentColor" /> 
-                                                        {anime.subEpisodes || anime.totalEpisodes || '?'}
+                                                    {/* CC Badge - Pink (Sub) */}
+                                                    <div className="flex items-center gap-1.5 bg-pink/10 text-pink text-[9px] font-black px-1.5 py-0.5 rounded-[6px] border border-pink/30">
+                                                        <div className="flex items-center justify-center bg-pink text-background rounded-[2px] px-0.5 text-[7px] leading-none h-2.5">CC</div>
+                                                        <span>{anime.subEpisodes || anime.totalEpisodes || '?'}</span>
                                                     </div>
 
-                                                    {/* Dub Badge - Primary/Teal Tint */}
+                                                    {/* Dub Badge - Primary (Dub) */}
                                                     {anime.dubEpisodes > 0 && (
-                                                        <div className="flex items-center gap-1 bg-primary/10 text-primary text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-primary/5">
-                                                            <Mic size={9} fill="currentColor" /> 
-                                                            {anime.dubEpisodes}
+                                                        <div className="flex items-center gap-1.5 bg-primary/10 text-primary text-[9px] font-black px-1.5 py-0.5 rounded-[6px] border border-primary/30">
+                                                            <Mic size={10} fill="currentColor" /> 
+                                                            <span>{anime.dubEpisodes}</span>
                                                         </div>
                                                     )}
 
                                                     {/* Type - TV/Movie */}
-                                                    <div className="flex items-center gap-1 text-white/30 text-[9px] font-black uppercase tracking-wider ml-auto">
-                                                        <span>•</span>
+                                                    <div className="flex items-center gap-1 text-white/40 text-[10px] font-bold uppercase tracking-wider ml-auto">
                                                         <span>{anime.type || 'TV'}</span>
                                                     </div>
                                                 </div>
