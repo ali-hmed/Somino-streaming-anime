@@ -151,20 +151,20 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
 
                                             {/* Info Area */}
                                             <div className="flex-1 min-w-0 ml-1">
-                                                <h3 className="text-[14px] font-bold text-white/80 group-hover:text-primary transition-colors line-clamp-2 leading-[1.3] mb-2.5">
+                                                <h3 className="text-[14px] font-bold text-white/80 group-hover:text-primary transition-colors line-clamp-1 leading-[1.3] mb-2.5">
                                                     {title}
                                                 </h3>
 
                                                 <div className="flex items-center gap-2 flex-wrap">
-                                                    {/* CC Badge - Primary Tint */}
-                                                    <div className="flex items-center gap-1 bg-primary/10 text-primary text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-primary/5">
+                                                    {/* CC Badge - Pink Tint */}
+                                                    <div className="flex items-center gap-1 bg-pink/10 text-pink text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-pink/5">
                                                         <MessageSquare size={9} fill="currentColor" /> 
                                                         {anime.subEpisodes || anime.totalEpisodes || '?'}
                                                     </div>
 
-                                                    {/* Dub Badge - Gold/Pink switch based on availability */}
+                                                    {/* Dub Badge - Primary/Teal Tint */}
                                                     {anime.dubEpisodes > 0 && (
-                                                        <div className="flex items-center gap-1 bg-gold/10 text-gold text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-gold/5">
+                                                        <div className="flex items-center gap-1 bg-primary/10 text-primary text-[9px] font-black px-1.5 py-0.5 rounded-[3px] border border-primary/5">
                                                             <Mic size={9} fill="currentColor" /> 
                                                             {anime.dubEpisodes}
                                                         </div>
