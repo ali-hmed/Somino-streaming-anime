@@ -255,18 +255,24 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                     <div className="flex items-center gap-2 mb-1">
                         <div className="flex items-center gap-1">
                             {(() => {
-                                const rankIcon = getRankIconByXP(item.power ?? 0);
+                                // Priority 1: Check by Power (XP)
+                                let rankIcon = getRankIconByXP(item.power ?? 0);
+                                // Priority 2: Fallback to Rank Name
+                                if (!rankIcon && item.rank) {
+                                    rankIcon = getRankIconByName(item.rank);
+                                }
+                                
                                 return rankIcon ? (
                                     <img
                                         src={rankIcon}
-                                        width={25}
-                                        height={25}
+                                        width={18}
+                                        height={18}
                                         alt="rank icon"
                                         className="object-contain shrink-0"
                                     />
                                 ) : null;
                             })()}
-                            <Link href={`/user/${item.username}`} className="text-[13px] font-bold text-primary cursor-pointer hover:underline">
+                            <Link href={`/user/${item.username}`} className="text-[12px] font-bold text-primary cursor-pointer hover:underline">
                                 {item.username || 'User'}
                             </Link>
                         </div>

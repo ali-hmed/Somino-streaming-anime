@@ -9,7 +9,7 @@ import { searchAnime } from '@/lib/consumet';
 import { getTitle } from '@/types/anime';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
-import { getRankIconByName } from '@/utils/rankUtils';
+import { getRankIconByXP, getRankIconByName } from '@/utils/rankUtils';
 
 interface NavbarProps {
     className?: string;
@@ -305,7 +305,13 @@ const Navbar = ({ className }: NavbarProps) => {
                                             <div className="px-4 pt-4 pb-3">
                                                 <div className="flex items-center gap-1 mb-0.5">
                                                     {(() => {
-                                                        const rankIcon = getRankIconByName(user?.rank);
+                                                        // Priority 1: Check by Power (XP)
+                                                        let rankIcon = getRankIconByXP(user?.power ?? 0);
+                                                        // Priority 2: Fallback to Rank Name
+                                                        if (!rankIcon && user?.rank) {
+                                                            rankIcon = getRankIconByName(user.rank);
+                                                        }
+                                                        
                                                         return rankIcon ? (
                                                             <img
                                                                 src={rankIcon}
