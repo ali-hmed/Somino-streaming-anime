@@ -475,7 +475,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                     ) : comments.length > 0 ? (
                         <div className="space-y-1">
                             {comments.map((main) => (
-                                <div key={main._id} className="pb-8 last:pb-0 border-b border-[#232736]">
+                                <div key={main._id} className="pb-8 last:pb-0">
                                     <CommentItem item={main} mainId={main._id} />
                                     {main.replies && main.replies.map(reply => (
                                         <CommentItem key={reply._id} item={reply} isReply={true} mainId={main._id} />
