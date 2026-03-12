@@ -191,14 +191,14 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                             {!isUpcoming && (
                                 <>
                                     {subCount > 0 && (
-                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 text-[9px] font-black text-[#FF6E9F] shrink-0">
-                                            <MessageSquare size={8} fill="currentColor" />
+                                        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-pink/10 text-[9px] font-black text-pink shrink-0 border border-pink/20">
+                                            <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
                                             {subCount}
                                         </div>
                                     )}
                                     {dubCount > 0 && (
-                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#53CCB8]/10 text-[9px] font-black text-[#53CCB8] shrink-0">
-                                            <Mic size={8} fill="currentColor" />
+                                        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-[9px] font-black text-primary shrink-0 border border-primary/20">
+                                            <Mic size={9} fill="currentColor" />
                                             {dubCount}
                                         </div>
                                     )}

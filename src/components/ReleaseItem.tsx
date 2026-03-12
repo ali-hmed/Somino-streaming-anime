@@ -32,24 +32,19 @@ const ReleaseItem: React.FC<ReleaseItemProps> = ({ anime }) => {
                     {title}
                 </h4>
                 <div className="flex items-center gap-2 flex-wrap">
-                    {/* SUB Badge - Main Theme Pink */}
-                    <div className="flex items-center gap-1 bg-[#FF6E9F] text-black text-[10px] font-black px-1.5 py-0.5 rounded-[2px]">
-                        <span className="opacity-60">SUB</span>
+                    {/* SUB Badge - Pink Pill */}
+                    <div className="flex items-center gap-1.5 bg-pink/10 text-pink text-[9px] font-black px-1.5 py-0.5 rounded-[4px] border border-pink/20">
+                        <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
                         {anime.subEpisodes || anime.episodeNumber || anime.totalEpisodes || '1'}
                     </div>
 
-                    {/* Mic Badge - Main Theme Pink */}
+                    {/* DUB Badge - Primary Pill */}
                     {anime.dubEpisodes > 0 && (
-                        <div className="flex items-center gap-1 bg-[#53CCB8] text-black text-[10px] font-black px-1.5 py-0.5 rounded-[2px]">
-                            <Mic size={8} className="fill-current" />
+                        <div className="flex items-center gap-1.5 bg-primary/10 text-primary text-[9px] font-black px-1.5 py-0.5 rounded-[4px] border border-primary/20">
+                            <Mic size={9} fill="currentColor" />
                             {anime.dubEpisodes}
                         </div>
                     )}
-
-                    {/* Count Badge - Muted Gray */}
-                    <div className="flex items-center gap-1 bg-white/10 text-white/50 text-[10px] font-black px-1.5 py-0.5 rounded-[2px]">
-                        {anime.episodeNumber || anime.totalEpisodes || '1'}
-                    </div>
 
                     <span className="text-white/40 text-[10px] font-bold flex items-center gap-1">
                         <span className="text-[8px] opacity-40">•</span>

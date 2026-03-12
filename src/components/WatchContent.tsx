@@ -140,12 +140,12 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                             </span>
                                         );
                                     })()}
-                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 text-[#FF6E9F] text-[8px] font-black tracking-tighter">
-                                        <MessageSquare size={9} fill="currentColor" />
+                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-pink/10 text-pink text-[8px] font-black tracking-tighter border border-pink/20">
+                                        <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
                                         {anime.subEpisodes || episodes.length || 0}
                                     </div>
                                     {anime.dubEpisodes && anime.dubEpisodes > 0 ? (
-                                        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-[#53CCB8]/10 text-[#53CCB8] text-[8px] font-black tracking-tighter">
+                                        <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-primary text-[8px] font-black tracking-tighter border border-primary/20">
                                             <Mic size={9} fill="currentColor" />
                                             {anime.dubEpisodes}
                                         </div>
@@ -463,13 +463,13 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                                 </h4>
     
                                                 <div className="flex items-center gap-2">
-                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#FF6E9F]/10">
-                                                        <span className="text-[8px] font-black text-[#FF6E9F]">SUB</span>
-                                                        <span className="text-[9px] font-black text-[#FF6E9F]">{rel.subEpisodes || rel.episodes || '?'}</span>
+                                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-pink/10 text-pink shrink-0 border border-pink/20">
+                                                        <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
+                                                        <span className="text-[9px] font-black">{rel.subEpisodes || rel.episodes || '?'}</span>
                                                     </div>
-                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#53CCB8]/10">
-                                                        <svg className="w-2 h-2 text-[#53CCB8] fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" /><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" /></svg>
-                                                        <span className="text-[9px] font-black text-[#53CCB8]">{rel.dubEpisodes || rel.subEpisodes || rel.episodes || '?'}</span>
+                                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-primary shrink-0 border border-primary/20">
+                                                        <Mic size={9} fill="currentColor" />
+                                                        <span className="text-[9px] font-black">{rel.dubEpisodes || rel.subEpisodes || rel.episodes || '?'}</span>
                                                     </div>
                                                     <span className="text-[10px] font-bold text-white/30">{rel.type}</span>
                                                     <span className="text-[9px] font-black text-white/40 truncate">{rel.relationType}</span>
@@ -512,14 +512,14 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                                             </h4>
 
                                             <div className="flex items-center gap-1.5 flex-wrap">
-                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-[#FF6E9F]/10">
-                                                    <MessageSquare size={9} fill="currentColor" className="text-[#FF6E9F]" />
-                                                    <span className="text-[9px] font-black text-[#FF6E9F]">{item.subEpisodes || item.episodes || item.totalEpisodes || '?'}</span>
+                                                <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-pink/10 text-pink border border-pink/20">
+                                                    <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
+                                                    <span className="text-[9px] font-black">{item.subEpisodes || item.episodes || item.totalEpisodes || '?'}</span>
                                                 </div>
                                                 {item.dubEpisodes > 0 && (
-                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[3px] bg-[#53CCB8]/10">
-                                                        <Mic size={9} fill="currentColor" className="text-[#53CCB8]" />
-                                                        <span className="text-[9px] font-black text-[#53CCB8]">{item.dubEpisodes}</span>
+                                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-primary border border-primary/20">
+                                                        <Mic size={9} fill="currentColor" />
+                                                        <span className="text-[9px] font-black">{item.dubEpisodes}</span>
                                                     </div>
                                                 )}
                                                 <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">•</span>

@@ -224,16 +224,16 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] bg-primary/20 text-primary tracking-wider">HD</span>
                                 <span className="text-white/20 text-xs">•</span>
-                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 text-[#FF6E9F] tracking-wider flex items-center gap-1">
-                                    <MessageSquare size={10} fill="currentColor" />
-                                    SUB {anime.totalEpisodes || anime.subEpisodes || '?'}
+                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[4px] bg-pink/10 text-pink tracking-wider flex items-center gap-1 border border-pink/20">
+                                    <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[8px] leading-none h-3 font-black">CC</div>
+                                    {anime.totalEpisodes || anime.subEpisodes || '?'}
                                 </span>
                                 {anime.dubEpisodes > 0 && (
                                     <>
                                         <span className="text-white/20 text-xs">•</span>
-                                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] bg-[#53CCB8]/10 text-[#53CCB8] tracking-wider flex items-center gap-1">
-                                            <Mic size={10} fill="currentColor" strokeWidth={3} />
-                                            DUB {anime.dubEpisodes}
+                                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[4px] bg-primary/10 text-primary tracking-wider flex items-center gap-1 border border-primary/20">
+                                            <Mic size={10} fill="currentColor" />
+                                            {anime.dubEpisodes}
                                         </span>
                                     </>
                                 )}
