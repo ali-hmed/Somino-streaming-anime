@@ -9,7 +9,7 @@ import { searchAnime } from '@/lib/consumet';
 import { getTitle } from '@/types/anime';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
-import { getRankIconByXP, getRankIconByName } from '@/utils/rankUtils';
+import { getRankByXP, getRankByName } from '@/utils/rankUtils';
 
 interface NavbarProps {
     className?: string;
@@ -306,25 +306,32 @@ const Navbar = ({ className }: NavbarProps) => {
                                                 <div className="flex items-center gap-1 mb-0.5">
                                                     {(() => {
                                                         // Priority 1: Check by Power (XP)
-                                                        let rankIcon = getRankIconByXP(user?.power ?? 0);
+                                                        let rank = getRankByXP(user?.power ?? 0);
                                                         // Priority 2: Fallback to Rank Name
-                                                        if (!rankIcon && user?.rank) {
-                                                            rankIcon = getRankIconByName(user.rank);
+                                                        if (!rank && user?.rank) {
+                                                            rank = getRankByName(user.rank);
                                                         }
                                                         
-                                                        return rankIcon ? (
-                                                            <img
-                                                                src={rankIcon}
-                                                                width={25}
-                                                                height={25}
-                                                                alt="rank icon"
-                                                                className="object-contain shrink-0"
-                                                            />
-                                                        ) : null;
+                                                        const rankIcon = rank?.icon;
+                                                        const nameColor = rank?.color || 'var(--primary)';
+
+                                                        return (
+                                                            <>
+                                                                {rankIcon && (
+                                                                    <img
+                                                                        src={rankIcon}
+                                                                        width={25}
+                                                                        height={25}
+                                                                        alt="rank icon"
+                                                                        className="object-contain shrink-0"
+                                                                    />
+                                                                )}
+                                                                <p className="text-[14px] font-black leading-tight" style={{ color: nameColor }}>
+                                                                    {user?.username}
+                                                                </p>
+                                                            </>
+                                                        );
                                                     })()}
-                                                    <p className="text-[14px] font-black text-white leading-tight" style={{ color: 'var(--primary)' }}>
-                                                        {user?.username}
-                                                    </p>
                                                 </div>
                                                 <p className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>
                                                     {user?.email}

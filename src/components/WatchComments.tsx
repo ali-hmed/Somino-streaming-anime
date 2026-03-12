@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
 import { timeAgo } from '@/utils/dateUtils';
-import { getRankIconByXP } from '@/utils/rankUtils';
+import { getRankByXP, getRankByName } from '@/utils/rankUtils';
 
 interface CommentType {
     _id: string;
@@ -17,6 +17,7 @@ interface CommentType {
     avatar?: string;
     rank?: string;
     power?: number;
+    role?: string;
     parentCommentId: string | null;
     text: string;
     createdAt: string;
@@ -240,7 +241,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
         return (
             <div id={`comment-${item._id}`} className={`group flex gap-3 ${isReply ? 'ml-12 mt-6' : 'mt-8'} scroll-mt-32 relative`}>
                 {/* Avatar */}
-                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-[#1B1F2A] border border-[#232736] overflow-hidden transition-transform hover:scale-110 active:scale-95 ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
+                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-[#1B1F2A] border-2 border-white/10 overflow-hidden ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
                     {item.avatar ? (
                         <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" />
                     ) : (
@@ -256,25 +257,43 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                         <div className="flex items-center gap-1">
                             {(() => {
                                 // Priority 1: Check by Power (XP)
-                                let rankIcon = getRankIconByXP(item.power ?? 0);
+                                let rank = getRankByXP(item.power ?? 0);
                                 // Priority 2: Fallback to Rank Name
-                                if (!rankIcon && item.rank) {
-                                    rankIcon = getRankIconByName(item.rank);
+                                if (!rank && item.rank) {
+                                    rank = getRankByName(item.rank);
                                 }
                                 
-                                return rankIcon ? (
-                                    <img
-                                        src={rankIcon}
-                                        width={18}
-                                        height={18}
-                                        alt="rank icon"
-                                        className="object-contain shrink-0"
-                                    />
-                                ) : null;
+                                const rankIcon = rank?.icon;
+                                const nameColor = rank?.color || '#ffffff';
+
+                                return (
+                                    <>
+                                        {rankIcon && (
+                                            <img
+                                                src={rankIcon}
+                                                width={18}
+                                                height={18}
+                                                alt="rank icon"
+                                                className="object-contain shrink-0"
+                                            />
+                                        )}
+                                        <Link 
+                                            href={`/user/${item.username}`} 
+                                            className="text-[13px] font-bold cursor-pointer hover:no-underline uppercase transition-colors"
+                                            style={{ color: nameColor }}
+                                        >
+                                            {item.username || 'User'}
+                                        </Link>
+                                    </>
+                                );
                             })()}
-                            <Link href={`/user/${item.username}`} className="text-[12px] font-bold text-primary cursor-pointer hover:underline">
-                                {item.username || 'User'}
-                            </Link>
+                            
+                            {/* Role Title Badge */}
+                            {item.role && item.role.toLowerCase() !== 'user' && (
+                                <span className="px-1.5 py-[1px] border border-white/20 rounded-[4px] text-[9px] uppercase font-bold text-white/40 tracking-wider">
+                                    {item.role}
+                                </span>
+                            )}
                         </div>
                         <span className="text-[11px] text-white/20 font-medium">
                             {mounted ? timeAgo(item.createdAt) : '...'}
