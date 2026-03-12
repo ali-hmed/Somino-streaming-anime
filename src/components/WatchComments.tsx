@@ -266,7 +266,9 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
                                 }
                                 
                                 const rankIcon = rank?.icon;
-                                const nameColor = rank?.color || '#ffffff';
+                                let nameColor = rank?.color || '#ffffff';
+                                if (item.role?.toLowerCase() === 'admin') nameColor = '#EF4444';
+                                if (item.role?.toLowerCase() === 'owner') nameColor = '#FFB941';
 
                                 return (
                                     <>
@@ -292,9 +294,11 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
                             
                             {/* Role Title Badge */}
                             {item.role && item.role.toLowerCase() !== 'user' && (
-                                <span className={`px-1.5 py-[1.5px] rounded-[4px] text-[9px] uppercase font-bold tracking-wider border ${
-                                    item.role.toLowerCase() === 'admin'
+                                <span className={`px-1.5 py-0.5 rounded-[4px] text-[7px] uppercase font-black tracking-widest border ${
+                                    item.role.toLowerCase() === 'owner'
                                         ? 'text-[#FFB941] bg-[#FFB941]/10 border-[#FFB941]/30'
+                                        : item.role.toLowerCase() === 'admin'
+                                        ? 'text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/30'
                                         : item.role.toLowerCase() === 'moderator'
                                         ? 'text-primary bg-primary/10 border-primary/30'
                                         : 'text-white/40 bg-white/5 border-white/10'

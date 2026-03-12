@@ -368,7 +368,10 @@ const PublicProfilePage = () => {
                                                 />
                                             ) : null;
                                         })()}
-                                        <h1 className="text-[20px] md:text-xl font-black text-white text-left">
+                                        <h1 className={`text-[20px] md:text-xl font-black text-left transition-colors ${
+                                            userData!.role?.toLowerCase() === 'admin' ? 'text-[#EF4444]' : 
+                                            userData!.role?.toLowerCase() === 'owner' ? 'text-[#FFB941]' : 'text-white'
+                                        }`}>
                                             {userData!.username}
                                         </h1>
                                     </div>
@@ -376,8 +379,10 @@ const PublicProfilePage = () => {
                                     <div className="flex flex-col items-start gap-1.5 md:gap-3">
                                         {/* Styled Role Badge */}
                                         <div className={`inline-block px-1.5 py-[1.5px] rounded-[3px] text-[10px] md:text-[8px] font-bold uppercase tracking-wider leading-none border ${
-                                            userData!.role?.toLowerCase() === 'admin'
+                                            userData!.role?.toLowerCase() === 'owner'
                                                 ? 'text-[#FFB941] bg-[#FFB941]/10 border-[#FFB941]/30'
+                                                : userData!.role?.toLowerCase() === 'admin'
+                                                ? 'text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/30'
                                                 : userData!.role?.toLowerCase() === 'moderator'
                                                 ? 'text-primary bg-primary/10 border-primary/30'
                                                 : 'text-white/50 bg-white/5 border-white/10'
