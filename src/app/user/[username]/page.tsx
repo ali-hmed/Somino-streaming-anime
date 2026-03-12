@@ -657,7 +657,7 @@ const PublicProfilePage = () => {
                                                         )}
                                                     </span>
                                                     {activity.animeTitle && (
-                                                        <> on <span className="text-primary font-semibold">{activity.animeTitle}</span></>
+                                                        <> on Anime <span className="text-primary font-semibold">{activity.animeTitle}</span></>
                                                     )}
                                                 </p>
                                                 {activity.content && (
