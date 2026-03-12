@@ -27,9 +27,9 @@ export default function MALPage() {
                 <h2 className="text-[17px] font-bold text-white">MyAnimeList Integration</h2>
             </div>
 
-            <div className="rounded-2xl overflow-hidden border" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)" }}>
                 <div className="p-8 sm:p-12 flex flex-col items-center text-center space-y-6">
-                    <div className="w-20 h-20 bg-[#2e51a2] rounded-2xl flex items-center justify-center shadow-2xl shadow-[#2e51a2]/20">
+                    <div className="w-20 h-20 bg-[#2e51a2] rounded-2xl flex items-center justify-center">
                         <img src="https://myanimelist.net/img/sp/icon/apple-touch-icon-144x144.png" alt="MAL" className="w-12 h-12 brightness-0 invert" />
                     </div>
 
@@ -52,7 +52,7 @@ export default function MALPage() {
                         >
                             {isConnecting ? (
                                 <>
-                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    <div className="w-4 h-4 rounded-full animate-spin" />
                                     Connecting...
                                 </>
                             ) : (
@@ -63,7 +63,7 @@ export default function MALPage() {
                         </button>
                     ) : (
                         <div className="w-full max-w-sm space-y-4">
-                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
                                 <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden">
                                     <img src="https://cdn.myanimelist.net/images/userimages/default.jpg" alt="User" className="w-full h-full object-cover" />
                                 </div>
@@ -92,7 +92,7 @@ export default function MALPage() {
                     )}
                 </div>
 
-                <div className="px-8 py-4 bg-white/[0.02] border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="px-8 py-4 bg-white/[0.02] flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2 text-[11px]" style={{ color: "var(--text-muted)" }}>
                         <AlertCircle size={14} className="text-yellow-500" />
                         <span>Data is synced every 5 minutes</span>
@@ -113,7 +113,7 @@ export default function MALPage() {
                     { title: "One-Click Add", desc: "Add shows to your MAL list directly from Somino." },
                     { title: "Rating Sync", desc: "Your Somino scores are pushed to MyAnimeList profile." }
                 ].map((f, i) => (
-                    <div key={i} className="p-5 rounded-2xl border" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                    <div key={i} className="p-5 rounded-2xl" style={{ background: "var(--surface)" }}>
                         <h4 className="text-[13px] font-bold text-white mb-2">{f.title}</h4>
                         <p className="text-[11px] leading-relaxed" style={{ color: "var(--text-muted)" }}>{f.desc}</p>
                     </div>

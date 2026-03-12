@@ -74,8 +74,8 @@ export default function SchedulePage() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-white/5 p-1.5 rounded-2xl border border-white/5">
-                        <div className="px-4 py-2 text-[10px] font-black tracking-widest text-white/40 border-r border-white/5 flex items-center gap-2">
+                    <div className="flex items-center gap-3 bg-white/5 p-1.5 rounded-2xl">
+                        <div className="px-4 py-2 text-[10px] font-black tracking-widest text-white/40 flex items-center gap-2">
                             <Filter size={12} /> Timezone
                         </div>
                         <div className="px-4 py-2 text-[10px] font-black tracking-widest text-primary">
@@ -85,13 +85,13 @@ export default function SchedulePage() {
                 </div>
 
                 {/* Day Selection Tabs */}
-                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-6 scrollbar-hide border-b border-white/5 mb-10">
+                <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-6 scrollbar-hide mb-10">
                     {DAYS.map((day) => (
                         <button
                             key={day.id}
                             onClick={() => setSelectedDay(day.id)}
-                            className={`px-6 py-3.5 rounded-xl font-black text-[10px] md:text-xs tracking-[0.15em] transition-all flex-shrink-0 border ${selectedDay === day.id ? 'bg-primary border-primary text-white shadow-neon scale-105 z-10'
-                                : 'bg-white/5 border-white/5 text-muted hover:border-white/10 hover:text-white'
+                            className={`px-6 py-3.5 rounded-xl font-black text-[10px] md:text-xs tracking-[0.15em] transition-all flex-shrink-0 ${selectedDay === day.id ? 'bg-primary text-white scale-105 z-10'
+                                : 'bg-white/5 text-muted hover:text-white'
                                 }`}
                         >
                             {day.label}
@@ -133,7 +133,7 @@ export default function SchedulePage() {
                             key="empty"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-center py-24 bg-white/5 rounded-3xl border border-dashed border-white/10"
+                            className="text-center py-24 bg-white/5 rounded-3xl"
                         >
                             <img src="/miku-not-found.png" alt="No Broadcasts" className="mx-auto w-44 h-44 object-contain mb-2 opacity-90 select-none" draggable={false} />
                             <h3 className="text-xl font-black text-white/40 tracking-widest uppercase">No Broadcasts Found</h3>

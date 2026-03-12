@@ -84,7 +84,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
     }, [selectedDateIndex]);
 
     return (
-        <div className="bg-[#12151D] border border-[#232736] rounded-[4px] overflow-hidden shadow-2xl">
+        <div className="bg-sidebar rounded-[4px] overflow-hidden">
             {/* Day Selector Header */}
             <div className="p-3 pb-4 flex items-center justify-between bg-white/[0.01]">
                 <button
@@ -108,7 +108,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
                                 <span className={`text-[10px] font-black tracking-widest transition-colors ${isActive ? 'text-white' : 'text-white/40 group-hover:text-white/60'}`}>
                                     {day.name}
                                 </span>
-                                <div className={`w-11 h-9 rounded-xl flex items-center justify-center text-[12px] font-black transition-all ${isActive ? 'bg-primary text-white shadow-neon' : 'bg-[#151821] text-white/30 group-hover:bg-[#1B1F2A]'}`}>
+                                <div className={`w-11 h-9 rounded-xl flex items-center justify-center text-[12px] font-black transition-all ${isActive ? 'bg-primary text-white' : 'bg-[#181818] text-white/30 group-hover:bg-[#1A1A1F]'}`}>
                                     {day.date}
                                 </div>
                             </button>
@@ -143,7 +143,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
                             <Link
                                 key={`${item.id}-${i}`}
                                 href={`/watch/${item.id}`}
-                                className="flex items-center gap-4 px-6 py-2 hover:bg-white/[0.03] transition-all group border-b border-white/[0.02] last:border-0"
+                                className="flex items-center gap-4 px-6 py-2 hover:bg-white/[0.03] transition-all group last:border-0"
                             >
                                 <span className="text-[11px] font-bold text-white/20 group-hover:text-white/40 transition-colors w-12 flex-shrink-0">
                                     {broadcastTime}
@@ -161,7 +161,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
                     <div className="flex-1 flex flex-col items-center justify-center p-12 opacity-20">
                         {loading ? null : (
                             <>
-                                <div className="w-12 h-12 rounded-full border-2 border-dashed border-white mb-4 animate-[spin_10s_linear_infinite]" />
+                                <div className="w-12 h-12 rounded-full border-2 border-dashed border-white/20 mb-4 animate-[spin_10s_linear_infinite]" />
                                 <p className="text-[10px] font-black tracking-[0.2em]">No Schedule Found</p>
                             </>
                         )}
@@ -170,7 +170,7 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
             </div>
 
             {/* Footer Clock & More Button */}
-            <div className="px-5 py-4 bg-[#12151D] flex items-center justify-between border-t border-[#232736]">
+            <div className="px-5 py-4 bg-sidebar flex items-center justify-between">
                 <p className="text-[11px] font-bold text-white/20 font-mono tracking-tighter">
                     {currentTime}
                 </p>

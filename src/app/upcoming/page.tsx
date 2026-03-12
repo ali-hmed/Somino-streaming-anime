@@ -22,7 +22,7 @@ export default async function UpcomingPage({
 
             <div className="container mx-auto max-w-[1400px] px-4 md:px-12 pt-28 md:pt-36">
                 {/* Premium Header */}
-                <div className="bg-gradient-to-r from-primary/10 via-transparent to-transparent p-8 md:p-12 rounded-3xl border border-white/5 mb-12 relative overflow-hidden group">
+                <div className="bg-gradient-to-r from-primary/10 via-transparent to-transparent p-8 md:p-12 rounded-3xl mb-12 relative overflow-hidden group">
                     <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-1000" />
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-4">
@@ -31,14 +31,14 @@ export default async function UpcomingPage({
                         </div>
                         <h1 className="text-4xl md:text-7xl font-display font-black text-white tracking-tighter leading-[0.9]">
                             Upcoming <br className="hidden md:block" />
-                            <span className="text-primary drop-shadow-[0_0_15px_rgba(83,204,184,0.3)]">Anime</span>
+                            <span className="text-primary">Anime</span>
                         </h1>
                         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mt-6">
                             <p className="text-white/40 text-sm md:text-base font-medium max-w-xl leading-relaxed">
                                 Discover the most anticipated anime titles coming soon. From new seasons to brand new releases, stay ahead of the curve.
                             </p>
                             {totalFound > 0 && (
-                                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 self-start md:self-center">
+                                <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full self-start md:self-center">
                                     <span className="text-primary font-black text-xs">{totalFound.toLocaleString()}</span>
                                     <span className="text-white/20 font-bold text-[10px] tracking-widest">Titles Found</span>
                                 </div>
@@ -61,7 +61,7 @@ export default async function UpcomingPage({
                                 {currentPage > 1 && (
                                     <Link
                                         href={`/upcoming?page=${currentPage - 1}`}
-                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                                     >
                                         <ChevronRight size={16} className="rotate-180" />
                                     </Link>
@@ -72,7 +72,7 @@ export default async function UpcomingPage({
                                         <Link
                                             key={`page-${p}`}
                                             href={`/upcoming?page=${p}`}
-                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === p ?'bg-primary text-white shadow-lg'
+                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === p ? 'bg-primary text-white'
                                                 : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                                 }`}
                                         >
@@ -86,7 +86,7 @@ export default async function UpcomingPage({
                                 {(pagination as any).has_next_page && (
                                     <Link
                                         href={`/upcoming?page=${currentPage + 1}`}
-                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                                     >
                                         <ChevronRight size={16} />
                                     </Link>
@@ -95,7 +95,7 @@ export default async function UpcomingPage({
                         )}
                     </>
                 ) : (
-                    <div className="text-center py-20 bg-surface border border-white/5 rounded-2xl">
+                    <div className="text-center py-20 bg-surface rounded-2xl">
                         <Calendar size={48} className="mx-auto text-white/5 mb-4" />
                         <p className="text-muted font-bold tracking-widest text-xs">No upcoming anime found at the moment.</p>
                     </div>

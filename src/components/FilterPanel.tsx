@@ -61,10 +61,10 @@ function CustomDropdown({
             <button
                 type="button"
                 onClick={() => setOpen(p => !p)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[7px] border transition-all text-left min-w-[110px] ${open ? 'bg-[#232736] border-primary/50'
+                className={`flex items-center gap-2 px-4 py-2 rounded-[7px] transition-all text-left min-w-[110px] ${open ? 'bg-surface-raised'
                     : isActive
-                        ? 'bg-[#232736] border-primary/30'
-                        : 'bg-[#1B1F2A] border-[#232736]/50 hover:border-white/20'
+                        ? 'bg-surface-raised'
+                        : 'bg-card hover:bg-surface-raised'
                     }`}
             >
                 <span className="text-[10px] font-bold text-white/40 shrink-0">{label}</span>
@@ -80,7 +80,7 @@ function CustomDropdown({
 
             {/* Panel */}
             {open && (
-                <div className="absolute top-[calc(100%+5px)] left-0 z-50 min-w-[140px] bg-[#12151D] border border-[#232736] rounded-[7px] shadow-2xl shadow-black/60 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute top-[calc(100%+5px)] left-0 z-50 min-w-[140px] bg-sidebar rounded-[7px] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
                     <button
                         type="button"
                         onClick={() => { onChange(ALL); setOpen(false); }}
@@ -92,7 +92,7 @@ function CustomDropdown({
                         {value === ALL && <Check size={9} strokeWidth={3} className="text-primary" />}
                     </button>
 
-                    <div className="h-px bg-white/[0.05] mx-2" />
+                    <div className="h-2" />
 
                     <div className="max-h-[180px] overflow-y-auto no-scrollbar py-0.5">
                         {options.map(opt => (
@@ -161,7 +161,7 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
     const hasAny = type !== ALL || status !== ALL || rating !== ALL || sort !== ALL || season !== ALL || score !== ALL || language !== ALL || selectedGenres.length > 0;
 
     return (
-        <div className="bg-[#151821] border border-[#232736] rounded-[10px] p-6 shadow-xl">
+        <div className="bg-sidebar rounded-[10px] p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
@@ -187,7 +187,7 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
             </div>
 
             {/* Divider */}
-            <div className="border-t border-white/[0.04] mb-5" />
+            <div className="h-5" />
 
             {/* Genre */}
             <p className="text-[9px] font-black text-white/20 tracking-[0.15em] mb-3">
@@ -201,8 +201,8 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
                              <button
                                 key={g.id}
                                 onClick={() => toggleGenre(g.id)}
-                                className={`px-2.5 py-1 rounded-[5px] text-[10px] font-semibold transition-all border ${active ? 'bg-primary/15 border-primary/50 text-primary'
-                                    : 'bg-[#1B1F2A] border-[#232736]/50 text-white/40 hover:border-white/20 hover:text-white hover:bg-[#232736]'
+                                className={`px-2.5 py-1 rounded-[5px] text-[10px] font-semibold transition-all ${active ? 'bg-primary/15 text-primary'
+                                    : 'bg-card text-white/40 hover:text-white hover:bg-surface-raised'
                                     }`}
                             >
                                 {g.name}
@@ -216,7 +216,7 @@ export default function FilterPanel({ genres, types, statuses, ratings, seasons,
             <div className="mt-8 flex items-center gap-3">
                 <button
                     onClick={applyFilters}
-                    className="px-6 py-2.5 bg-primary text-[#0b0c10] font-black text-[11px] rounded-[7px] hover:bg-primary/90 active:scale-95 transition-all shadow-lg shadow-primary/10"
+                    className="px-6 py-2.5 bg-primary text-[#0b0c10] font-black text-[11px] rounded-[7px] hover:bg-primary/90 active:scale-95 transition-all"
                 >
                     Filters
                 </button>

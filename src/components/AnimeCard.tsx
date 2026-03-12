@@ -63,7 +63,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                     className="group cursor-pointer w-full"
                 >
                     {/* Poster with badges */}
-                    <div className={`relative aspect-video ${roundedClass} overflow-hidden bg-[#1B1F2A] border border-[#232736] shadow-xl mb-3`}>
+                    <div className={`relative aspect-video ${roundedClass} overflow-hidden bg-card mb-3`}>
                         {displayImage && !imgError ? (
                             <img
                                 src={displayImage}
@@ -85,14 +85,14 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                             const rating = String(anime.rating || '');
                             const rUpper = rating.toUpperCase();
                             if (rating === 'R' || rUpper.includes('R+') || rUpper.includes('RX') || rUpper.includes('HENTAI') || rating.includes('R -') || anime.is18 || anime.isAdult) {
-                                return <span className="absolute top-1.5 right-1.5 z-10 bg-[#e5534b] text-white text-[9px] font-black px-1.5 py-0.5 rounded-[3px] shadow pointer-events-none">18+</span>;
+                                return <span className="absolute top-1.5 right-1.5 z-10 bg-[#e5534b] text-white text-[9px] font-black px-1.5 py-0.5 rounded-[3px] pointer-events-none">18+</span>;
                             }
                             return null;
                         })()}
 
                         {/* Hover Play Button */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <div className="w-10 h-10 bg-[#FF6E9F] rounded-full flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                            <div className="w-10 h-10 bg-[#FF6E9F] rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform">
                                 <Play size={18} className="text-white fill-current translate-x-0.5" />
                             </div>
                         </div>
@@ -100,7 +100,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                         {/* Progress Bar Overlaid on Image Bottom */}
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40 overflow-hidden">
                             <div
-                                className="h-full bg-[#FF6E9F] transition-all duration-300 shadow-[0_0_8px_rgba(255,110,159,0.5)]"
+                                className="h-full bg-[#FF6E9F] transition-all duration-300"
                                 style={{ width: `${progressPercent}%` }}
                             />
                         </div>
@@ -132,7 +132,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                 className="group cursor-pointer w-full"
             >
                 {/* Image Container */}
-                <div className={`relative aspect-[2/3] ${roundedClass} overflow-hidden bg-[#1B1F2A] border border-[#232736] shadow-lg mb-3`}>
+                <div className={`relative aspect-[2/3] ${roundedClass} overflow-hidden bg-card mb-3`}>
                     {displayImage ? (
                         <img
                             src={displayImage}
@@ -146,7 +146,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                     {/* Interaction Overlay (only if aired) */}
                     {!(anime.status?.toLowerCase() === 'not yet aired' || anime.status?.toLowerCase() === 'upcoming') && (
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <div className="w-12 h-12 bg-[#53CCB8] rounded-full flex items-center justify-center shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                            <div className="w-12 h-12 bg-[#53CCB8] rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300">
                                 <Play size={22} className="text-black fill-current translate-x-0.5" />
                             </div>
                         </div>
@@ -155,7 +155,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                     {/* Left Badges (episode number) */}
                     {anime.episodeNumber && showEpisode && (
                         <div className="absolute top-2 left-2 z-10">
-                            <span className="bg-black/60 backdrop-blur-md text-white/60 text-[8px] font-black px-1.5 py-0.5 rounded-[2px] border border-white/10 tracking-tighter">
+                            <span className="bg-black/60 backdrop-blur-md text-white/60 text-[8px] font-black px-1.5 py-0.5 rounded-[2px] tracking-tighter">
                                 EP {anime.episodeNumber}
                             </span>
                         </div>
@@ -167,12 +167,12 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                             const rating = String(anime.rating || '');
                             const rUpper = rating.toUpperCase();
                             if (rating === 'R' || rUpper.includes('R+') || rUpper.includes('RX') || rUpper.includes('HENTAI') || rating.includes('R -') || anime.is18 || anime.isAdult) {
-                                return <span className="bg-[#e5534b] text-white text-[9px] font-black px-1.5 py-0.5 rounded-[3px] shadow">18+</span>;
+                                return <span className="bg-[#e5534b] text-white text-[9px] font-black px-1.5 py-0.5 rounded-[3px]">18+</span>;
                             }
                             return null;
                         })()}
                         {anime.score && showScore && (
-                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-black/60 backdrop-blur-md border border-white/10 text-[#FFB941] text-[10px] font-black shadow-sm">
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-black/60 backdrop-blur-md text-[#FFB941] text-[10px] font-black">
                                 <Star size={10} fill="currentColor" className="stroke-0" />
                                 {anime.score}
                             </div>
@@ -191,13 +191,13 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                             {!isUpcoming && (
                                 <>
                                     {subCount > 0 && (
-                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 border border-[#FF6E9F]/30 text-[9px] font-black text-[#FF6E9F] shrink-0">
+                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 text-[9px] font-black text-[#FF6E9F] shrink-0">
                                             <MessageSquare size={8} fill="currentColor" />
                                             {subCount}
                                         </div>
                                     )}
                                     {dubCount > 0 && (
-                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#53CCB8]/10 border border-[#53CCB8]/30 text-[9px] font-black text-[#53CCB8] shrink-0">
+                                        <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-[2px] bg-[#53CCB8]/10 text-[9px] font-black text-[#53CCB8] shrink-0">
                                             <Mic size={8} fill="currentColor" />
                                             {dubCount}
                                         </div>
@@ -212,7 +212,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <span className="px-1.5 py-0.5 rounded-[2px] bg-white/5 border border-white/10 text-white/50 text-[8px] font-black uppercase tracking-wider">{anime.type || 'tv'}</span>
+                            <span className="px-1.5 py-0.5 rounded-[2px] bg-white/5 text-white/50 text-[8px] font-black uppercase tracking-wider">{anime.type || 'tv'}</span>
                         </div>
                     </div>
                 </div>

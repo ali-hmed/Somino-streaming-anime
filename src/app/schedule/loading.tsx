@@ -17,14 +17,14 @@ export default function ScheduleLoading() {
                     {/* Day Tabs */}
                     <div className="flex gap-2 justify-center overflow-x-auto pb-4">
                         {[1, 2, 3, 4, 5, 6, 7].map(i => (
-                            <div key={i} className="flex-shrink-0 w-24 h-12 rounded-xl bg-white/5 border border-white/10" />
+                            <div key={i} className="flex-shrink-0 w-24 h-12 rounded-xl bg-white/5" />
                         ))}
                     </div>
 
                     {/* Schedule List */}
                     <div className="max-w-4xl mx-auto space-y-4">
                         {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 h-24" />
+                            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 h-24" />
                         ))}
                     </div>
                 </div>

@@ -35,7 +35,7 @@ const BottomSections: React.FC<BottomSectionsProps> = ({ topAiring, mostPopular,
                             </h3>
                             <ChevronRight size={14} className="text-primary/60" />
                         </div>
-                        <div className="bg-[#151821] border border-[#232736] rounded-[8px] flex flex-col shadow-xl">
+                        <div className="bg-[#181818] rounded-[8px] flex flex-col">
                             {section.data.map((item, i) => (
                                 <ReleaseItem key={`${item.id}-${i}`} anime={item} />
                             ))}
@@ -51,7 +51,7 @@ const BottomSections: React.FC<BottomSectionsProps> = ({ topAiring, mostPopular,
                     <h3 className="text-[20px] font-black text-white/95 tracking-tight">
                         {dataSections[activeIndex].title}
                     </h3>
-                    <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5">
+                    <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5">
                         <svg className="w-4 h-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                         </svg>
@@ -60,7 +60,7 @@ const BottomSections: React.FC<BottomSectionsProps> = ({ topAiring, mostPopular,
 
                 {/* Card Container */}
                 {/* Card Container */}
-                <div className="bg-[#151821] border border-[#232736] rounded-[8px] mx-1 md:mx-0 shadow-2xl relative overflow-hidden">
+                <div className="bg-[#181818] rounded-[8px] mx-1 md:mx-0 relative overflow-hidden">
                     <div className="flex flex-col">
                         {dataSections[activeIndex].data.map((item, i) => (
                             <ReleaseItem key={`${item.id}-${i}`} anime={item} />

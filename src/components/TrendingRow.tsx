@@ -93,14 +93,14 @@ const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending'
                                 </div>
 
                                 {/* Large ranking number at the bottom */}
-                                <span className="tr-num font-black leading-none pb-0" style={{ color: '#eee' }}>
+                                <span className="tr-num font-black leading-none pb-0">
                                     {num}
                                 </span>
                             </div>
 
                             {/* Poster */}
                             <div
-                                className="relative overflow-hidden bg-[#1B1F2A] flex-shrink-0 ring-1 ring-[#232736] group-hover:ring-primary/40 transition-all"
+                                className="relative overflow-hidden bg-card flex-shrink-0 transition-all"
                                 style={{ width: CARD_W, height: CARD_H }}
                             >
                                 <img
@@ -123,7 +123,7 @@ const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending'
                 /* Rank number sizing — big like HiAnime */
                 .tr-num {
                     font-size: 28px;
-                    color: #d1d5db;
+                    color: rgba(255,255,255,0.2);
                 }
 
                 /* Make first 3 stand out */

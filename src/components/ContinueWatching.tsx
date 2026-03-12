@@ -92,7 +92,7 @@ const ContinueWatching = () => {
                         {/* Remove Button */}
                         <button
                             onClick={(e) => handleRemove(e, item.animeId)}
-                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white/40 hover:text-white hover:bg-red-500 transition-all z-20 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 shadow-xl"
+                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white/40 hover:text-white hover:bg-red-500 transition-all z-20 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100"
                             title="Remove from history"
                         >
                             <X size={12} strokeWidth={3} />

@@ -39,7 +39,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white">
                         <Trophy size={18} fill="currentColor" />
                     </div>
                     <h2 className="text-[17px] font-black text-white tracking-tight">
@@ -51,7 +51,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                 <div className="relative">
                     <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="flex items-center gap-2 bg-primary px-3.5 py-1.5 rounded-lg text-[10px] font-black text-white tracking-widest hover:brightness-110 transition-all shadow-md"
+                        className="flex items-center gap-2 bg-primary px-3.5 py-1.5 rounded-lg text-[10px] font-black text-white tracking-widest hover:brightness-110 transition-all"
                     >
                         {currentLabel}
                         <ChevronDown size={14} className={`transition-transform duration-200 ${isDropdownOpen ?'rotate-180' : ''}`} />
@@ -63,7 +63,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute right-0 top-full mt-2 w-32 bg-[#1a1a1e] border border-white/10 rounded-xl shadow-2xl z-[100] overflow-hidden"
+                                className="absolute right-0 top-full mt-2 w-32 bg-[#181818] rounded-xl z-[100] overflow-hidden"
                             >
                                 {timeframes.map((tf) => (
                                     <button
@@ -111,7 +111,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                     >
                                          <Link
                                             href={`/watch/${anime.id}`}
-                                            className="relative flex items-center h-[80px] group cursor-pointer rounded-[8px] overflow-hidden bg-[#1B1F2A] border border-[#232736] transition-all"
+                                            className="relative flex items-center h-[80px] group cursor-pointer rounded-[8px] overflow-hidden bg-card transition-all"
                                         >
                                             {/* Claw Marks Background Overlay */}
                                             {rank <= 3 && (
@@ -124,7 +124,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
 
                                             {/* Rank Circle */}
                                             <div className="flex-shrink-0 w-14 flex items-center justify-center z-10">
-                                                <div className="w-8 h-8 rounded-full border border-[#232736] flex items-center justify-center bg-[#151821] group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                                                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-background group-hover:bg-primary transition-all duration-300">
                                                     <span className="text-[12px] font-black text-white/90">{rank}</span>
                                                 </div>
                                             </div>
@@ -137,26 +137,26 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
 
                                                 <div className="flex items-center gap-2 mt-2">
                                                     {/* CC Badge */}
-                                                    <div className="flex items-center gap-1 bg-[#FF6E9F]/10 text-[#FF6E9F] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#FF6E9F]/30 items-center">
+                                                    <div className="flex items-center gap-1 bg-[#FF6E9F]/10 text-[#FF6E9F] text-[9px] font-black px-1.5 py-0.5 rounded items-center">
                                                         <MessageSquare size={9} fill="currentColor" /> {anime.subEpisodes || anime.totalEpisodes || (rank + 5)}
                                                     </div>
 
                                                     {/* Dub Badge */}
                                                     {anime.dubEpisodes > 0 && (
-                                                        <div className="flex items-center gap-1 bg-[#53CCB8]/10 text-[#53CCB8] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#53CCB8]/30 items-center">
+                                                        <div className="flex items-center gap-1 bg-[#53CCB8]/10 text-[#53CCB8] text-[9px] font-black px-1.5 py-0.5 rounded items-center">
                                                             <Mic size={9} fill="currentColor" /> {anime.dubEpisodes}
                                                         </div>
                                                     )}
 
                                                     {/* Score Badge */}
                                                     {anime.score && (
-                                                        <div className="flex items-center gap-1 bg-[#FFB941]/10 text-[#FFB941] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#FFB941]/30 items-center">
+                                                        <div className="flex items-center gap-1 bg-[#FFB941]/10 text-[#FFB941] text-[9px] font-black px-1.5 py-0.5 rounded items-center">
                                                             <Star size={9} fill="currentColor" /> {anime.score}
                                                         </div>
                                                     )}
 
                                                     {/* Type */}
-                                                    <span className="px-1.5 py-0.5 rounded-[2px] bg-white/[0.03] border border-white/5 text-white/20 text-[8px] font-black tracking-tighter">
+                                                    <span className="px-1.5 py-0.5 rounded-[2px] bg-white/[0.03] text-white/20 text-[8px] font-black tracking-tighter">
                                                         {anime.type || 'tv'}
                                                     </span>
                                                 </div>
@@ -173,7 +173,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                                 <div
                                                     className="absolute inset-0"
                                                     style={{
-                                                        background: 'linear-gradient(to right, #0F1017 10%, rgba(17, 19, 26, 0.8) 40%, rgba(11, 13, 18, 0.2) 70%, transparent 100%)'
+                                                        background: 'linear-gradient(to right, #181818 10%, rgba(24, 24, 24, 0.8) 40%, rgba(24, 24, 24, 0.2) 70%, transparent 100%)'
                                                     }}
                                                 />
                                             </div>

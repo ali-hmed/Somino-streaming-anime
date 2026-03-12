@@ -13,14 +13,14 @@ export default function Loading() {
 
                 <div className="flex flex-col gap-8">
                     {/* Filter Panel Skeleton */}
-                    <div className="bg-[#141519] border border-white/[0.04] rounded-[10px] p-6 shadow-xl animate-pulse">
+                    <div className="bg-[#141519] rounded-[10px] p-6 animate-pulse">
                         <div className="h-4 w-20 bg-white/10 rounded mb-5" />
                         <div className="flex flex-wrap gap-2 mb-5">
                             {Array.from({ length: 7 }).map((_, i) => (
-                                <div key={i} className="h-9 w-28 bg-white/5 rounded-[7px] border border-white/[0.05]" />
+                                <div key={i} className="h-9 w-28 bg-white/5 rounded-[7px]" />
                             ))}
                         </div>
-                        <div className="border-t border-white/[0.04] mb-5" />
+                        <div className="mb-5" />
                         <div className="h-3 w-16 bg-white/5 rounded mb-3" />
                         <div className="max-h-[135px] md:max-h-none overflow-hidden mb-2">
                             <div className="flex flex-wrap gap-1.5 md:mb-6">

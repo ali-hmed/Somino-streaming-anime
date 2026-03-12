@@ -131,13 +131,13 @@ const PublicProfilePage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#0F1115] text-white flex flex-col">
-                <Navbar className="bg-[#0F1115]/50 backdrop-blur-md !py-2 md:!py-3" />
+            <div className="min-h-screen bg-background text-white flex flex-col">
+                <Navbar className="bg-background/50 backdrop-blur-md !py-2 md:!py-3" />
 
                 {/* Hero Skeleton */}
                 <div className="relative w-full overflow-hidden h-[66vh]">
                     <div className="absolute inset-0 bg-[#1a1b20] animate-pulse" />
-                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#0F1115] to-transparent z-[3]" />
+                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
                     <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
                         <div className="w-full px-4">
                             <div className="w-full max-w-[896px] h-auto md:h-[142px] mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
@@ -187,7 +187,7 @@ const PublicProfilePage = () => {
                     {/* Left Side: Rank System & Watchlist */}
                     <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
                         {/* Rank Progression Skeleton */}
-                        <div className="bg-[#151821] rounded-none md:rounded-[3rem] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center pt-10 pb-14 h-[280px] animate-pulse" />
+                        <div className="bg-sidebar rounded-none md:rounded-[3rem] relative overflow-hidden flex flex-col items-center pt-10 pb-14 h-[280px] animate-pulse" />
 
                         {/* Watch List Section Skeleton */}
                         <div className="space-y-8 px-4 md:px-0">
@@ -205,7 +205,7 @@ const PublicProfilePage = () => {
 
                     {/* Right Side: Activity Sidebar Section */}
                     <div className="lg:col-span-4 space-y-8 px-4 md:px-0">
-                        <div className="bg-[#12151D]/50 border border-[#232736] rounded-[2rem] overflow-hidden shadow-2xl h-[500px] animate-pulse" />
+                        <div className="bg-sidebar rounded-[2rem] overflow-hidden h-[500px] animate-pulse" />
                     </div>
                 </div>
             </div>
@@ -214,7 +214,7 @@ const PublicProfilePage = () => {
 
     if (error || !userData) {
         return (
-            <div className="min-h-screen bg-[#0F1115] flex flex-col items-center justify-center text-center px-4">
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center px-4">
                 <Navbar />
                 <div className="mt-20">
                     <h2 className="text-2xl font-bold text-white mb-4">{error || 'User not found'}</h2>
@@ -287,8 +287,8 @@ const PublicProfilePage = () => {
     overallProgress = Math.min(100, Math.max(0, overallProgress));
 
     return (
-        <div className="min-h-screen bg-[#0F1115] text-white flex flex-col">
-            <Navbar className="bg-[#0F1115]/50 backdrop-blur-md !py-2 md:!py-3" />
+        <div className="min-h-screen bg-background text-white flex flex-col">
+            <Navbar className="bg-background/50 backdrop-blur-md !py-2 md:!py-3" />
 
             {/* 1. Profile Hero Section */}
             <div className="relative w-full overflow-hidden h-[66vh]">
@@ -318,12 +318,12 @@ const PublicProfilePage = () => {
 
                     {/* Gradients like HeroCarousel & Globals.css */}
                     {/* Deep Bottom Fade (Requested: connect to below seamlessly) */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F1115] via-[#0F1115]/40 to-transparent z-[2]" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#0F1115]/40 via-transparent to-[#0F1115]/40 z-[1]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent z-[2]" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40 z-[1]" />
                 </div>
                 {/* Top/Bottom Edge Smoothing */}
-                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#0F1115] to-transparent z-[3]" />
-                <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[#0F1115] to-transparent z-[3]" />
+                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
+                <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-background to-transparent z-[3]" />
 
                 {/* Profile Info Content Overlay (Requested: two-column design style) */}
                 <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
@@ -333,10 +333,10 @@ const PublicProfilePage = () => {
                             <div className="flex flex-row items-center gap-5 md:contents w-full justify-center md:w-auto">
                                 {/* Left: Avatar with Ring */}
                                 <div className="relative shrink-0 flex items-center md:min-w-[100px] justify-center md:justify-end md:pr-4">
-                                    <div className="w-[95px] h-[95px] rounded-[50%] p-0 md:p-1 bg-none md:bg-gradient-to-tr md:from-primary md:via-primary/50 md:to-pink-500 shadow-none md:shadow-[0_0_15px_rgba(83,204,184,0.25)]">
-                                        <div className="w-full h-full rounded-[50%] border-0 md:border-[1px] md:border-[#161618] bg-[#1a1b20] overflow-hidden">
+                                    <div className="w-[95px] h-[95px] rounded-[50%] p-0 md:p-1 bg-none md:bg-gradient-to-tr md:from-primary md:via-primary/50 md:to-pink-500">
+                                        <div className="w-full h-full rounded-[50%] bg-[#181818] overflow-hidden">
                                             {userData.avatar ? (
-                                                <img src={userData.avatar} className="w-full h-full object-cover shadow-inner" alt={userData.username} />
+                                                <img src={userData.avatar} className="w-full h-full object-cover" alt={userData.username} />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center rounded-[50%]">
                                                     <span className="text-3xl font-black text-white/5 uppercase">{userData.username[0]}</span>
@@ -361,14 +361,20 @@ const PublicProfilePage = () => {
                                                 />
                                             ) : null;
                                         })()}
-                                        <h1 className="text-[20px] md:text-xl font-black text-white drop-shadow-xl text-left">
+                                        <h1 className="text-[20px] md:text-xl font-black text-white text-left">
                                             {userData!.username}
                                         </h1>
                                     </div>
 
                                     <div className="flex flex-col items-start gap-1.5 md:gap-3">
                                         {/* Styled Role Badge */}
-                                        <div className="inline-block px-1.5 py-[1px] rounded-[3px] border border-white/50 text-[10px] md:text-[8px] font-bold uppercase tracking-wider text-white bg-transparent leading-none">
+                                        <div className={`inline-block px-1.5 py-[1.5px] rounded-[3px] text-[10px] md:text-[8px] font-bold uppercase tracking-wider leading-none border ${
+                                            userData!.role?.toLowerCase() === 'admin'
+                                                ? 'text-[#FFB941] bg-[#FFB941]/10 border-[#FFB941]/30'
+                                                : userData!.role?.toLowerCase() === 'moderator'
+                                                ? 'text-primary bg-primary/10 border-primary/30'
+                                                : 'text-white/50 bg-white/5 border-white/10'
+                                        }`}>
                                             {userData!.role?.toLowerCase() === 'user' || !userData!.role ? 'MEMBER' : userData!.role.toUpperCase()}
                                         </div>
 
@@ -380,7 +386,7 @@ const PublicProfilePage = () => {
                             </div>
 
                             {/* Right: Stats Column */}
-                            <div className="shrink-0 w-full md:w-[240px] flex flex-col items-center md:items-start justify-center space-y-4 md:space-y-5 pt-4 md:pt-0 border-t border-white/5 md:border-transparent">
+                            <div className="shrink-0 w-full md:w-[240px] flex flex-col items-center md:items-start justify-center space-y-4 md:space-y-5 pt-4 md:pt-0">
                                 {/* Power Display */}
                                 <div className="flex items-center justify-center md:justify-start gap-3">
                                     <span className="text-sm md:text-base font-bold uppercase tracking-tight text-white/90">Power:</span>
@@ -390,14 +396,14 @@ const PublicProfilePage = () => {
                                         onMouseLeave={() => setShowExactPower(false)}
                                     >
                                         <div 
-                                            className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-black text-primary border border-white/10 shadow-lg cursor-pointer hover:bg-white/20 transition-all select-none"
+                                            className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-black text-primary cursor-pointer hover:bg-white/20 transition-all select-none"
                                             onClick={() => setShowExactPower(!showExactPower)}
                                             title="Exact XP"
                                         >
                                             Z
                                         </div>
                                         <span 
-                                            className="text-xl font-black text-white tracking-tighter shadow-sm cursor-pointer select-none"
+                                            className="text-xl font-black text-white tracking-tighter cursor-pointer select-none"
                                             onClick={() => setShowExactPower(!showExactPower)}
                                         >
                                             {showExactPower 
@@ -411,11 +417,11 @@ const PublicProfilePage = () => {
                                 {/* Sub-Stats / Earning link */}
                                 <div className="space-y-3 flex flex-col items-center md:items-start">
                                     <div className="flex items-center justify-center md:justify-start gap-3">
-                                        <div className="h-[5px] w-[120px] bg-white/5 rounded-full overflow-hidden border border-white/[0.03]">
+                                        <div className="h-[5px] w-[120px] bg-white/5 rounded-full overflow-hidden">
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${progressToNext}%` }}
-                                                className="h-full bg-white opacity-90 shadow-[0_0_10px_white] rounded-full"
+                                                className="h-full bg-white opacity-90 rounded-full"
                                             />
                                         </div>
                                         <span className="text-[11px] font-black text-white/70 min-w-[40px] text-right md:text-left">{progressToNext.toFixed(2)}%</span>
@@ -438,7 +444,7 @@ const PublicProfilePage = () => {
                 <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
 
                     {/* Horizontal Rank Progression (Precisely 720x148 for content area) */}
-                    <div className="bg-[#151821] rounded-[10px] shadow-none md:shadow-2xl relative overflow-hidden flex flex-col items-center">
+                    <div className="bg-[#101010] rounded-[10px] relative overflow-hidden flex flex-col items-center">
                         <div className="role-line w-full overflow-x-auto no-scrollbar">
                             <div className="role-line-wrap flex w-[720px] h-[138px] mx-auto relative z-20">
                                 {ranks.map((rank, idx) => {
@@ -455,7 +461,7 @@ const PublicProfilePage = () => {
                                             {/* Requirement with Z Icon */}
                                             <div className="flex items-center gap-1.5 mb-4">
                                                 {idx > 0 && (
-                                                    <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black border ${isReached ? 'bg-[#717282] border-white/20 text-white' : 'bg-white/5 border-white/5 text-white/5'}`}>
+                                                    <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black ${isReached ? 'bg-[#717282] text-white' : 'bg-white/5 text-white/5'}`}>
                                                         Z
                                                     </div>
                                                 )}
@@ -466,9 +472,9 @@ const PublicProfilePage = () => {
 
                                             {/* Icon Section */}
                                             <div className="h-10 flex items-center justify-center">
-                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
-                                                    isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30] border border-white/10 shadow-lg' :
-                                                        'bg-[#1a1b20] border border-white/[0.02]'
+                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400' :
+                                                    isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30]' :
+                                                        'bg-[#1a1b20]'
                                                     }`}>
                                                     <img
                                                         src={rank.icon}
@@ -493,7 +499,7 @@ const PublicProfilePage = () => {
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${overallProgress}%` }}
-                                        className="h-full bg-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.7)]"
+                                        className="h-full bg-yellow-400"
                                     />
 
                                     <motion.div
@@ -501,8 +507,8 @@ const PublicProfilePage = () => {
                                         animate={{ left: `${overallProgress}%` }}
                                         className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-50"
                                     >
-                                        <div className="w-11 h-11 rounded-full shadow-2xl overflow-hidden">
-                                            <div className="w-full h-full rounded-full border border-yellow-400 overflow-hidden">
+                                        <div className="w-11 h-11 rounded-full overflow-hidden">
+                                            <div className="w-full h-full rounded-full overflow-hidden">
                                                         <img
                                                             src={userData!.avatar || 'https://via.placeholder.com/150'}
                                                             className="w-full h-full object-cover"
@@ -523,7 +529,7 @@ const PublicProfilePage = () => {
                                 <Grid className="text-primary" />
                                 Watch List
                             </h2>
-                            <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-white/40 uppercase tracking-widest">
+                            <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-black text-white/20 uppercase tracking-widest">
                                 {userData.watchlist.length} Title{userData.watchlist.length !== 1 ? 's' : ''}
                             </span>
                         </div>
@@ -556,7 +562,7 @@ const PublicProfilePage = () => {
                                 {userData!.watchlist.length > watchlistLimit && (
                                     <button
                                         onClick={() => setWatchlistLimit(prev => prev + 10)}
-                                        className="w-full py-5 bg-[#151821]/50 border border-[#232736] rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#151821] transition-all flex items-center justify-center gap-3 group"
+                                        className="w-full py-5 bg-[#101010] rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#181818] transition-all flex items-center justify-center gap-3 group"
                                     >
                                         View All List Items
                                         <ChevronRight size={14} className="group-hover:translate-x-1.5 transition-transform" />
@@ -564,7 +570,7 @@ const PublicProfilePage = () => {
                                 )}
                             </div>
                         ) : (
-                            <div className="bg-[#151821]/30 border border-[#232736] rounded-[2rem] py-20 flex flex-col items-center justify-center opacity-25">
+                            <div className="bg-[#101010] rounded-[2rem] py-20 flex flex-col items-center justify-center opacity-25">
                                 <Clock size={48} className="mb-4" />
                                 <span className="font-bold uppercase tracking-widest text-sm">List is currently empty</span>
                             </div>
@@ -588,7 +594,7 @@ const PublicProfilePage = () => {
                                 activities.map((activity: Activity) => (
                                     <div key={activity._id} className="flex gap-3 group">
                                         {/* Anime poster thumbnail (like HiAnime) */}
-                                        <div className="shrink-0 w-[52px] h-[68px] rounded-[4px] overflow-hidden bg-white/5 border border-white/[0.06]">
+                                        <div className="shrink-0 w-[52px] h-[68px] rounded-[4px] overflow-hidden bg-white/5">
                                             {activity.animeImage ? (
                                                 <img
                                                     src={activity.animeImage}

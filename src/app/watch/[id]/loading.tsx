@@ -19,8 +19,8 @@ export default function WatchLoading() {
                             <div className="flex flex-col md:flex-row gap-6 flex-1">
                                 {/* Poster Skeleton */}
                                 <div className="flex-shrink-0 mx-auto md:mx-0">
-                                    <div className="w-[130px] aspect-[2/3] rounded-xl bg-[#1B1F2A]/80 border border-[#232736] shadow-2xl" />
-                                    <div className="mt-3 w-full py-2 bg-white/5 rounded-md h-8 border border-white/5" />
+                                    <div className="w-[130px] aspect-[2/3] rounded-xl bg-[#1B1F2A]/80" />
+                                    <div className="mt-3 w-full py-2 bg-white/5 rounded-md h-8" />
                                 </div>
 
                                 {/* Info Skeleton */}
@@ -45,7 +45,7 @@ export default function WatchLoading() {
                                     {/* Stats Row */}
                                     <div className="flex flex-wrap items-center gap-3 pt-4">
                                         {[1, 2, 3, 4].map(i => (
-                                            <div key={i} className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px] gap-2">
+                                            <div key={i} className="bg-white/[0.03] rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px] gap-2">
                                                 <div className="h-2 w-10 rounded bg-white/10" />
                                                 <div className="h-6 w-12 rounded-lg bg-white/15" />
                                             </div>
@@ -62,7 +62,7 @@ export default function WatchLoading() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                     {[...Array(10)].map((_, i) => (
-                                        <div key={i} className="flex flex-col gap-2 p-1.5 rounded-lg bg-[#151821]/80 border border-[#232736] h-[46px]" />
+                                        <div key={i} className="flex flex-col gap-2 p-1.5 rounded-lg bg-[#151821]/80 h-[46px]" />
                                     ))}
                                 </div>
                             </div>
@@ -75,17 +75,17 @@ export default function WatchLoading() {
                     <div className="flex flex-col lg:flex-row gap-6">
                         {/* Left Sidebar */}
                         <aside className="lg:w-[260px] xl:w-[280px] flex-shrink-0">
-                            <div className="h-[600px] w-full rounded-2xl bg-[#12151D]/80 border border-[#232736] shadow-sm" />
+                            <div className="h-[600px] w-full rounded-2xl bg-[#12151D]/80" />
                         </aside>
 
                         {/* Main Content */}
                         <div className="flex-1 space-y-6">
                             {/* Synopsis section */}
-                            <div className="h-40 w-full rounded-2xl bg-[#151821]/80 border border-[#232736]" />
+                            <div className="h-40 w-full rounded-2xl bg-[#151821]/80" />
                             {/* Video section */}
-                            <div className="aspect-video w-full rounded-2xl bg-[#151821]/80 border border-[#232736] shadow-xl" />
+                            <div className="aspect-video w-full rounded-2xl bg-[#151821]/80" />
                             {/* Recommended section */}
-                            <div className="h-80 w-full rounded-2xl bg-[#151821]/80 border border-[#232736]" />
+                            <div className="h-80 w-full rounded-2xl bg-[#151821]/80" />
                         </div>
                     </div>
                 </div>

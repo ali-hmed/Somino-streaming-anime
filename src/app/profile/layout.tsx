@@ -27,7 +27,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             <Navbar />
 
             {/* Profile Header Banner */}
-            <div className="relative h-[40vh] pt-[80px] overflow-hidden border-b flex flex-col justify-end" style={{ borderColor: "var(--border)" }}>
+            <div className="relative h-[40vh] pt-[80px] overflow-hidden flex flex-col justify-end">
                 {/* Blurred BG using user avatar or fallback */}
                 <div
                     className="absolute inset-0 z-0 opacity-15 blur-[5px] scale-110"
@@ -47,7 +47,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                     </h1>
 
                     {/* Tab Navigation */}
-                    <div className="flex items-center justify-center overflow-x-auto no-scrollbar border-t w-full" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center justify-center overflow-x-auto no-scrollbar w-full">
                         <div className="flex items-center justify-center gap-1 sm:gap-6 w-full">
                             {tabs.map((tab) => {
                                 const isActive = pathname === tab.href;

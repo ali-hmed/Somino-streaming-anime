@@ -19,7 +19,7 @@ export default function ContactPage() {
                 </div>
 
                 {/* Minimalist Form Card */}
-                <div className="bg-[#1a1a1e] border border-white/5 p-6 rounded-[6px] shadow-2xl relative overflow-hidden group">
+                <div className="bg-[#1a1a1e] p-6 rounded-[6px] relative overflow-hidden group">
                     {/* Subtle Gradient Glow */}
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 blur-[80px] rounded-full pointer-events-none" />
 

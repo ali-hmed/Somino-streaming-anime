@@ -141,14 +141,14 @@ export default function NotificationsPage() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={markAllRead}
-                            className="flex items-center gap-2 px-4 py-2 bg-[#53CCB8] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all shadow-lg active:scale-95"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#53CCB8] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all active:scale-95"
                         >
                             <Check size={12} strokeWidth={3} />
                             Mark all as read
                         </button>
                         <button
                             onClick={clearAll}
-                            className="flex items-center gap-2 px-4 py-2 bg-[#FFB800] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all shadow-lg active:scale-95"
+                            className="flex items-center gap-2 px-4 py-2 bg-[#FFB800] text-white rounded-lg text-xs font-bold hover:brightness-110 transition-all active:scale-95"
                         >
                             <Trash2 size={12} />
                             Clear All
@@ -161,7 +161,7 @@ export default function NotificationsPage() {
                     <button
                         onClick={() => setActiveTab('anime')}
                         className={`px-5 py-2 rounded-[6px] text-xs font-black tracking-widest uppercase transition-all ${activeTab === 'anime'
-                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(83,204,184,0.3)]'
+                            ? 'bg-primary text-white'
                             : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
                             }`}
                     >
@@ -170,7 +170,7 @@ export default function NotificationsPage() {
                     <button
                         onClick={() => setActiveTab('community')}
                         className={`px-5 py-2 rounded-[6px] text-xs font-black tracking-widest uppercase transition-all ${activeTab === 'community'
-                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(83,204,184,0.3)]'
+                            ? 'bg-primary text-white'
                             : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
                             }`}
                     >
@@ -207,10 +207,10 @@ export default function NotificationsPage() {
                                     <Link
                                         href={`/watch/${n.animeId}/${n.episodeId}${n.commentId ? `#comment-${n.commentId}` : ''}`}
                                         onClick={() => !n.isRead && markAsRead(n._id)}
-                                        className={`group relative flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/[0.03] active:scale-[0.99] border border-transparent hover:border-white/5 ${n.isRead ? 'opacity-40' : 'bg-[#1a1b20] shadow-xl'}`}
+                                        className={`group relative flex items-start gap-4 p-4 rounded-xl transition-all hover:bg-white/[0.03] active:scale-[0.99] ${n.isRead ? 'opacity-40' : 'bg-[#1a1b20]'}`}
                                     >
                                         <div className="relative shrink-0">
-                                            <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-white/5 shadow-inner">
+                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5">
                                                 {n.fromUserId?.avatar ? (
                                                     <img src={n.fromUserId.avatar} className="w-full h-full object-cover" />
                                                 ) : (
@@ -219,7 +219,7 @@ export default function NotificationsPage() {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#1a1b20] border border-white/10 flex items-center justify-center shadow-lg">
+                                            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#181818] flex items-center justify-center">
                                                 {getActionIcon(n.type)}
                                             </div>
                                         </div>
@@ -238,7 +238,7 @@ export default function NotificationsPage() {
                                                     </span>
                                                 </div>
                                                 {!n.isRead && (
-                                                    <div className="shrink-0 w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(83,204,184,0.8)]" />
+                                                    <div className="shrink-0 w-2 h-2 rounded-full bg-primary" />
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-3 mt-1.5">

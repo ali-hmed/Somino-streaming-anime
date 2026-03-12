@@ -115,13 +115,13 @@ export default function ProfilePage() {
             {/* Alerts */}
             {error && (
                 <div className="mb-6 p-4 rounded-xl text-[13px] font-semibold"
-                    style={{ background: "rgba(255,80,80,0.08)", border: "1px solid rgba(255,80,80,0.2)", color: "#f87171" }}>
+                    style={{ background: "rgba(255,80,80,0.08)", color: "#f87171" }}>
                     {error}
                 </div>
             )}
             {success && (
                 <div className="mb-6 p-4 rounded-xl text-[13px] font-semibold"
-                    style={{ background: "rgba(83,204,184,0.08)", border: "1px solid rgba(83,204,184,0.2)", color: "var(--primary)" }}>
+                    style={{ background: "rgba(83,204,184,0.08)", color: "var(--primary)" }}>
                     {success}
                 </div>
             )}
@@ -133,7 +133,7 @@ export default function ProfilePage() {
                     <h2 className="text-[17px] font-bold text-white">Edit Profile</h2>
                 </div>
 
-                <div className="rounded-2xl p-6 sm:p-8 shadow-2xl" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <div className="rounded-2xl p-6 sm:p-8" style={{ background: "var(--surface)" }}>
                     <div className="flex flex-col-reverse md:flex-row gap-10">
 
                         {/* Left: Form */}
@@ -148,11 +148,11 @@ export default function ProfilePage() {
                                         disabled
                                         value={formData.email}
                                         className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium outline-none cursor-not-allowed"
-                                        style={{ background: "var(--surface-raised)", color: "var(--text-muted)", border: "1px solid var(--border)" }}
+                                        style={{ background: "var(--surface-raised)", color: "var(--text-muted)" }}
                                     />
                                     <div className="inline-flex mt-1.5">
-                                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold"
-                                            style={{ border: "1px solid rgba(83,204,184,0.3)", color: "var(--primary)" }}>
+                                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-primary/10"
+                                            style={{ color: "var(--primary)" }}>
                                             <UserCheck size={11} strokeWidth={2.5} />
                                             <span>Verified</span>
                                         </div>
@@ -170,7 +170,7 @@ export default function ProfilePage() {
                                         value={formData.username}
                                         onChange={handleChange}
                                         className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium text-white outline-none transition-all"
-                                        style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}
+                                        style={{ background: "var(--surface-raised)" }}
                                         onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
                                         onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
                                     />
@@ -181,7 +181,7 @@ export default function ProfilePage() {
                                         JOINED
                                     </label>
                                     <div className="flex items-center gap-2 rounded-lg py-2.5 px-4"
-                                        style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}>
+                                        style={{ background: "var(--surface-raised)" }}>
                                         <Calendar size={14} style={{ color: "var(--text-muted)" }} />
                                         <span className="text-[13px] font-medium" style={{ color: "var(--text-muted)" }}>
                                             {formatJoinDate(joinedAt)}
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                         <div className="flex-shrink-0 flex md:block justify-center">
                             <div className="relative">
                                 <div
-                                    className="w-[110px] h-[110px] rounded-full overflow-hidden shadow-xl flex items-center justify-center text-4xl font-black"
+                                    className="w-[110px] h-[110px] rounded-full overflow-hidden flex items-center justify-center text-4xl font-black"
                                     style={{ background: "var(--surface-raised)", border: "2px solid var(--border)", color: "var(--primary)" }}
                                 >
                                     {formData.avatar ? (
@@ -260,7 +260,7 @@ export default function ProfilePage() {
                                 </div>
                                 <button
                                     type="button"
-                                    className="absolute bottom-1 right-0 w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-opacity hover:opacity-80"
+                                    className="absolute bottom-1 right-0 w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
                                     style={{ background: "var(--primary)", color: "#0f1012" }}
                                     onClick={() => document.querySelector<HTMLInputElement>('[name="avatar"]')?.focus()}
                                 >

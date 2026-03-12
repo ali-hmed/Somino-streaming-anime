@@ -112,9 +112,9 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
                     setIsOpen(!isOpen);
                 }}
                 disabled={isLoading}
-                className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-md text-[10px] font-semibold transition-all border ${currentStatus
-                    ? 'bg-primary/10 border-primary/20 text-primary hover:bg-primary/20'
-                    : 'bg-white/5 border-white/10 text-white/70 hover:text-white'
+                className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-md text-[10px] font-semibold transition-all ${currentStatus
+                    ? 'bg-primary/10 text-primary hover:bg-primary/20'
+                    : 'bg-white/5 text-white/70 hover:text-white'
                     }`}
             >
                 {isLoading ? (
@@ -134,7 +134,7 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
                         initial={{ opacity: 0, y: 4, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                        className="absolute bottom-full left-0 w-full mb-2 bg-[#1a1c22]/95 backdrop-blur-xl border border-white/5 rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
+                        className="absolute bottom-full left-0 w-full mb-2 bg-[#181818] rounded-xl overflow-hidden z-50 p-1.5"
                     >
                         <div className="flex flex-col gap-0.5">
                             {STATUS_OPTIONS.map((status) => (
@@ -153,7 +153,7 @@ export default function WatchlistButton({ animeId, animeTitle, animeImage }: Wat
 
                             {currentStatus && (
                                 <>
-                                    <div className="h-px bg-white/5 mx-2 my-1" />
+
                                     <button
                                         onClick={handleRemove}
                                         className="flex items-center justify-between px-3 py-1.5 rounded-lg text-[10px] font-bold text-red-500/60 hover:text-red-500 hover:bg-red-500/10 transition-all"

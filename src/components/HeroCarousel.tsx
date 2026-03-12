@@ -87,14 +87,14 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                         }}
                     />
                     {/* Dark overlay — lighter on mobile to remove "dark right space" */}
-                    <div className="absolute inset-0 bg-[#0F1115]/70 hidden md:block" />
-                    <div className="absolute inset-0 bg-[#0F1115]/40 block md:hidden" />
+                    <div className="absolute inset-0 bg-[#0A0A0A]/70 hidden md:block" />
+                    <div className="absolute inset-0 bg-[#0A0A0A]/40 block md:hidden" />
                     {/* Strong left gradient — text area */}
-                    <div className="absolute inset-0" style={{ zIndex: 1, background: 'linear-gradient(to right, #0F1115 20%, rgba(15,17,21,0.55) 35%, rgba(15,17,21,0.05) 45%, transparent 100%)' }} />
+                    <div className="absolute inset-0" style={{ zIndex: 1, background: 'linear-gradient(to right, #0A0A0A 20%, rgba(10,10,10,0.55) 35%, rgba(10,10,10,0.05) 45%, transparent 100%)' }} />
                     {/* TOP fade — keeps navbar area dark so text is legible */}
-                    <div className="absolute top-0 inset-x-0 h-28" style={{ zIndex: 1, background: 'linear-gradient(to bottom, #0F1115 0%, rgba(15,17,21,0.65) 50%, transparent 100%)' }} />
+                    <div className="absolute top-0 inset-x-0 h-28" style={{ zIndex: 1, background: 'linear-gradient(to bottom, #0A0A0A 0%, rgba(10,10,10,0.65) 50%, transparent 100%)' }} />
                     {/* BOTTOM fade — blends into page bg */}
-                    <div className="absolute bottom-0 inset-x-0 h-36" style={{ zIndex: 1, background: 'linear-gradient(to top, #0F1115 0%, rgba(15,17,21,0.6) 55%, transparent 100%)' }} />
+                    <div className="absolute bottom-0 inset-x-0 h-36" style={{ zIndex: 1, background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10,10,10,0.6) 55%, transparent 100%)' }} />
                 </div>
             ))}
 
@@ -134,7 +134,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                     <div
                         className="absolute top-0 inset-x-0 h-24 pointer-events-none"
                         style={{
-                            background: 'linear-gradient(to bottom, #0F1115 0%, rgba(15,17,21,0.55) 55%, transparent 100%)',
+                            background: 'linear-gradient(to bottom, #0A0A0A 0%, rgba(10,10,10,0.55) 55%, transparent 100%)',
                             zIndex: 3,
                         }}
                     />
@@ -142,7 +142,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                     <div
                         className="absolute inset-y-0 left-0 w-1/2 pointer-events-none"
                         style={{
-                            background: 'linear-gradient(to right, #0F1115 0%, rgba(15,17,21,0.5) 35%, rgba(15,17,21,0.1) 65%, transparent 100%)',
+                            background: 'linear-gradient(to right, #0A0A0A 0%, rgba(10,10,10,0.5) 35%, rgba(10,10,10,0.1) 65%, transparent 100%)',
                             zIndex: 3,
                         }}
                     />
@@ -150,7 +150,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                     <div
                         className="absolute bottom-0 inset-x-0 h-32 pointer-events-none"
                         style={{
-                            background: 'linear-gradient(to top, #0F1115 0%, rgba(15,17,21,0.5) 55%, transparent 100%)',
+                            background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10,10,10,0.5) 55%, transparent 100%)',
                             zIndex: 3,
                         }}
                     />
@@ -222,16 +222,16 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             <span className="text-white/20 text-xs">•</span>
                             {/* Outlined media badges */}
                             <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-primary/60 text-primary tracking-wider">HD</span>
+                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] bg-primary/20 text-primary tracking-wider">HD</span>
                                 <span className="text-white/20 text-xs">•</span>
-                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-[#FF6E9F]/60 text-[#FF6E9F] tracking-wider flex items-center gap-1">
+                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] bg-[#FF6E9F]/10 text-[#FF6E9F] tracking-wider flex items-center gap-1">
                                     <MessageSquare size={10} fill="currentColor" />
                                     SUB {anime.totalEpisodes || anime.subEpisodes || '?'}
                                 </span>
                                 {anime.dubEpisodes > 0 && (
                                     <>
                                         <span className="text-white/20 text-xs">•</span>
-                                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] border border-[#53CCB8]/60 text-[#53CCB8] tracking-wider flex items-center gap-1">
+                                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] bg-[#53CCB8]/10 text-[#53CCB8] tracking-wider flex items-center gap-1">
                                             <Mic size={10} fill="currentColor" strokeWidth={3} />
                                             DUB {anime.dubEpisodes}
                                         </span>
@@ -268,7 +268,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             {/* Detail — dark pill */}
                             <Link
                                 href={`/watch/${anime.id}`}
-                                className="flex items-center gap-1 font-normal text-[11px] px-4 py-1.5 rounded-full border border-white/15 text-white/70 hover:text-white hover:border-white/30 transition-all bg-[#1B1F2A]"
+                                className="flex items-center gap-1 font-normal text-[11px] px-4 py-1.5 rounded-full text-white/70 hover:text-white transition-all bg-card"
                             >
                                 Detail
                                 <ChevronRight size={10} />
@@ -293,13 +293,13 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={prev}
-                        className="w-10 h-10 rounded-[4px] bg-white/5 border border-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary hover:border-primary transition-all group"
+                        className="w-10 h-10 rounded-[4px] bg-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary transition-all group"
                     >
                         <ChevronLeft size={10} className="group-active:scale-90 transition-transform" />
                     </button>
                     <button
                         onClick={next}
-                        className="w-10 h-10 rounded-[4px] bg-white/5 border border-[#232736] backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary hover:border-primary transition-all group"
+                        className="w-10 h-10 rounded-[4px] bg-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary transition-all group"
                     >
                         <ChevronRight size={20} className="group-active:scale-90 transition-transform" />
                     </button>

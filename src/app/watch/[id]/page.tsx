@@ -22,7 +22,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
     if (!anime) {
         return (
-            <div className="min-h-screen bg-[#0F1115] flex flex-col items-center justify-center p-4 text-center">
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 text-center">
                 <img src="/miku-not-found.png" alt="Not Found" className="w-44 h-44 object-contain mb-2 opacity-90 select-none" draggable={false} />
                 <h1 className="text-2xl font-bold mb-2 text-white/40">Anime Not Found</h1>
                 <p className="text-white/30 text-sm mb-6">The series you&apos;re looking for might have been moved or doesn&apos;t exist.</p>
@@ -81,7 +81,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         .slice(0, 18);
 
     return (
-        <main className="min-h-screen bg-[#0F1115] text-white pb-20">
+        <main className="min-h-screen bg-background text-white pb-20">
             <Navbar />
 
             {/* Blurred Background Hero */}
@@ -92,7 +92,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                         alt=""
                         className="w-full h-full object-cover blur-[8px] scale-125 opacity-40"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#0F1115]/60 via-[#0F1115]/80 to-[#0F1115]" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
                 </div>
 
                 {/* Breadcrumbs */}
@@ -114,7 +114,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                         <div className="flex flex-col md:flex-row gap-6 flex-1">
                             {/* Poster */}
                             <div className="flex-shrink-0 mx-auto md:mx-0">
-                                <div className="w-[130px] rounded-lg overflow-hidden shadow-2xl border border-white/10 mx-auto">
+                                <div className="w-[130px] rounded-lg overflow-hidden mx-auto">
                                     <img src={anime.image} alt={title} className="w-full h-full object-cover" />
                                 </div>
                                 <div className="mt-3 w-full">
@@ -130,17 +130,15 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                             <div className="flex-1 space-y-3">
                                 {/* Type & Status badges */}
                                 <div className="flex items-center gap-2 flex-wrap">
-                                    {anime.type && (
-                                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-white/10 border border-white/10 text-white/80">
+                                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-white/10 text-white/80">
                                             {anime.type}
                                         </span>
-                                    )}
                                     {status && (
-                                        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded border ${status.toLowerCase() === 'currently airing' || status.toLowerCase() === 'ongoing' || status.toLowerCase() === 'airing'
-                                            ? 'bg-[#2ECC71]/15 border-[#2ECC71]/40 text-[#2ECC71]'
+                                        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded ${status.toLowerCase() === 'currently airing' || status.toLowerCase() === 'ongoing' || status.toLowerCase() === 'airing'
+                                            ? 'bg-[#2ECC71]/15 text-[#2ECC71]'
                                             : status.toLowerCase() === 'not yet aired' || status.toLowerCase() === 'upcoming'
-                                                ? 'bg-white/5 border-white/10 text-white/40'
-                                                : 'bg-white/5 border-white/10 text-white/60'
+                                                ? 'bg-white/5 text-white/40'
+                                                : 'bg-white/5 text-white/60'
                                             }`}>
                                             {status}
                                         </span>
@@ -175,7 +173,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     {status?.toLowerCase() === 'not yet aired' || status?.toLowerCase() === 'upcoming' ? null : anime.episodes?.[0] ? (
                                         <Link
                                             href={`/watch/${id}/${anime.episodes[0].id}`}
-                                            className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-black text-sm transition-all shadow-lg hover:scale-105 active:scale-95"
+                                            className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-black text-sm transition-all hover:scale-105 active:scale-95"
                                         >
                                             <Play size={10} className="fill-current" />
                                             Watch Now
@@ -198,19 +196,19 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                         {members && <span className="text-[8px] font-bold text-white/20 mt-0.5">{formatNum(members)} users</span>}
                                     </div> */}
                                     {rank && (
-                                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px]">
+                                        <div className="bg-white/[0.03] rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px]">
                                             <span className="text-[9px] font-black text-white/30 tracking-[0.2em] mb-1">Rank</span>
                                             <span className="text-lg font-black text-white">#{rank}</span>
                                         </div>
                                     )}
                                     {popularity && (
-                                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px]">
+                                        <div className="bg-white/[0.03] rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px]">
                                             <span className="text-[9px] font-black text-white/30 tracking-[0.2em] mb-1">Popularity</span>
                                             <span className="text-lg font-black text-white">#{popularity}</span>
                                         </div>
                                     )}
                                     {members && members > 0 && (
-                                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px]">
+                                        <div className="bg-white/[0.03] rounded-xl p-3 flex flex-col items-center justify-center min-w-[90px]">
                                             <span className="text-[9px] font-black text-white/30 tracking-[0.2em] mb-1">Members</span>
                                             <span className="text-lg font-black text-white">{formatNum(members)}</span>
                                         </div>
@@ -233,10 +231,10 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                     {/* ─── LEFT SIDEBAR ─── */}
                     <aside className="lg:w-[260px] xl:w-[280px] flex-shrink-0 space-y-0 lg:self-start lg:sticky lg:top-24">
-                        <div className="bg-[#12151D] rounded-xl border border-[#232736] overflow-hidden">
+                        <div className="bg-sidebar rounded-xl overflow-hidden">
 
                             {/* Alternative Titles */}
-                            <div className="px-5 py-4 border-b border-white/5">
+                            <div className="px-5 py-4">
                                 <h3 className="text-[11px] font-black tracking-widest text-white mb-3">Alternative Titles</h3>
                                 {japaneseTitle && (
                                     <div className="mb-2">
@@ -256,7 +254,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                             </div>
 
                             {/* Basic Info */}
-                            <div className="px-5 py-4 border-b border-white/5">
+                            <div className="px-5 py-4">
                                 <h3 className="text-[11px] font-black tracking-widest text-white mb-3">Basic Info</h3>
                                 <div className="space-y-2">
                                     {[
@@ -297,7 +295,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                             {/* Credits */}
                             {studios.length > 0 && (
-                                <div className="px-5 py-4 border-b border-white/5">
+                                <div className="px-5 py-4">
                                     <h3 className="text-[11px] font-black tracking-widest text-white mb-3">Credits</h3>
                                     <div className="flex items-start justify-between gap-2">
                                         <span className="text-[11px] font-bold text-white/40 shrink-0">Studio</span>
@@ -337,16 +335,16 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* Relations Section */}
                         {anime.relations && anime.relations.length > 0 && (
-                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
+                            <section className="bg-[#141418] rounded-xl p-6 md:p-8">
                                 <div className="flex items-center gap-2 mb-6">
-                                    <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Relations</h2>
+                                    <h2 className="text-sm font-black text-white tracking-widest pl-3 border-l-4 border-primary">Relations</h2>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {anime.relations.map((rel: any, i: number) => (
                                         <Link
                                             key={i}
                                             href={`/watch/${rel.entry.mal_id}`}
-                                            className="group flex items-center gap-3 bg-[#0b0c10]/40 hover:bg-white/5 transition-all p-3 rounded-lg border border-white/5"
+                                            className="group flex items-center gap-3 bg-background/40 hover:bg-white/5 transition-all p-3 rounded-lg"
                                         >
                                             <div className="w-12 h-16 shrink-0 rounded overflow-hidden">
                                                 <img src={rel.entry.image} alt={rel.entry.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -365,14 +363,14 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                         )}
 
                         {/* Synopsis */}
-                        <section className="bg-[#151821] rounded-xl border border-[#232736] p-7 md:p-8">
+                        <section className="bg-[#141418] rounded-xl p-7 md:p-8">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
+                                <div className="w-1.5 h-6 bg-primary rounded-full" />
                                 <h2 className="text-xl md:text-2xl font-black text-white tracking-widest ">Synopsis</h2>
                             </div>
 
                             {/* Quick Info Bar */}
-                            <div className="flex flex-wrap gap-6 mb-6 pb-6 border-b border-white/5">
+                            <div className="flex flex-wrap gap-6 mb-6 pb-6">
                                 <div className="flex flex-col">
                                     <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">Type</span>
                                     <span className="text-[12px] font-bold text-white/80">{anime.type || 'N/A'}</span>
@@ -394,11 +392,11 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* Trailer */}
                         {trailer?.embedUrl && (
-                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
+                            <section className="bg-[#141418] rounded-xl p-6 md:p-8">
                                 <div className="flex items-center gap-2 mb-4">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Trailer</h2>
                                 </div>
-                                <div className="aspect-video w-full rounded-lg overflow-hidden shadow-2xl border border-white/5 bg-black/40">
+                                <div className="aspect-video w-full rounded-lg overflow-hidden bg-black/40">
                                     <iframe
                                         src={trailer.embedUrl}
                                         title={`${title} Trailer`}
@@ -412,7 +410,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* More Seasons Section */}
                         {anime.moreSeasons && anime.moreSeasons.length > 0 && (
-                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
+                            <section className="bg-[#141418] rounded-xl p-6 md:p-8">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">More Seasons</h2>
                                 </div>
@@ -420,10 +418,10 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     {anime.moreSeasons.map((season: any, i: number) => {
                                         const seasonTitle = getTitle(season.title);
                                         return (
-                                            <Link key={i} href={`/watch/${season.id}`} className={`flex flex-col gap-2 p-3 rounded-lg border border-white/5 transition-all hover:bg-white/5 ${season.isActive ? "bg-white/10 border-primary/50 pointer-events-none" : "bg-[#0b0c10]/40"}`}>
+                                            <Link key={i} href={`/watch/${season.id}`} className={`flex flex-col gap-2 p-3 rounded-lg transition-all hover:bg-white/5 ${season.isActive ? "bg-white/10 pointer-events-none" : "bg-background/40"}`}>
                                                 <div className="relative aspect-video rounded-md overflow-hidden bg-white/5">
                                                     {season.image ? <img src={season.image} className="w-full h-full object-cover" /> : null}
-                                                    {season.isActive && <div className="absolute inset-0 bg-primary/20 flex items-center justify-center backdrop-blur-sm"><Play size={20} className="text-white drop-shadow-lg" /></div>}
+                                                    {season.isActive && <div className="absolute inset-0 bg-primary/20 flex items-center justify-center backdrop-blur-sm"><Play size={20} className="text-white" /></div>}
                                                 </div>
                                                 <div className="flex flex-col gap-1">
                                                     <h4 className="text-[12px] font-bold text-white line-clamp-1 truncate">{seasonTitle}</h4>
@@ -437,15 +435,15 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                         )}
 
                         {/* Characters (Mobile) */}
-                        <section className="lg:hidden bg-white/[0.03] rounded-xl border border-white/5 p-6 md:p-8">
+                        <section className="lg:hidden bg-white/[0.03] rounded-xl p-6 md:p-8">
                             <CharacterSection characters={characters || []} />
                         </section>
 
                         {/* Recommended Section */}
                         {cleanRecommended.length > 0 && (
-                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
+                            <section className="bg-[#141418] rounded-xl p-6 md:p-8">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_12px_rgba(83,204,184,0.5)]" />
+                                    <div className="w-1.5 h-6 bg-primary rounded-full" />
                                     <h2 className="text-xl md:text-2xl font-black text-white ">Recommended for you</h2>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -458,7 +456,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
 
                         {/* Most Popular Section */}
                         {anime.mostPopular && anime.mostPopular.length > 0 && (
-                            <section className="bg-[#151821] rounded-xl border border-[#232736] p-6 md:p-8">
+                            <section className="bg-[#141418] rounded-xl p-6 md:p-8">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-sm font-black text-white tracking-widest border-l-4 border-primary pl-3">Most Popular</h2>
                                 </div>
@@ -466,7 +464,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     {anime.mostPopular.slice(0, 9).map((item: any, i: number) => {
                                         const popularTitle = getTitle(item.title);
                                         return (
-                                            <Link key={i} href={`/watch/${item.id}`} className="flex gap-3 bg-[#0b0c10]/40 hover:bg-white/5 transition-colors p-3 rounded-lg border border-white/5 group">
+                                            <Link key={i} href={`/watch/${item.id}`} className="flex gap-3 bg-background/40 hover:bg-white/5 transition-colors p-3 rounded-lg group">
                                                 <div className="w-12 h-16 shrink-0 rounded overflow-hidden">
                                                     <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                 </div>

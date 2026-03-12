@@ -259,7 +259,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             )}
 
             {/* ── Actions bar (Prev / Next / AutoNext etc.) ───── */}
-            <div className="px-4 md:px-5 py-2.5 bg-[#0b0c10]/60 border-b border-white/[0.03] flex items-center justify-between md:justify-center gap-4 md:gap-8 shrink-0 relative z-20 overflow-visible">
+            <div className="px-4 md:px-5 py-2.5 bg-background/60 flex items-center justify-between md:justify-center gap-4 md:gap-8 shrink-0 relative z-20 overflow-visible">
                 <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
                     <Maximize2 size={12} strokeWidth={2.5} /> Expand
                 </button>
@@ -324,13 +324,13 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             </div>
 
             {/* ── Desktop Controls Footer ─────────────────────────────── */}
-            <div className="bg-[#0b0c10]/20">
+            <div className="bg-background/20">
                 <div className="hidden md:flex p-6 items-center justify-between gap-6">
                     <div className="space-y-1.5">
-                        <h4 className="text-[13px] font-black text-white leading-none">
+                        <h4 className="text-[12px] font-black text-white leading-none">
                             you are watching episode {episodeNumber}
                         </h4>
-                        <p className="text-[10px] font-medium text-white/20 max-w-[340px] leading-relaxed">
+                        <p className="text-[9px] font-medium text-white/20 max-w-[340px] leading-relaxed">
                             if the current server is not working, please try switching to other servers.
                         </p>
                     </div>
@@ -342,8 +342,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                     saveUserSettings({ preferredCategory: 'sub' });
                                 }}
                                 className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category === 'sub'
-                                    ? 'bg-primary/15 border border-primary/40 text-primary'
-                                    : 'bg-white/[0.03] border border-white/5 text-white/20 hover:text-white/50'
+                                    ? 'bg-primary/15 text-primary'
+                                    : 'bg-white/[0.03] text-white/20 hover:text-white/50'
                                     }`}
                             >
                                 <div className={`w-1.5 h-1.5 rounded-full ${category === 'sub' ? 'bg-primary' : 'bg-white/10'}`} />
@@ -356,9 +356,9 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                         saveUserSettings({ preferredCategory: 'dub' });
                                     }}
                                     className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category === 'dub'
-                                        ? 'bg-[#53CCB8]/15 border border-[#53CCB8]/40 text-[#53CCB8]'
-                                        : 'bg-white/[0.03] border border-white/5 text-white/20 hover:text-white/50'
-                                        }`}
+                                        ? 'bg-[#53CCB8]/15 text-[#53CCB8]'
+                                    : 'bg-white/[0.03] text-white/20 hover:text-white/50'
+                                    }`}
                                 >
                                     <div className={`w-1.5 h-1.5 rounded-full ${category === 'dub' ? 'bg-[#53CCB8]' : 'bg-white/10'}`} />
                                     dub
@@ -371,9 +371,9 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                     setServer('megaPlay');
                                     saveUserSettings({ lastServer: 'megaPlay' });
                                 }}
-                                className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all shadow-lg active:scale-95 ${server === 'megaPlay'
-                                    ? 'bg-[#53CCB8] text-[#0b0c10] shadow-[#53CCB8]/20'
-                                    : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
+                                className={`px-5 py-2 font-black text-[9px] rounded-[4px] transition-all active:scale-95 ${server === 'megaPlay'
+                                    ? 'bg-[#53CCB8] text-[#0b0c10]'
+                                    : 'bg-white/5 text-white/40 hover:bg-white/10'
                                     }`}
                             >
                                 server 1
@@ -383,9 +383,9 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                     setServer('vidWish');
                                     saveUserSettings({ lastServer: 'vidWish' });
                                 }}
-                                className={`px-5 py-2 font-black text-[10px] rounded-[6px] transition-all active:scale-95 ${server === 'vidWish'
-                                    ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/20'
-                                    : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
+                                className={`px-5 py-2 font-black text-[9px] rounded-[4px] transition-all active:scale-95 ${server === 'vidWish'
+                                    ? 'bg-[#53CCB8] text-[#0b0c10]'
+                                    : 'bg-white/5 text-white/40 hover:bg-white/10'
                                     }`}
                             >
                                 server 2
@@ -402,9 +402,9 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 setCategory('sub');
                                 saveUserSettings({ preferredCategory: 'sub' });
                             }}
-                            className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category === 'sub'
-                                ? 'bg-primary/10 border-primary/40 text-primary'
-                                : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white'
+                            className={`flex items-center gap-2 px-2.5 py-1 rounded-full text-[9px] font-bold transition-colors ${category === 'sub'
+                                ? 'bg-primary/10 text-primary'
+                                : 'bg-white/[0.04] text-white/60 hover:text-white'
                                 }`}
                         >
                             <div className="px-0.5 rounded-[1px] bg-primary/20 text-primary text-[8px] font-black leading-none">SUB</div>
@@ -416,10 +416,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                     setCategory('dub');
                                     saveUserSettings({ preferredCategory: 'dub' });
                                 }}
-                                className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-bold transition-colors ${category === 'dub'
-                                    ? 'bg-[#53CCB8]/10 border-[#53CCB8]/40 text-[#53CCB8]'
-                                    : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white'
-                                    }`}
+                                className={`flex items-center gap-2 px-2.5 py-1 rounded-full text-[9px] font-bold transition-colors ${category === 'dub'
+                                    ? 'bg-[#53CCB8]/10 text-[#53CCB8]'
+                                : 'bg-white/[0.04] text-white/60 hover:text-white'
+                                }`}
                             >
                                 <Mic size={9} className={category === 'dub' ? 'text-[#53CCB8]' : 'text-[#53CCB8]/60'} />
                                 dub
@@ -433,8 +433,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 saveUserSettings({ lastServer: 'megaPlay' });
                             }}
                             className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'megaPlay'
-                                ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/10'
-                                : 'bg-white/5 text-white/40 border border-white/5'
+                                ? 'bg-[#53CCB8] text-[#0b0c10]'
+                                : 'bg-white/5 text-white/40'
                                 }`}
                         >
                             server 1
@@ -445,8 +445,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 saveUserSettings({ lastServer: 'vidWish' });
                             }}
                             className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'vidWish'
-                                ? 'bg-[#53CCB8] text-[#0b0c10] shadow-lg shadow-[#53CCB8]/10'
-                                : 'bg-white/5 text-white/40 border border-white/5'
+                                ? 'bg-[#53CCB8] text-[#0b0c10]'
+                                : 'bg-white/5 text-white/40'
                                 }`}
                         >
                             server 2
@@ -462,7 +462,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     </div>
 
                     {animeStatus?.toLowerCase() === 'currently airing' && (
-                        <div className="w-full mt-2 p-3 rounded-[10px] bg-gradient-to-br from-[#53CCB8]/10 via-[#53CCB8]/5 to-transparent border border-[#53CCB8]/10 flex flex-col items-center justify-center text-center">
+                        <div className="w-full mt-2 p-3 rounded-[10px] bg-gradient-to-br from-[#53CCB8]/10 via-[#53CCB8]/5 to-transparent flex flex-col items-center justify-center text-center">
                             <p className="text-[9px] font-bold text-white/30 mb-0.5 tracking-[0.1em] leading-none">
                                 the next episode is expected to be released on
                             </p>

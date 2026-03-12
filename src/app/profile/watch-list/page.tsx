@@ -37,7 +37,7 @@ function StatusMenu({
         <div ref={ref} className="absolute top-2 right-2 z-30">
             <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(o => !o); }}
-                className="w-7 h-7 rounded-md bg-white/90 backdrop-blur flex items-center justify-center text-black shadow hover:bg-white transition-colors"
+                className="w-7 h-7 rounded-md bg-white/90 backdrop-blur flex items-center justify-center text-black hover:bg-white transition-colors"
             >
                 <MoreVertical size={14} />
             </button>
@@ -49,7 +49,7 @@ function StatusMenu({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -4, scale: 0.97 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-2xl overflow-hidden z-50 py-1"
+                        className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl overflow-hidden z-50 py-1"
                     >
                         {STATUS_OPTIONS.map(s => (
                             <button
@@ -156,7 +156,7 @@ export default function WatchListPage() {
             <div className="flex items-center gap-3">
                 <Heart size={24} className="text-white fill-white" />
                 <h2 className="text-[22px] font-black text-white tracking-tight">Watch List</h2>
-                <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-black border border-primary/20">
+                <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-black">
                     {filteredList.length}
                 </span>
             </div>
@@ -166,7 +166,7 @@ export default function WatchListPage() {
                 {tabs.map(tab => (
                     <button key={tab} onClick={() => { setActiveTab(tab); setPage(1); }}
                         className={`px-4 py-2 rounded-[6px] text-[10px] font-black tracking-widest uppercase transition-all whitespace-nowrap ${activeTab === tab
-                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(83,204,184,0.3)]'
+                            ? 'bg-primary text-white'
                             : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'}`}>
                         {tab}
                     </button>
@@ -175,7 +175,7 @@ export default function WatchListPage() {
 
             {/* Content */}
             {uniqueWatchlist.length === 0 ? (
-                <div className="rounded-3xl p-24 flex flex-col items-center justify-center text-center space-y-4 bg-[#141519]/40 border border-white/5">
+                <div className="rounded-3xl p-24 flex flex-col items-center justify-center text-center space-y-4 bg-[#181818]">
                     <Bookmark size={40} className="text-white/10" />
                     <div>
                         <h3 className="text-xs font-black text-white uppercase tracking-widest">Your list is empty</h3>

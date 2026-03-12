@@ -13,7 +13,7 @@ const ReleaseItem: React.FC<ReleaseItemProps> = ({ anime }) => {
     return (
         <Link
             href={`/watch/${anime.id}/1`}
-            className="flex items-center gap-4 p-4 hover:bg-[#1B1F2A] transition-all cursor-pointer group border-b border-[#232736] last:border-0"
+            className="flex items-center gap-4 p-4 hover:bg-card transition-all cursor-pointer group"
         >
             {/* Thumbnail */}
             <div className="w-16 h-18 rounded-md overflow-hidden bg-white/5 flex-shrink-0 relative">

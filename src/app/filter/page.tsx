@@ -183,7 +183,7 @@ export default async function FilterPage({
                                         {currentPage > 1 && (
                                             <Link
                                                 href={buildUrl(params, currentPage - 1)}
-                                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                                             >
                                                 <ChevronRight size={16} className="rotate-180" />
                                             </Link>
@@ -194,7 +194,7 @@ export default async function FilterPage({
                                                 <Link
                                                     key={`page-${p}`}
                                                     href={buildUrl(params, p)}
-                                                    className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === p ? 'bg-primary text-white shadow-lg'
+                                                    className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === p ? 'bg-primary text-white'
                                                         : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                                         }`}
                                                 >
@@ -208,7 +208,7 @@ export default async function FilterPage({
                                         {(pagination as any).has_next_page && (
                                             <Link
                                                 href={buildUrl(params, currentPage + 1)}
-                                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                                             >
                                                 <ChevronRight size={16} />
                                             </Link>
@@ -217,7 +217,7 @@ export default async function FilterPage({
                                 )}
                             </>
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-40 bg-white/[0.02] border border-dashed border-white/5 rounded-[6px]">
+                            <div className="flex flex-col items-center justify-center py-40 bg-white/[0.02] rounded-[6px]">
                                 <p className="text-sm font-black text-white/20 tracking-widest">no results found</p>
                                 <p className="text-[10px] font-medium text-white/10 mt-2">try adjusting your filters</p>
                             </div>

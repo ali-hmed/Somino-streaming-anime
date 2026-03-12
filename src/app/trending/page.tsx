@@ -17,7 +17,7 @@ export default function TrendingPage() {
                     <img
                         src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3a3dtN3QwbWxmZ2dlYjVibnhzOXRyNmtueTA4cW45Mm1rMTI1enFseCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mnEhag9YXWbxS/giphy.gif"
                         alt="Shocked Miku"
-                        className="w-64 md:w-80 h-auto filter drop-shadow-[0_0_30px_rgba(83,204,184,0.3)]"
+                        className="w-64 md:w-80 h-auto"
                     />
                 </div>
 
@@ -39,7 +39,7 @@ export default function TrendingPage() {
                 <div className="mt-10">
                     <Link
                         href="/"
-                        className="flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-primary-hover text-black font-black text-sm rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
+                        className="flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-primary-hover text-black font-black text-sm rounded-full transition-all hover:scale-105 active:scale-95"
                     >
                         <Home size={16} strokeWidth={3} />
                         back to home

@@ -17,7 +17,7 @@ export default function RequestPage() {
                     <img
                         src="/miku-not-found.png"
                         alt="Shocked Miku"
-                        className="w-64 md:w-80 h-auto filter drop-shadow-[0_0_30px_rgba(83,204,184,0.3)] select-none"
+                        className="w-64 md:w-80 h-auto select-none"
                         draggable={false}
                     />
                 </div>
@@ -40,7 +40,7 @@ export default function RequestPage() {
                 <div className="mt-10">
                     <Link
                         href="/"
-                        className="flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-primary-hover text-black font-black text-sm rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
+                        className="flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-primary-hover text-black font-black text-sm rounded-full transition-all hover:scale-105 active:scale-95"
                     >
                         <Home size={16} strokeWidth={3} />
                         back to home

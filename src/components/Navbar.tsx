@@ -154,7 +154,7 @@ const Navbar = ({ className }: NavbarProps) => {
     const NotificationBadge = () => {
         if (unreadCount === 0) return null;
         return (
-            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-primary border-2 border-[#090a0f] rounded-full flex items-center justify-center text-[8px] font-black text-white p-0">
+            <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-primary rounded-full flex items-center justify-center text-[8px] font-black text-white p-0">
                 {unreadCount > 9 ? '9+' : unreadCount}
             </span>
         );
@@ -173,7 +173,7 @@ const Navbar = ({ className }: NavbarProps) => {
 
     return (
         <>
-            <nav className={`absolute top-0 w-full z-[100] border-none shadow-none outline-none py-6 bg-gradient-to-b from-[#0F1115]/60 via-[#0F1115]/20 to-transparent ${className || ''}`}>
+            <nav className={`absolute top-0 w-full z-[100] border-none shadow-none outline-none py-6 bg-gradient-to-b from-[#0A0A0A]/80 via-[#0A0A0A]/40 to-transparent ${className || ''}`}>
                 <div className="container mx-auto px-4 md:px-8 h-full flex items-center justify-between">
                     {/* Left Section: Menu (Mobile) + Logo */}
                     <div className="flex items-center gap-2 md:gap-4 h-full">
@@ -218,7 +218,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                 {/* Desktop Dropdown (Genre) */}
                                 {item.hasDropdown && isGenresOpen && (
                                     <div className="absolute top-full left-0 pt-3 animate-in fade-in slide-in-from-top-2 duration-300 z-50">
-                                        <div className="bg-[#1B1F2A]/98 border border-[#232736] rounded-[1.2rem] shadow-2xl p-5 w-[450px] backdrop-blur-3xl">
+                                        <div className="bg-[#181818] rounded-[1.2rem] p-5 w-[450px] backdrop-blur-3xl">
                                             <div className="grid grid-cols-4 gap-x-4 gap-y-2">
                                                 {genres.map((g) => (
                                                     <Link
@@ -255,7 +255,7 @@ const Navbar = ({ className }: NavbarProps) => {
 
 
                         {(isClient && isAuthenticated) ? (
-                            <div ref={profileRef} className="relative flex items-center gap-2 pl-2 border-l border-white/5">
+                            <div ref={profileRef} className="relative flex items-center gap-2 pl-2">
                                 {/* Bell icon */}
                                 <Link
                                     href="/profile/notification"
@@ -273,8 +273,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                     aria-expanded={isProfileOpen}
                                     aria-controls="profile-dropdown"
                                     onClick={() => setIsProfileOpen(v => !v)}
-                                    className="w-9 h-9 rounded-full bg-primary/20 border-2 flex items-center justify-center text-primary overflow-hidden transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                                    style={{ borderColor: isProfileOpen ? 'var(--primary)' : 'rgba(83,204,184,0.2)' }}
+                                    className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden transition-all focus:outline-none"
                                 >
                                     {user?.avatar ? (
                                         <img src={user.avatar} alt={user?.username} className="w-full h-full object-cover" />
@@ -294,11 +293,9 @@ const Navbar = ({ className }: NavbarProps) => {
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: -8, scale: 0.96 }}
                                             transition={{ duration: 0.18, ease: 'easeOut' }}
-                                            className="absolute top-[calc(100%+12px)] right-0 z-[300] w-[240px] rounded-2xl shadow-2xl overflow-hidden"
+                                            className="absolute top-[calc(100%+12px)] right-0 z-[300] w-[240px] rounded-2xl overflow-hidden"
                                             style={{
-                                                background: 'var(--surface)',
-                                                border: '1px solid var(--border)',
-                                                boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
+                                                background: 'var(--surface)'
                                             }}
                                         >
                                             {/* User info header */}
@@ -339,7 +336,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                             </div>
 
                                             {/* Divider */}
-                                            <div className="h-px mx-3 mb-1" style={{ background: 'var(--border)' }} />
+                                            <div className="h-px mx-3 mb-1" />
 
                                             {/* Menu Items */}
                                             <div className="px-2 py-1 flex flex-col gap-0.5">
@@ -369,7 +366,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                             </div>
 
                                             {/* Divider */}
-                                            <div className="h-px mx-3 mt-1" style={{ background: 'var(--border)' }} />
+                                            <div className="h-px mx-3 mt-1" />
 
                                             {/* Logout */}
                                             <div className="px-2 py-2">
@@ -395,7 +392,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                 onClick={() => setAuthModalOpen(true)}
                                 className={`flex items-center group ${!isClient ? 'opacity-0' : 'opacity-100'} transition-opacity`}
                             >
-                                <div className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/50 group-hover:bg-primary/20 group-hover:text-primary group-hover:border-primary/40 transition-all">
+                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/50 group-hover:bg-primary/20 group-hover:text-primary transition-all">
                                     <User size={18} />
                                 </div>
                                 <span className="hidden sm:inline-block ml-2 text-[14px] font-medium text-white/70 group-hover:text-white transition-colors">
@@ -421,7 +418,7 @@ const Navbar = ({ className }: NavbarProps) => {
                         <div className="relative w-full max-w-xl animate-in zoom-in-95 slide-in-from-top-4 duration-300">
                              <form
                                 onSubmit={handleSearch}
-                                className="group relative bg-[#12151D] rounded-2xl shadow-2xl overflow-hidden"
+                                className="group relative bg-sidebar rounded-2xl overflow-hidden"
                             >
                                 <div className="flex items-center h-14 px-5">
                                     <Search className="text-white/40 group-focus-within:text-primary transition-colors duration-300" size={18} strokeWidth={2.5} />
@@ -454,7 +451,7 @@ const Navbar = ({ className }: NavbarProps) => {
 
                                 {/* Autocomplete Dropdown */}
                                 {(query.trim().length >= 2) && (
-                                    <div className="bg-[#12151D] max-h-[400px] overflow-y-auto custom-scrollbar border-t border-[#232736]">
+                                    <div className="bg-sidebar max-h-[400px] overflow-y-auto custom-scrollbar">
                                         {isSearching ? (
                                             <div className="p-4 text-center text-white/40 text-[12px] font-medium tracking-wide">Searching...</div>
                                         ) : suggestions.length > 0 ? (
@@ -464,7 +461,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                                         key={anime.id}
                                                         href={`/watch/${anime.id}`}
                                                         onClick={() => { setIsSearchOpen(false); setQuery(''); }}
-                                                        className="flex items-center gap-3 p-3 hover:bg-white/[0.03] transition-colors border-b border-white/[0.02] last:border-0"
+                                                        className="flex items-center gap-3 p-3 hover:bg-white/[0.03] transition-colors last:border-0"
                                                     >
                                                         <div className="w-10 h-12 flex-shrink-0 rounded-[4px] overflow-hidden bg-white/5">
                                                             {anime.image && (
@@ -527,7 +524,7 @@ const Navbar = ({ className }: NavbarProps) => {
                             }}
                             exit={{ opacity: 0, y: -10, scale: 0.95 }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
-                            className="absolute top-16 left-4 bg-[#1B1F2A]/95 backdrop-blur-xl border border-[#232736] rounded-[0.3rem] shadow-2xl overflow-hidden py-4 z-[120]"
+                            className="absolute top-16 left-4 bg-card/95 backdrop-blur-xl rounded-[0.3rem] overflow-hidden py-4 z-[120]"
                         >
                             <div className="flex flex-col">
                                 {navLinks.map((item) => (

@@ -51,8 +51,8 @@ export default async function AZListPage({
                         <Link
                             key={cat}
                             href={`/az-list/${cat === 'ALL' ? '' : cat}`}
-                            className={`flex-shrink-0 flex items-center justify-center min-w-[32px] h-8 px-2 rounded-md font-bold text-[11px] transition-all border ${currentLetter === cat ?'bg-primary border-primary text-white shadow-lg shadow-primary/20'
-                                : 'bg-white/5 border-white/5 text-muted hover:bg-white/10 hover:text-white'
+                            className={`flex-shrink-0 flex items-center justify-center min-w-[32px] h-8 px-2 rounded-md font-bold text-[11px] transition-all ${currentLetter === cat ? 'bg-primary text-white'
+                                : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                 }`}
                         >
                             {cat}
@@ -73,7 +73,7 @@ export default async function AZListPage({
                         ))}
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-40 bg-white/5 border border-dashed border-white/10 rounded-2xl">
+                    <div className="flex flex-col items-center justify-center py-40 bg-white/5 rounded-2xl">
                         <LayoutGrid size={48} className="text-white/10 mb-6" />
                         <h3 className="text-xl font-black text-white/40 tracking-widest">No Series Found</h3>
                         <p className="text-[10px] font-bold text-muted mt-2 tracking-widest">No anime starting with &quot;{currentLetter}&quot; was found.</p>
@@ -86,7 +86,7 @@ export default async function AZListPage({
                         {currentPage > 1 && (
                             <Link
                                 href={`/az-list/${currentLetter === 'ALL' ? '' : currentLetter}?page=${currentPage - 1}`}
-                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                             >
                                 <ChevronRight size={16} className="rotate-180" />
                             </Link>
@@ -97,7 +97,7 @@ export default async function AZListPage({
                                 <Link
                                     key={`page-${page}`}
                                     href={`/az-list/${currentLetter === 'ALL' ? '' : currentLetter}?page=${page}`}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ?'bg-primary text-white shadow-lg'
+                                    className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ? 'bg-primary text-white'
                                         : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                         }`}
                                 >
@@ -111,7 +111,7 @@ export default async function AZListPage({
                         {pagination.has_next_page && (
                             <Link
                                 href={`/az-list/${currentLetter === 'ALL' ? '' : currentLetter}?page=${currentPage + 1}`}
-                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                             >
                                 <ChevronRight size={16} />
                             </Link>

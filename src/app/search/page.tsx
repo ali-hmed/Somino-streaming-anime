@@ -55,7 +55,7 @@ export default async function SearchPage({
                                 {currentPage > 1 && (
                                     <Link
                                         href={`/search?q=${encodeURIComponent(query)}&page=${currentPage - 1}`}
-                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                                     >
                                         <ChevronRight size={16} className="rotate-180" />
                                     </Link>
@@ -66,7 +66,7 @@ export default async function SearchPage({
                                         <Link
                                             key={`page-${page}`}
                                             href={`/search?q=${encodeURIComponent(query)}&page=${page}`}
-                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ? 'bg-primary text-white shadow-lg'
+                                            className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs transition-all ${currentPage === page ? 'bg-primary text-white'
                                                 : 'bg-white/5 text-muted hover:bg-white/10 hover:text-white'
                                                 }`}
                                         >
@@ -80,7 +80,7 @@ export default async function SearchPage({
                                 {pagination.has_next_page && (
                                     <Link
                                         href={`/search?q=${encodeURIComponent(query)}&page=${currentPage + 1}`}
-                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all shadow-sm"
+                                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-muted hover:bg-white/10 hover:text-white transition-all"
                                     >
                                         <ChevronRight size={16} />
                                     </Link>
@@ -89,7 +89,7 @@ export default async function SearchPage({
                         )}
                     </>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-24 bg-white/5 border border-dashed border-white/10 rounded-2xl">
+                    <div className="flex flex-col items-center justify-center py-24 bg-white/5 rounded-2xl">
                         <img src="/miku-not-found.png" alt="No Results" className="w-40 h-40 object-contain mb-2 opacity-90 select-none" draggable={false} />
                         <h3 className="text-xl font-black text-white/40 tracking-widest uppercase">No Series Found</h3>
                         <p className="text-[10px] font-bold text-muted mt-2 tracking-widest uppercase opacity-60">Try searching with a different title or keyword</p>

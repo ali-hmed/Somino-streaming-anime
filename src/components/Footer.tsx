@@ -7,7 +7,7 @@ const Footer = () => {
     const alphabet = "0-9 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" ");
 
     return (
-        <footer className="bg-black text-[#858585] py-12 border-t border-white/5 font-sans overflow-hidden">
+        <footer className="bg-footer text-[#858585] py-12 font-sans overflow-hidden">
             <div className="container mx-auto px-4 md:px-6 max-w-[1300px]">
 
                 {/* Top Section: A-Z List and Quick Links */}
@@ -20,14 +20,14 @@ const Footer = () => {
                     <div className="flex flex-wrap items-center justify-between gap-y-6">
                         {/* A-Z Buttons */}
                         <div className="flex flex-wrap gap-1.5">
-                            <Link href="/az-list" className="px-3 py-1 bg-[#1a1a1a] hover:bg-primary hover:text-black transition-all text-[12px] font-bold rounded-[4px] min-w-[36px] text-center text-white">
+                            <Link href="/az-list" className="px-3 py-1 bg-card hover:bg-primary hover:text-black transition-all text-[12px] font-bold rounded-[4px] min-w-[36px] text-center text-white">
                                 All
                             </Link>
                             {alphabet.map((letter) => (
                                 <Link
                                     key={letter}
                                     href={`/az-list/${letter === '0-9' ? '0-9' : letter}`}
-                                    className="px-2 py-1 bg-[#1a1a1a] hover:bg-primary hover:text-black transition-all text-[12px] font-bold rounded-[4px] min-w-[28px] text-center text-white"
+                                    className="px-2 py-1 bg-card hover:bg-primary hover:text-black transition-all text-[12px] font-bold rounded-[4px] min-w-[28px] text-center text-white"
                                 >
                                     {letter}
                                 </Link>

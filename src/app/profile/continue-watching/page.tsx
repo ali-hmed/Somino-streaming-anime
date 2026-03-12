@@ -69,7 +69,7 @@ export default function ContinueWatchingPage() {
 
             {history.length === 0 ? (
                 <div className="rounded-3xl p-20 flex flex-col items-center justify-center text-center space-y-5"
-                    style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                    style={{ background: "var(--surface)" }}>
                     <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
                         <Clock size={32} className="text-white/10" />
                     </div>
@@ -101,7 +101,7 @@ export default function ContinueWatchingPage() {
                                 {/* Delete Button - Overlayed on top of AnimeCard */}
                                 <button
                                     onClick={(e) => handleRemove(e, item.animeId)}
-                                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white/60 hover:text-white hover:bg-red-500 transition-all z-20 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 shadow-xl"
+                                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white/60 hover:text-white hover:bg-red-500 transition-all z-20 opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100"
                                     title="Remove from history"
                                 >
                                     <X size={14} strokeWidth={3} />

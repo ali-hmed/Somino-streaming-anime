@@ -17,14 +17,14 @@ const ShareCard = () => {
         <section className="w-full px-1">
             <div className="w-full relative overflow-hidden group">
                 {/* Background with Ambient Glow */}
-                <div className="absolute inset-0 bg-[#151821] rounded-[4px]" />
+                <div className="absolute inset-0 bg-card/60 backdrop-blur-sm rounded-[4px]" />
 
                 <div className="relative flex items-center justify-between py-0 h-18">
                     {/* Left: Text Content */}
                     <div className="flex items-center flex-1 min-w-0 h-full relative">
                         {/* Circular GIF Thumbnail (No space on left) */}
                         <div className="w-16 h-16 sm:w-20 sm:h-20 relative flex-shrink-0 group/video cursor-pointer">
-                            <div className="absolute inset-0 bg-[#1B1F2A] rounded-full overflow-hidden shadow-inner">
+                            <div className="absolute inset-0 bg-card rounded-full overflow-hidden">
                                 <img
                                     src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NWh1dXM4azU0dDVxMTQ3a20wbnZ5d3hpOGlnamVpdGozMHI2b3U4MyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/vRHKYJFbMNapxHnp6x/giphy.gif"
                                     alt="Anime"

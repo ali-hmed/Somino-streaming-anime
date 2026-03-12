@@ -126,7 +126,7 @@ export default function WatchControlsWatchlist({ animeId, animeTitle, animeImage
                         initial={{ opacity: 0, y: 4, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 min-w-[120px] bg-[#0f1115]/95 backdrop-blur-2xl border border-white/5 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden z-50 p-1.5"
+                        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 min-w-[120px] bg-[#181818] rounded-xl overflow-hidden z-50 p-1.5"
                     >
                         <div className="flex flex-col gap-0.5">
                             {STATUS_OPTIONS.map((status) => (
@@ -145,7 +145,7 @@ export default function WatchControlsWatchlist({ animeId, animeTitle, animeImage
 
                             {currentStatus && (
                                 <>
-                                    <div className="h-px bg-white/5 mx-2 my-1" />
+
                                     <button
                                         onClick={handleRemove}
                                         className="flex items-center justify-between px-3 py-1.5 rounded-lg text-[10px] font-bold text-red-500/60 hover:text-red-500 hover:bg-red-500/10 transition-all"

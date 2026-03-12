@@ -241,7 +241,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
         return (
             <div id={`comment-${item._id}`} className={`group flex gap-3 ${isReply ? 'ml-12 mt-6' : 'mt-8'} scroll-mt-32 relative`}>
                 {/* Avatar */}
-                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-[#1B1F2A] border-2 border-white/10 overflow-hidden ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
+                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-card overflow-hidden ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
                     {item.avatar ? (
                         <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" />
                     ) : (
@@ -290,7 +290,13 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                             
                             {/* Role Title Badge */}
                             {item.role && item.role.toLowerCase() !== 'user' && (
-                                <span className="px-1.5 py-[1px] border border-white/20 rounded-[4px] text-[9px] uppercase font-bold text-white/40 tracking-wider">
+                                <span className={`px-1.5 py-[1.5px] rounded-[4px] text-[9px] uppercase font-bold tracking-wider border ${
+                                    item.role.toLowerCase() === 'admin'
+                                        ? 'text-[#FFB941] bg-[#FFB941]/10 border-[#FFB941]/30'
+                                        : item.role.toLowerCase() === 'moderator'
+                                        ? 'text-primary bg-primary/10 border-primary/30'
+                                        : 'text-white/40 bg-white/5 border-white/10'
+                                }`}>
                                     {item.role}
                                 </span>
                             )}
@@ -356,7 +362,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                         initial={{ opacity: 0, scale: 0.98, y: 5 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.98, y: 5 }}
-                                        className="absolute top-full left-0 mt-2 w-40 bg-[#1B1F2A] border border-[#232736] rounded-[4px] shadow-2xl z-50 overflow-hidden py-1"
+                                        className="absolute top-full left-0 mt-2 w-40 bg-[#181818] rounded-[4px] z-50 overflow-hidden py-1"
                                     >
                                         <button
                                             onClick={() => handleCopyLink(item._id)}
@@ -367,7 +373,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                         {user?._id === item.userId && (
                                             <button
                                                 onClick={() => handleDelete(item._id)}
-                                                className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-red-500/80 hover:bg-red-500/10 transition-colors border-t border-white/5 mt-1 text-left"
+                                                className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-red-500/80 hover:bg-red-500/10 transition-colors mt-1 text-left"
                                             >
                                                 <Trash2 size={13} /> Delete
                                             </button>
@@ -384,11 +390,11 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
 
     return (
         <div className="space-y-6 h-full">
-            <div className="bg-[#151821] rounded-[6px] border border-[#232736] overflow-hidden shadow-2xl flex flex-col lg:max-h-[1050px]">
+            <div className="bg-sidebar rounded-[6px] overflow-hidden flex flex-col lg:max-h-[1050px]">
                 {/* Header */}
                 <div className="px-6 py-5 flex items-center gap-4">
                     <h2 className="text-[20px] font-bold text-white tracking-tight">Comments</h2>
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-[4px] bg-[#1B1F2A] border border-[#232736]">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-[4px] bg-card">
                         <span className="text-[12px] font-black text-primary">
                             {comments.reduce((acc, curr) => acc + 1 + (curr.replies?.length || 0), 0)}
                         </span>
@@ -397,9 +403,9 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                 </div>
 
                 {/* Input Area */}
-                <div id="comment-input-area" className="px-6 pb-8 border-b border-[#232736]">
+                <div id="comment-input-area" className="px-6 pb-8">
                     <div className="flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-[#1B1F2A] border border-[#232736] flex items-center justify-center shrink-0 overflow-hidden">
+                        <div className="w-12 h-12 rounded-full bg-card flex items-center justify-center shrink-0 overflow-hidden">
                             {mounted && user?.avatar ? (
                                 <img src={user.avatar} className="w-full h-full object-cover" />
                             ) : (
@@ -409,7 +415,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                         <div className="flex-1 space-y-3">
                             <div className="relative group">
                                 {replyingTo && (
-                                    <div className="absolute bottom-full left-0 mb-2 flex items-center gap-2 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-[4px]">
+                                    <div className="absolute bottom-full left-0 mb-2 flex items-center gap-2 bg-primary/10 px-2.5 py-1 rounded-[4px]">
                                         <span className="text-[9px] font-black text-primary uppercase tracking-wider">Replying to {replyingTo.username}</span>
                                         <button onClick={() => setReplyingTo(null)} className="text-white/40 hover:text-white transition-colors">
                                             <X size={10} />
@@ -422,7 +428,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                                     placeholder={mounted ? (isAuthenticated ? "Leave a comment" : "Join the discussion...") : "Loading..."}
                                     disabled={!mounted || isPosting}
                                     onFocus={() => setIsInputExpanded(true)}
-                                    className={`w-full bg-[#1B1F2A] border border-[#232736]/50 rounded-[4px] px-4 py-2.5 text-[14px] text-white placeholder-white/10 focus:outline-none focus:border-white/10 transition-all resize-none ${isInputExpanded ? 'min-h-[80px]' : 'min-h-[44px]'}`}
+                                    className={`w-full bg-card rounded-[4px] px-4 py-2.5 text-[14px] text-white placeholder-white/10 focus:outline-none focus:bg-card/80 transition-all resize-none ${isInputExpanded ? 'min-h-[80px]' : 'min-h-[44px]'}`}
                                 />
                                 {mounted && !isAuthenticated && (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-[4px] cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
@@ -467,7 +473,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                 </div>
 
                 {/* Comments List */}
-                <div className="px-6 py-8 flex-1 overflow-y-auto custom-scrollbar shadow-inner">
+                <div className="px-6 py-8 flex-1 overflow-y-auto custom-scrollbar">
                     {!mounted || isLoading ? (
                         <div className="flex flex-col items-center justify-center py-16">
                             <Loader2 className="w-8 h-8 text-primary/40 animate-spin" />
