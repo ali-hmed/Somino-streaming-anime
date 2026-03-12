@@ -7,7 +7,7 @@ interface User {
     email: string;
     avatar?: string;
     banner?: string;
-    role?: 'user' | 'moderator' | 'admin';
+    role?: 'user' | 'moderator' | 'admin' | 'owner';
     level?: number;
     power?: number;
     rank?: string;

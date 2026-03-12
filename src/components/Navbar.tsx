@@ -9,6 +9,7 @@ import { searchAnime } from '@/lib/consumet';
 import { getTitle } from '@/types/anime';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
+import { getRankIconByName } from '@/utils/rankUtils';
 
 interface NavbarProps {
     className?: string;
@@ -302,9 +303,23 @@ const Navbar = ({ className }: NavbarProps) => {
                                         >
                                             {/* User info header */}
                                             <div className="px-4 pt-4 pb-3">
-                                                <p className="text-[14px] font-black text-white leading-tight" style={{ color: 'var(--primary)' }}>
-                                                    {user?.username}
-                                                </p>
+                                                <div className="flex items-center gap-1 mb-0.5">
+                                                    {(() => {
+                                                        const rankIcon = getRankIconByName(user?.rank);
+                                                        return rankIcon ? (
+                                                            <img
+                                                                src={rankIcon}
+                                                                width={25}
+                                                                height={25}
+                                                                alt="rank icon"
+                                                                className="object-contain shrink-0"
+                                                            />
+                                                        ) : null;
+                                                    })()}
+                                                    <p className="text-[14px] font-black text-white leading-tight" style={{ color: 'var(--primary)' }}>
+                                                        {user?.username}
+                                                    </p>
+                                                </div>
                                                 <p className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>
                                                     {user?.email}
                                                 </p>

@@ -13,25 +13,22 @@ import {
     ChevronRight,
     Loader2,
     CheckCircle2,
-    ShieldCheck,
     History,
     Grid,
     Clock,
-    ChevronUp,
-    ChevronsUp,
-    ChevronDown
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import AnimeCard from '@/components/AnimeCard';
 import { timeAgo } from '@/utils/dateUtils';
+import { getRankIconByXP } from '@/utils/rankUtils';
 
 interface UserData {
     _id: string;
     username: string;
     avatar?: string;
     banner?: string;
-    role: 'user' | 'moderator' | 'admin';
+    role: 'user' | 'moderator' | 'admin' | 'owner';
     createdAt: string;
     level: number;
     power: number;
@@ -230,42 +227,61 @@ const PublicProfilePage = () => {
     }
 
     const ranks = [
-        { name: 'The Casual', requirement: '10,000 XP', minXP: 0, maxXP: 10000, icon: 'shield-check' },
-        { name: 'The Seeker', requirement: '45,000 XP', minXP: 10001, maxXP: 45000, icon: 'chevron-up' },
-        { name: 'The Otaku', requirement: '100,000 XP', minXP: 45001, maxXP: 100000, icon: 'chevrons-up' },
-        { name: 'The Enthusiast', requirement: '175,000 XP', minXP: 100001, maxXP: 175000, icon: 'chevrons-up' },
-        { name: 'The Historian', requirement: '252,610 XP', minXP: 175001, maxXP: 252610, icon: 'chevron-down' },
+        { name: 'The Casual', requirement: '10,000 XP', minXP: 10001, maxXP: 45000, icon: '/The_Casual1.png' },
+        { name: 'The Seeker', requirement: '45,000 XP', minXP: 45001, maxXP: 100000, icon: '/The_seeker2.png' },
+        { name: 'The Otaku', requirement: '100,000 XP', minXP: 100001, maxXP: 175000, icon: '/The_otaku-3.png' },
+        { name: 'The Enthusiast', requirement: '175,000 XP', minXP: 175001, maxXP: 250000, icon: '/The_Enthusiast-4.png' },
+        { name: 'The Historian', requirement: '250,000 XP', minXP: 250001, maxXP: 1000000, icon: '/The_Histraions-5.png' },
     ];
 
     const totalXP = (userData as any).totalXP ?? userData.power ?? 0;
     
-    let currentRankIndex = ranks.findIndex(r => totalXP >= r.minXP && totalXP <= r.maxXP);
-    if (currentRankIndex === -1 && totalXP > 252610) currentRankIndex = ranks.length - 1; // Cap at max rank
-    if (currentRankIndex === -1) currentRankIndex = 0; // Fallback
-
-    const currentRank = ranks[currentRankIndex];
-    let progressToNext = 100;
-    
-    if (currentRankIndex < ranks.length - 1) {
-        const nextRank = ranks[currentRankIndex + 1];
-        const range = nextRank.minXP - currentRank.minXP;
-        const earnedInRank = totalXP - currentRank.minXP;
-        progressToNext = Math.max(0, Math.min(100, (earnedInRank / range) * 100));
-    } else {
-        const maxPlatformXP = 252610;
-        if (totalXP >= maxPlatformXP) {
-            progressToNext = 100;
-        } else {
-            const range = maxPlatformXP - currentRank.minXP;
-            const earnedInRank = totalXP - currentRank.minXP;
-            progressToNext = Math.min(100, Math.max(0, (earnedInRank / range) * 100));
+    // Find highest rank reached
+    let currentRankIndex = -1;
+    for (let i = ranks.length - 1; i >= 0; i--) {
+        if (totalXP >= ranks[i].minXP) {
+            currentRankIndex = i;
+            break;
         }
     }
 
-    let overallProgress = 0;
-    if (currentRankIndex > 0) {
-        overallProgress = ((currentRankIndex - 1) * 25) + ((progressToNext / 100) * 25);
+    // Calculate progress within current rank segment
+    let progressToNext = 0;
+    if (currentRankIndex === -1) {
+        // Range: 0 to 10,000 (Towards Casual)
+        progressToNext = Math.min(100, (totalXP / 10000) * 100);
+    } else if (currentRankIndex < ranks.length - 1) {
+        // Range: Current Rank Min to Next Rank Min
+        const current = ranks[currentRankIndex];
+        const next = ranks[currentRankIndex + 1];
+        const range = next.minXP - current.minXP;
+        const earned = totalXP - current.minXP;
+        progressToNext = Math.min(100, Math.max(0, (earned / range) * 100));
+    } else {
+        // Max Rank (Historian)
+        progressToNext = 100;
     }
+
+    // Calculate marker position on the bar (0-100%)
+    // The bar segments are: 
+    // Start -> Casual (Idx 0) -> Seeker (Idx 1) -> Otaku (Idx 2) -> Enthusiast (Idx 3) -> Historian (Idx 4)
+    // However, the bar points are the ranks themselves. 
+    // Points at: 0%, 25%, 50%, 75%, 100%.
+    
+    let overallProgress = 0;
+    const segmentSize = 25; // 100 / (5 points - 1 segment between points? No, 4 segments)
+
+    if (currentRankIndex === -1) {
+        // Moving from 0 XP to Point 0 (The Casual)
+        // But the first point (Casual) is usually at 0%. 
+        // If they are unranked, we'll keep them at 0% or slightly before.
+        overallProgress = 0; 
+    } else {
+        // Between Casual (0%) and Historian (100%)
+        overallProgress = (currentRankIndex * segmentSize) + ((progressToNext / 100) * segmentSize);
+    }
+    
+    overallProgress = Math.min(100, Math.max(0, overallProgress));
 
     return (
         <div className="min-h-screen bg-[#0F1115] text-white flex flex-col">
@@ -329,23 +345,32 @@ const PublicProfilePage = () => {
 
                                 {/* Center: Info Column */}
                                 <div className="flex flex-col items-start justify-center space-y-1.5 md:space-y-4 w-auto md:w-[200px]">
-                                    <div className="flex items-center gap-2">
-                                        <div className="hidden md:flex w-5 h-5 rounded-full bg-yellow-500/20 items-center justify-center border border-yellow-500/30">
-                                            <ChevronRight size={12} className="text-yellow-500 -rotate-90" />
-                                        </div>
-                                        <h1 className="text-[22px] md:text-xl font-black tracking-tight text-white drop-shadow-xl italic text-left">
-                                            {userData.username}
+                                    <div className="flex items-center gap-1">
+                                        {(() => {
+                                            const rankIcon = getRankIconByXP(totalXP);
+                                            return rankIcon ? (
+                                                <img
+                                                    src={rankIcon}
+                                                    width={25}
+                                                    height={25}
+                                                    alt="rank icon"
+                                                    className="object-contain shrink-0"
+                                                />
+                                            ) : null;
+                                        })()}
+                                        <h1 className="text-[20px] md:text-xl font-black text-white drop-shadow-xl text-left">
+                                            {userData!.username}
                                         </h1>
                                     </div>
 
                                     <div className="flex flex-col items-start gap-1.5 md:gap-3">
                                         {/* Styled Role Badge */}
                                         <div className="inline-block px-1.5 py-[1px] rounded-[3px] border border-white/50 text-[10px] md:text-[8px] font-bold uppercase tracking-wider text-white bg-transparent leading-none">
-                                            {userData.role?.toLowerCase() === 'user' || !userData.role ? 'MEMBER' : userData.role.toUpperCase()}
+                                            {userData!.role?.toLowerCase() === 'user' || !userData!.role ? 'MEMBER' : userData!.role.toUpperCase()}
                                         </div>
 
                                         <div className="text-[12px] font-bold text-[#717282] tracking-tight text-left">
-                                            Joined: {new Date(userData.createdAt).toISOString().split('T')[0]}
+                                            Joined: {new Date(userData!.createdAt).toISOString().split('T')[0]}
                                         </div>
                                     </div>
                                 </div>
@@ -422,25 +447,17 @@ const PublicProfilePage = () => {
 
                                             {/* Icon Section */}
                                             <div className="h-10 flex items-center justify-center">
-                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 text-[#0F1115] shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
-                                                    isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30] text-yellow-400 border border-white/10 shadow-lg' :
-                                                        'bg-[#1a1b20] text-white/5 border border-white/[0.02]'
+                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400 shadow-[0_0_25px_rgba(250,204,21,0.5)]' :
+                                                    isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30] border border-white/10 shadow-lg' :
+                                                        'bg-[#1a1b20] border border-white/[0.02]'
                                                     }`}>
-                                                    {rank.icon === 'shield-check' && (
-                                                        <div className={`w-5 h-5 ${!isReached ? 'opacity-10 grayscale' : 'opacity-40'}`} style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'currentColor' }} />
-                                                    )}
-                                                    {rank.icon === 'chevron-up' && <ChevronUp size={20} strokeWidth={4} />}
-                                                    {rank.icon === 'chevrons-up' && (
-                                                        <div className="flex flex-col -space-y-3">
-                                                            <ChevronUp size={20} strokeWidth={4} />
-                                                            <ChevronUp size={20} strokeWidth={4} />
-                                                        </div>
-                                                    )}
-                                                    {rank.icon === 'chevron-down' && (
-                                                        <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-[#0F1115] shadow-inner">
-                                                            <ChevronDown size={14} strokeWidth={4} />
-                                                        </div>
-                                                    )}
+                                                    <img
+                                                        src={rank.icon}
+                                                        width={36}
+                                                        height={36}
+                                                        alt="rank icon"
+                                                        className={`object-contain transition-all duration-500 ${!isReached ? 'opacity-10 grayscale' : isCurrent ? 'opacity-100' : 'opacity-70'}`}
+                                                    />
                                                 </div>
                                             </div>
 
@@ -467,11 +484,11 @@ const PublicProfilePage = () => {
                                     >
                                         <div className="w-11 h-11 rounded-full p-[2px] bg-[#151821] border-[2.5px] border-white shadow-2xl overflow-hidden">
                                             <div className="w-full h-full rounded-full border border-yellow-400 overflow-hidden">
-                                                <img
-                                                    src={userData.avatar || 'https://via.placeholder.com/150'}
-                                                    className="w-full h-full object-cover"
-                                                    alt="Progress"
-                                                />
+                                                        <img
+                                                            src={userData!.avatar || 'https://via.placeholder.com/150'}
+                                                            className="w-full h-full object-cover"
+                                                            alt="Progress"
+                                                        />
                                             </div>
                                         </div>
                                     </motion.div>
@@ -492,11 +509,11 @@ const PublicProfilePage = () => {
                             </span>
                         </div>
 
-                        {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).length > 0 ? (
+                        {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData!.watchlist).length > 0 ? (
                             <div className="space-y-10">
                                 {/* Compact Grid: 2 columns on mobile, exactly 5 columns on desktop (2x5 layout) */}
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-2 gap-y-4 md:gap-x-3 md:gap-y-7">
-                                    {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData.watchlist).slice(0, watchlistLimit).map((item) => (
+                                    {(enrichedWatchlist.length > 0 ? enrichedWatchlist : userData!.watchlist).slice(0, watchlistLimit).map((item) => (
                                         <AnimeCard
                                             key={item.animeId}
                                             anime={{
@@ -517,7 +534,7 @@ const PublicProfilePage = () => {
                                     ))}
                                 </div>
 
-                                {userData.watchlist.length > watchlistLimit && (
+                                {userData!.watchlist.length > watchlistLimit && (
                                     <button
                                         onClick={() => setWatchlistLimit(prev => prev + 10)}
                                         className="w-full py-5 bg-[#151821]/50 border border-[#232736] rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] text-white/30 hover:text-primary hover:bg-[#151821] transition-all flex items-center justify-center gap-3 group"

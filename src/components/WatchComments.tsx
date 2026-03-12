@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
 import { timeAgo } from '@/utils/dateUtils';
+import { getRankIconByXP } from '@/utils/rankUtils';
 
 interface CommentType {
     _id: string;
@@ -14,6 +15,8 @@ interface CommentType {
     userId: string;
     username?: string;
     avatar?: string;
+    rank?: string;
+    power?: number;
     parentCommentId: string | null;
     text: string;
     createdAt: string;
@@ -250,9 +253,23 @@ const WatchComments = ({ episodeId, animeId, animeTitle, episodeNumber }: WatchC
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                        <Link href={`/user/${item.username}`} className="text-[13px] font-bold text-primary cursor-pointer hover:underline">
-                            {item.username || 'User'}
-                        </Link>
+                        <div className="flex items-center gap-1">
+                            {(() => {
+                                const rankIcon = getRankIconByXP(item.power ?? 0);
+                                return rankIcon ? (
+                                    <img
+                                        src={rankIcon}
+                                        width={25}
+                                        height={25}
+                                        alt="rank icon"
+                                        className="object-contain shrink-0"
+                                    />
+                                ) : null;
+                            })()}
+                            <Link href={`/user/${item.username}`} className="text-[13px] font-bold text-primary cursor-pointer hover:underline">
+                                {item.username || 'User'}
+                            </Link>
+                        </div>
                         <span className="text-[11px] text-white/20 font-medium">
                             {mounted ? timeAgo(item.createdAt) : '...'}
                         </span>
