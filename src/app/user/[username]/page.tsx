@@ -645,13 +645,12 @@ const PublicProfilePage = () => {
                                                     <span>{timeAgo(activity.createdAt)}</span>
                                                 </div>
                                                 <p className="text-[13px] text-white/80 leading-snug group-hover:text-white transition-colors line-clamp-2">
-                                                    <span className="font-bold text-white">
+                                                    <span className="font-bold text-white mr-1.5">{userData?.username}</span>
+                                                    <span className="text-white/50">
                                                         {activity.activityType === 'comment' ? 'commented' : activity.activityType === 'reply' ? 'replied' : 'liked'}
                                                     </span>
                                                     {activity.animeTitle && (
-                                                        <> on <span className="text-primary font-semibold">{activity.animeTitle}</span>
-                                                            {activity.episodeNumber ? ` Ep ${activity.episodeNumber}` : ''}
-                                                        </>
+                                                        <> on <span className="text-primary font-semibold">{activity.animeTitle}</span></>
                                                     )}
                                                 </p>
                                                 {activity.content && (
