@@ -37,8 +37,8 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
         ? availableEpisodes
         : (plannedEpisodes || anime.episodeNumber || 0);
 
-    const subCount = anime.subEpisodes || displayEpisodes || anime.episodeNumber || 0;
-    const dubCount = anime.dubEpisodes || 0;
+    const subCount = anime.subEpisodes || anime.sub || displayEpisodes || anime.episodeNumber || 0;
+    const dubCount = anime.dubEpisodes || anime.dub || 0;
 
     const currentEpisodeNum = anime.episodeNumber || (availableEpisodes && Math.floor(availableEpisodes * 0.4)) || 1;
 

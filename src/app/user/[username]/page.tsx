@@ -93,6 +93,8 @@ const PublicProfilePage = () => {
                                     dubEpisodes: info.episodes?.dub || 0,
                                     totalEpisodes: info.episodes?.eps || info.episodes?.sub || item.episodeNumber || 0,
                                     type: info.type || item.type || 'TV',
+                                    score: info.MAL_score || info.score,
+                                    rating: info.rating,
                                     animeImage: item.animeImage || info.poster,
                                 };
                             } catch {
@@ -112,7 +114,7 @@ const PublicProfilePage = () => {
                         animeImage: act.animeId ? (watchlistMap[act.animeId] || null) : null,
                     }));
                     setActivities(enrichedActivities);
-                    return; // already set activities above
+                    return;
                 } else {
                     setError(data.message || 'User not found');
                 }
@@ -534,19 +536,19 @@ const PublicProfilePage = () => {
                                         <AnimeCard
                                             key={item.animeId}
                                             anime={{
+                                                ...item,
                                                 id: item.animeId,
                                                 title: item.animeTitle,
                                                 poster: item.animeImage,
-                                                type: item.type || 'TV',
-                                                duration: item.duration,
-                                                status: item.status,
-                                                subEpisodes: item.subEpisodes,
-                                                dubEpisodes: item.dubEpisodes,
-                                                episodeNumber: item.episodeNumber,
-                                                totalEpisodes: item.totalEpisodes || item.episodeNumber
+                                                sub: item.subEpisodes,
+                                                dub: item.dubEpisodes,
+                                                score: item.score || item.MAL_score,
+                                                totalEpisodes: item.totalEpisodes || item.subEpisodes || item.episodeNumber
                                             }}
                                             variant="portrait"
                                             isSharp={true}
+                                            showEpisode={!!item.episodeNumber}
+                                            showScore={true}
                                         />
                                     ))}
                                 </div>
