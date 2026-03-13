@@ -128,11 +128,11 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                                 <span 
                                                     className="tr-num text-4xl font-black italic select-none tracking-tighter transition-all duration-300 group-hover:scale-110 block"
                                                     style={{ 
-                                                        WebkitTextStroke: `1.5px ${rankColor}`,
+                                                        WebkitTextStroke: `1.5px ${rank <= 3 ? rankColor : '#ffffff83'}`,
                                                         color: 'transparent',
                                                         fontFamily: 'system-ui, sans-serif',
                                                         filter: rank <= 3 ? `drop-shadow(0 0 8px ${rankColor}33)` : 'none',
-                                                        opacity: rank <= 3 ? 1 : 0.6
+                                                        opacity: 1
                                                     }}
                                                 >
                                                     {rank}
