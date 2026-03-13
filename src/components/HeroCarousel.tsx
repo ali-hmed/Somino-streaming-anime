@@ -63,7 +63,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
 
     return (
         <section
-            className="relative w-full overflow-hidden h-[60vh] md:h-[max(550px,82vh)] touch-pan-y"
+            className="hero-carousel-section relative w-full overflow-hidden h-[60vh] md:h-[max(550px,82vh)] touch-pan-y"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -172,9 +172,9 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             </span>
                         </div>
 
-                        {/* Title — scaled down slightly for desktop */}
+                        {/* Title — Single line and slightly smaller */}
                         <h1
-                            className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight transition-all duration-500 delay-75 line-clamp-1"
+                            className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-[1.2] tracking-tight transition-all duration-500 delay-75 line-clamp-1"
                             style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(10px)' : 'translateY(0)' }}
                         >
                             {title}
@@ -190,25 +190,25 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                             </p>
                         </div>
 
-                        {/* Info row — hidden on mobile */}
+                        {/* Info row — visible on mobile with reduced density */}
                         <div
-                            className="hidden md:flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-4 transition-all duration-500 delay-100"
+                            className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mb-5 transition-all duration-500 delay-100"
                             style={{ opacity: isAnimating ? 0 : 1 }}
                         >
                             {/* Type */}
-                            <span className="flex items-center gap-1 text-white/80 text-xs font-semibold">
-                                <Tv size={10} className="text-white/60" />
+                            <span className="flex items-center gap-1 text-white font-semibold text-[10px] md:text-xs">
+                                <Tv size={10} className="text-primary" />
                                 {anime.type || 'TV'}
                             </span>
                             <span className="text-white/20 text-xs">•</span>
-                            {/* Duration */}
-                            <span className="flex items-center gap-1 text-white/80 text-xs font-semibold">
+                            {/* Duration — Hidden on small mobile */}
+                            <span className="hidden sm:flex items-center gap-1 text-white/80 text-[10px] md:text-xs font-semibold">
                                 <Clock size={10} className="text-white/60" />
                                 {anime.duration?.replace('per ep', '').trim() || '24m'}
                             </span>
-                            <span className="text-white/20 text-xs">•</span>
-                            {/* Date */}
-                            <span className="flex items-center gap-1 text-white/80 text-xs font-semibold">
+                            <span className="hidden sm:text-white/20 text-xs sm:inline">•</span>
+                            {/* Date — Hidden on mobile */}
+                            <span className="hidden md:flex items-center gap-1 text-white/80 text-xs font-semibold">
                                 <Calendar size={10} className="text-white/60" />
                                 {(() => {
                                     if (anime.year) return anime.year;
@@ -219,20 +219,20 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                                     return anime.premiered || 'TBA';
                                 })()}
                             </span>
-                            <span className="text-white/20 text-xs">•</span>
-                            {/* Outlined media badges */}
+                            <span className="hidden md:text-white/20 text-xs md:inline">•</span>
+                            {/* Badges */}
                             <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[2px] bg-primary/20 text-primary tracking-wider">HD</span>
+                                <span className="text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[2px] bg-primary text-white tracking-wider">HD</span>
                                 <span className="text-white/20 text-xs">•</span>
-                                <span className="text-[10px] font-black px-2 py-0.5 rounded-[4px] bg-pink/10 text-pink tracking-wider flex items-center gap-1 border border-pink/20">
-                                    <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[8px] leading-none h-3 font-black">CC</div>
+                                <span className="text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[4px] bg-pink/30 text-pink tracking-wider flex items-center gap-1 border border-pink/40">
+                                    <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
                                     {anime.totalEpisodes || anime.subEpisodes || '?'}
                                 </span>
                                 {anime.dubEpisodes > 0 && (
                                     <>
                                         <span className="text-white/20 text-xs">•</span>
-                                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[4px] bg-primary/10 text-primary tracking-wider flex items-center gap-1 border border-primary/20">
-                                            <Mic size={10} fill="currentColor" />
+                                        <span className="flex text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[4px] bg-primary/30 text-primary tracking-wider items-center gap-1 border border-primary/40">
+                                            <Mic size={10} fill="currentColor" className="text-primary" />
                                             {anime.dubEpisodes}
                                         </span>
                                     </>
@@ -278,30 +278,32 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                 </div>
             </div>
 
-            {/* Navigation Controls */}
-            <div className="absolute bottom-6 right-4 md:right-12 z-20 flex flex-row items-center gap-2">
-                <div className="flex items-center gap-1.5 mr-4">
+            {/* Navigation Controls — Refined HiAnime Style */}
+            <div className="absolute bottom-4 md:bottom-19 right-4 md:right-12 z-20 flex flex-row items-center gap-4">
+                {/* Pagination Dots */}
+                <div className="flex items-center gap-1.5 translate-y-[2px]">
                     {list.map((_, i) => (
                         <button
                             key={i}
                             onClick={() => goTo(i)}
-                            className="h-1 rounded-full transition-all duration-300 bg-white"
-                            style={{ width: i === current ? '20px' : '4px', opacity: i === current ? 1 : 0.2 }}
+                            className={`h-[2.9px] rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-primary' : 'w-1.5 bg-white/20 hover:bg-white/40'}`}
+                            aria-label={`Go to slide ${i + 1}`}
                         />
                     ))}
                 </div>
+                {/* Navigation Arrows */}
                 <div className="flex items-center gap-2">
                     <button
                         onClick={prev}
-                        className="w-10 h-10 rounded-[4px] bg-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary transition-all group"
+                        className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-black/40 border border-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary transition-all active:scale-90"
                     >
-                        <ChevronLeft size={10} className="group-active:scale-90 transition-transform" />
+                        <ChevronLeft size={18} />
                     </button>
                     <button
                         onClick={next}
-                        className="w-10 h-10 rounded-[4px] bg-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary transition-all group"
+                        className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-black/40 border border-white/5 backdrop-blur-md flex items-center justify-center text-white/50 hover:text-white hover:bg-primary transition-all active:scale-90"
                     >
-                        <ChevronRight size={20} className="group-active:scale-90 transition-transform" />
+                        <ChevronRight size={18} />
                     </button>
                 </div>
             </div>

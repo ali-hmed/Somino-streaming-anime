@@ -126,7 +126,7 @@ const TopTrending: React.FC<TopTrendingProps> = ({ trendingData = {} }) => {
                                             {/* Rank Number (Stylish Outline) */}
                                             <div className="flex-shrink-0 w-11 text-center">
                                                 <span 
-                                                    className="text-4xl font-black italic select-none tracking-tighter transition-all duration-300 group-hover:scale-110 block"
+                                                    className="tr-num text-4xl font-black italic select-none tracking-tighter transition-all duration-300 group-hover:scale-110 block"
                                                     style={{ 
                                                         WebkitTextStroke: `1.5px ${rankColor}`,
                                                         color: 'transparent',

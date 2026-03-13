@@ -10,10 +10,10 @@ interface TrendingRowProps {
     title?: string;
 }
 
-const CARD_W = 190.5;
-const CARD_H = 255.48;
-const NUM_COL_W = 56; // width of the left number+title column
-const GAP = 20;
+const CARD_W = 170;
+const CARD_H = 240;
+const NUM_COL_W = 52; // width of the left number+title column
+const GAP = 18;
 
 const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending' }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -134,16 +134,16 @@ const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending'
                 /* Responsive: on mobile squeeze the card a tiny bit */
                 @media (max-width: 640px) {
                     .trending-item {
-                        height: 180px !important;
+                        height: 160px !important;
                     }
                     .trending-item > div:last-child {
-                        width: 140px !important;
-                        height: 180px !important;
+                        width: 120px !important;
+                        height: 160px !important;
                     }
-                    .tr-num { font-size: 22px; }
-                    .trending-item:nth-child(1) .tr-num { font-size: 26px; }
-                    .trending-item:nth-child(2) .tr-num { font-size: 24px; }
-                    .trending-item:nth-child(3) .tr-num { font-size: 22px; }
+                    .tr-num { font-size: 20px; }
+                    .trending-item:nth-child(1) .tr-num { font-size: 24px; }
+                    .trending-item:nth-child(2) .tr-num { font-size: 22px; }
+                    .trending-item:nth-child(3) .tr-num { font-size: 20px; }
                 }
             `}</style>
         </section>

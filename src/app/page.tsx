@@ -28,6 +28,7 @@ export default async function Home() {
   const heroList = (dataRef.spotlight?.length > 0) ? dataRef.spotlight : trendingAnime;
   const trendingData = dataRef.trending || [];
 
+  console.log(`[API] Top 10 Keys:`, Object.keys(dataRef.top10 || {}));
   console.log(`[API] Fetched Home Data from custom backend.`);
 
   return (

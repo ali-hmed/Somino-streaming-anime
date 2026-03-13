@@ -131,8 +131,8 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime, variant = 'portrait', show
                 whileHover={{ y: -5 }}
                 className="group cursor-pointer w-full"
             >
-                {/* Image Container */}
-                <div className={`relative aspect-[2/3] ${roundedClass} overflow-hidden bg-card mb-3`}>
+                {/* Image Container — Slightly shorter height for sleek HiAnime look */}
+                <div className={`relative aspect-[3/4] ${roundedClass} overflow-hidden bg-card mb-3`}>
                     {displayImage ? (
                         <img
                             src={displayImage}
