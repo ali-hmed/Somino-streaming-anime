@@ -107,14 +107,14 @@ export default function WatchControlsWatchlist({ animeId, animeTitle, animeImage
                     setIsOpen(!isOpen);
                 }}
                 disabled={isLoading}
-                className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-all whitespace-nowrap ${currentStatus ? 'text-primary' : 'text-white/40 hover:text-white'
+                className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-all whitespace-nowrap ${currentStatus ? 'text-primary' : 'text-white/40 hover:text-white'
                     }`}
             >
                 {isLoading ? (
-                    <Loader2 className="w-4 h-4 md:w-3 md:h-3 animate-spin text-primary" />
+                    <Loader2 className="w-3.5 h-3.5 md:w-3 md:h-3 animate-spin text-primary" />
                 ) : (
                     <>
-                        <Heart className={`w-4 h-4 md:w-3 md:h-3 ${currentStatus ? 'fill-current' : ''}`} strokeWidth={2.5} />
+                        <Heart className={`w-3.5 h-3.5 md:w-3 md:h-3 ${currentStatus ? 'fill-current' : ''}`} strokeWidth={2.5} />
                         <span className="hidden md:inline">{currentStatus || "Bookmark"}</span>
                     </>
                 )}
