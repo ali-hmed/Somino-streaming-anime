@@ -136,8 +136,31 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
                 {list.length > 0 ? (
                     list.slice(0, displayCount).map((item, i) => {
                         const title = getTitle(item.title);
-                        const broadcastTime = item.time || `${String(5 + i).padStart(2, '0')}:00`;
-                        const epNum = item.episode || (10 + i);
+                        const broadcastTime = item.time || '';
+                        const epNum = item.episode || '';
+
+                        // Determine if this is upcoming
+                        let isNext = false;
+                        let isUpcoming = false;
+
+                        if (broadcastTime && selectedDateIndex === 1) { // 1 is Today
+                            const [h, m] = broadcastTime.split(':').map(Number);
+                            const now = new Date();
+                            const itemTime = new Date();
+                            itemTime.setHours(h, m, 0, 0);
+
+                            isUpcoming = itemTime > now;
+
+                            // Find the first upcoming item to mark as "Next"
+                            const firstUpcoming = list.find(it => {
+                                if (!it.time) return false;
+                                const [ih, im] = it.time.split(':').map(Number);
+                                const itTime = new Date();
+                                itTime.setHours(ih, im, 0, 0);
+                                return itTime > now;
+                            });
+                            isNext = firstUpcoming && firstUpcoming.id === item.id && firstUpcoming.time === item.time;
+                        }
 
                         return (
                             <Link
@@ -145,12 +168,17 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
                                 href={`/watch/${item.id}`}
                                 className="flex items-center gap-4 px-6 py-2 hover:bg-white/[0.03] transition-all group last:border-0"
                             >
-                                <span className="text-[11px] font-bold text-white/20 group-hover:text-white/40 transition-colors w-12 flex-shrink-0">
+                                <span className={`text-[11px] font-bold ${isNext ? 'text-primary' : 'text-white/20'} group-hover:text-white/40 transition-colors w-12 flex-shrink-0`}>
                                     {broadcastTime}
                                 </span>
-                                <h5 className="flex-1 text-[13px] font-bold text-white/60 group-hover:text-white transition-colors line-clamp-1 truncate tracking-tight">
-                                    {title}
-                                </h5>
+                                <div className="flex-1 flex items-center gap-2 min-w-0">
+                                    <h5 className="text-[13px] font-bold text-white/60 group-hover:text-white transition-colors line-clamp-1 truncate tracking-tight">
+                                        {title}
+                                    </h5>
+                                    {isNext && (
+                                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" title="Next Episode" />
+                                    )}
+                                </div>
                                 <span className="text-[10px] font-bold text-white/20 group-hover:text-white/40 tracking-widest text-right min-w-[40px]">
                                     EP {epNum}
                                 </span>
