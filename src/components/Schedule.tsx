@@ -171,9 +171,11 @@ const Schedule: React.FC<ScheduleProps> = ({ scheduleList: initialList }) => {
 
             {/* Footer Clock & More Button */}
             <div className="px-5 py-4 bg-sidebar flex items-center justify-between">
-                <p className="text-[11px] font-bold text-white/20 font-mono tracking-tighter">
-                    {currentTime}
-                </p>
+                <div className="bg-white/[0.94] px-2.5 py-1 rounded-[4px] border border-white/[0.04]">
+                    <p className="text-[11px] font-bold text-black/90">
+                        {currentTime}
+                    </p>
+                </div>
 
                 {list.length > INITIAL_COUNT && (
                     <button
