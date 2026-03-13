@@ -60,7 +60,7 @@ const ContinueWatching = () => {
     if (!mounted || history.length === 0) return null;
 
     return (
-        <section className="relative mt-12 mb-16 px-4 md:px-0">
+        <section className="relative mt-12 mb-16 px-3 md:px-0">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2.5">
                     <RotateCcw className="text-[#FF6E9F]" size={20} />
@@ -73,7 +73,7 @@ const ContinueWatching = () => {
                 </Link>
             </div>
 
-            <div className="flex gap-4 md:gap-5 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth">
+            <div className="flex gap-4 md:gap-5 overflow-x-auto no-scrollbar pb-4 -mx-3 px-3 md:mx-0 md:px-0 scroll-smooth">
                 {history.slice(0, 10).map((item, i) => (
                     <div key={`cw-wrapper-${item.animeId}-${i}`} className="min-w-[160px] md:min-w-[190px] w-[160px] md:w-[190px] relative group">
                         <AnimeCard

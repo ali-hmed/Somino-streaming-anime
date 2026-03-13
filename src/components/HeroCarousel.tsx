@@ -159,7 +159,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
 
             {/* Content */}
             <div className="relative z-10 h-full flex items-end pb-12 md:pb-20">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-3 md:px-12">
                     <div className="max-w-[300px] md:max-w-[540px]">
 
                         {/* Spotlight label — pink, like reference */}

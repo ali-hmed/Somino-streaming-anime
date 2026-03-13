@@ -39,17 +39,17 @@ export default async function Home() {
       <HeroCarousel animeList={heroList} />
 
       {/* Share Somino Card */}
-      <div className="w-full max-w-[1460px] mx-auto px-6 mt-4">
+      <div className="w-full max-w-[1460px] mx-auto px-3 md:px-6 mt-4">
         <ShareCard />
       </div>
 
       {/* Latest Updates Row — right below hero */}
-      <div className="w-full max-w-[1460px] mx-auto px-6 mt-8">
+      <div className="w-full max-w-[1460px] mx-auto px-3 md:px-6 mt-8">
         <TrendingRow animeList={trendingData.length > 0 ? trendingData.slice(0, 10) : trendingAnime} title="Trending" />
       </div>
 
       {/* Main Content Area */}
-      <div className="w-full max-w-[1460px] mx-auto px-6 mt-6 md:mt-10">
+      <div className="w-full max-w-[1460px] mx-auto px-3 md:px-6 mt-6 md:mt-10">
         <div className="flex flex-col lg:flex-row gap-10 md:gap-12 lg:gap-8">
 
           {/* Left Column */}

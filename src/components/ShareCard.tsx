@@ -45,7 +45,7 @@ const ShareCard = () => {
                     </div>
 
                     {/* Right: Controls (Compact) */}
-                    <div className="flex items-center gap-4 pr-6">
+                    <div className="flex items-center gap-4 pr-3">
                         <button
                             onClick={handleCopy}
                             className="flex items-center gap-1.5 px-3.5 py-1.5 bg-primary/10 hover:bg-primary/20 rounded-full transition-all group whitespace-nowrap"
