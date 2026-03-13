@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import VideoPlayer from './VideoPlayer';
-import { Mic, SkipBack, SkipForward, FastForward, PlayCircle, Moon, Maximize2, Flag, MessageSquare, Heart } from 'lucide-react';
+import { Mic, SkipBack, SkipForward, FastForward, CirclePlay, Moon, Maximize2, Flag, MessageSquare, Heart, Scissors, Bug } from 'lucide-react';
 import WatchControlsWatchlist from './WatchControlsWatchlist';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings';
@@ -259,68 +259,98 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             )}
 
             {/* ── Actions bar (Prev / Next / AutoNext etc.) ───── */}
-            <div className="px-4 md:px-5 py-2.5 bg-background/60 flex items-center justify-between md:justify-center gap-4 md:gap-8 shrink-0 relative z-20 overflow-visible">
-                <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                    <Maximize2 size={12} strokeWidth={2.5} /> Expand
-                </button>
-                <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                    <Moon size={12} strokeWidth={2.5} /> Focus
-                </button>
+            <div className="px-2 md:px-5 py-3 md:py-2.5 bg-background/60 flex items-center justify-center gap-1 sm:gap-4 md:gap-8 shrink-0 relative z-20 overflow-visible border-b border-white/[0.03]">
+                {/* AutoNext (Position 1 on mobile) */}
                 <button
                     onClick={() => {
                         const newState = !autoNext;
                         setAutoNext(newState);
                         saveUserSettings({ autoNext: newState });
                     }}
-                    className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-[#FF6331]' : 'text-white/20 hover:text-white/40'}`}
+                    className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
                 >
-                    <FastForward size={14} className={autoNext ? 'fill-current' : ''} strokeWidth={2.5} /> AutoNext
+                    <FastForward className={`w-[18px] h-[18px] md:w-3.5 md:h-3.5 ${autoNext ? 'fill-current' : ''}`} strokeWidth={2.5} /> 
+                    <span className="hidden md:inline">AutoNext</span>
                 </button>
+
+                {/* AutoPlay (Position 2 on mobile) */}
                 <button
                     onClick={() => {
                         const newState = !autoPlay;
                         setAutoPlay(newState);
                         saveUserSettings({ autoPlay: newState });
                     }}
-                    className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
+                    className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
                 >
-                    <PlayCircle size={13} className={autoPlay ? 'fill-current' : ''} strokeWidth={2.5} /> AutoPlay
+                    <CirclePlay className={`w-[18px] h-[18px] md:w-[13px] md:h-[13px] ${autoPlay ? 'fill-primary/10' : ''}`} strokeWidth={2.2} /> 
+                    <span className="hidden md:inline">AutoPlay</span>
                 </button>
-                <div className="hidden md:block w-px h-3 bg-white/5 mx-1" />
+
+                {/* SkipTime (Position 3 on mobile - Scissors) */}
+                <button className="flex md:hidden items-center justify-center w-9 h-9 text-primary transition-colors whitespace-nowrap" title="Skip Intro">
+                    <Scissors className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                </button>
+
+                <div className="w-px h-4 bg-white/5 mx-0.5 md:hidden" />
+
+                {/* Prev (4) */}
                 {prevEpId ? (
                     <button
                         onClick={() => onEpisodeChange?.(prevEpId)}
                         disabled={isLoading}
-                        className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                        className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
                     >
-                        <SkipBack size={12} strokeWidth={2.5} /> Prev
+                        <SkipBack className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                        <span className="hidden md:inline">Prev</span>
                     </button>
                 ) : (
-                    <div className="flex items-center gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
-                        <SkipBack size={12} strokeWidth={2.5} /> Prev
+                    <div className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
+                        <SkipBack className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                        <span className="hidden md:inline">Prev</span>
                     </div>
                 )}
+
+                {/* Next (5) */}
                 {nextEpId ? (
                     <button
                         onClick={() => onEpisodeChange?.(nextEpId)}
                         disabled={isLoading}
-                        className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                        className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
                     >
-                        <SkipForward size={12} strokeWidth={2.5} /> Next
+                        <SkipForward className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                        <span className="hidden md:inline">Next</span>
                     </button>
                 ) : (
-                    <div className="flex items-center gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
-                        <SkipForward size={12} strokeWidth={2.5} /> Next
+                    <div className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
+                        <SkipForward className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                        <span className="hidden md:inline">Next</span>
                     </div>
                 )}
+
+                <div className="w-px h-4 bg-white/5 mx-0.5 md:hidden" />
+
+                {/* Bookmark (6) */}
                 <WatchControlsWatchlist
                     animeId={animeId}
                     animeTitle={animeTitle}
                     animeImage={animeImage}
                 />
-                <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                    <Flag size={12} strokeWidth={2.5} /> Report
+
+                {/* Report (7) */}
+                <button className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
+                    <Bug className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                    <span className="hidden md:inline">Report</span>
                 </button>
+
+                {/* Expand & Focus (MD Only) */}
+                <div className="hidden md:flex items-center gap-6 ml-2">
+                    <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
+                        <Maximize2 className="w-3 h-3" strokeWidth={2.5} /> Expand
+                    </button>
+                    <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
+                        <Moon className="w-3 h-3" strokeWidth={2.5} /> Focus
+                    </button>
+                </div>
             </div>
 
             {/* ── Desktop Controls Footer ─────────────────────────────── */}
