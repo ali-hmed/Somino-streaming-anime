@@ -58,20 +58,16 @@ export default async function Home() {
             <ContinueWatching />
 
             {/* Latest Episodes */}
-            <section className="mt-16">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white">
-                    Latest Episodes
-                  </h2>
-                </div>
-                <div className="flex items-center gap-6">
-                  <Link href="/animes/recently-updated" className="flex items-center gap-1.5 text-[11px] font-black tracking-widest text-white/40 hover:text-white transition-colors">
-                    view more <ChevronRight size={14} className="text-[#53CCB8]" />
-                  </Link>
-                </div>
+            <section className="mt-12 md:mt-16">
+              <div className="flex items-center justify-between mb-6 md:mb-8">
+                <h2 className="text-lg md:text-2xl font-black tracking-tighter text-white">
+                  Latest Episodes
+                </h2>
+                <Link href="/animes/recently-updated" className="flex items-center gap-1.5 text-[10px] md:text-[11px] font-black tracking-widest text-white/40 hover:text-white transition-colors uppercase">
+                  view more <ChevronRight size={14} className="text-primary" />
+                </Link>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                 {(dataRef.latestEpisode?.length > 0 ? dataRef.latestEpisode : trendingAnime).slice(0, 12).map((item: any, i: number) => (
                   <AnimeCard key={`le-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={true} showScore={true} />
                 ))}
@@ -79,20 +75,16 @@ export default async function Home() {
             </section>
 
             {/* Newly Added */}
-            <section className="mt-16">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white">
-                    Newly Added
-                  </h2>
-                </div>
-                <div className="flex items-center gap-6">
-                  <Link href="/animes/recently-added" className="flex items-center gap-1.5 text-[11px] font-black tracking-widest text-white/40 hover:text-white transition-colors">
-                    view more <ChevronRight size={14} className="text-[#53CCB8]" />
-                  </Link>
-                </div>
+            <section className="mt-12 md:mt-16">
+              <div className="flex items-center justify-between mb-6 md:mb-8">
+                <h2 className="text-lg md:text-2xl font-black tracking-tighter text-white">
+                  Newly Added
+                </h2>
+                <Link href="/animes/recently-added" className="flex items-center gap-1.5 text-[10px] md:text-[11px] font-black tracking-widest text-white/40 hover:text-white transition-colors uppercase">
+                  view more <ChevronRight size={14} className="text-primary" />
+                </Link>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                 {(dataRef.newAdded?.length > 0 ? dataRef.newAdded : trendingAnime).slice(0, 12).map((item: any, i: number) => (
                   <AnimeCard key={`na-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={true} showScore={true} />
                 ))}
@@ -100,20 +92,16 @@ export default async function Home() {
             </section>
 
             {/* Top Upcoming */}
-            <section className="mt-16">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white">
-                    Top Upcoming
-                  </h2>
-                </div>
-                <div className="flex items-center gap-6">
-                  <Link href="/animes/top-upcoming" className="flex items-center gap-1.5 text-[11px] font-black tracking-widest text-white/40 hover:text-white transition-colors">
-                    view more <ChevronRight size={14} className="text-[#53CCB8]" />
-                  </Link>
-                </div>
+            <section className="mt-12 md:mt-16">
+              <div className="flex items-center justify-between mb-6 md:mb-8">
+                <h2 className="text-lg md:text-2xl font-black tracking-tighter text-white">
+                  Top Upcoming
+                </h2>
+                <Link href="/animes/top-upcoming" className="flex items-center gap-1.5 text-[10px] md:text-[11px] font-black tracking-widest text-white/40 hover:text-white transition-colors uppercase">
+                  view more <ChevronRight size={14} className="text-primary" />
+                </Link>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                 {(dataRef.topUpcoming?.length > 0 ? dataRef.topUpcoming : trendingAnime).slice(0, 12).map((item: any, i: number) => (
                   <AnimeCard key={`tu-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={true} showScore={true} />
                 ))}
