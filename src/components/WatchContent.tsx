@@ -426,6 +426,15 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Main area: Comments */}
                 <div className="flex-1 min-w-0 relative">
+                    {/* Share Prompt */}
+                    <div className="flex items-center gap-3 mb-6">
+                        <img src="/favicon.png" alt="Love this site?" className="w-11 h-11 object-contain drop-shadow-[0_0_10px_rgba(46,204,113,0.3)]" />
+                        <div className="flex flex-col">
+                            <h3 className="text-[13px] md:text-[14px] font-bold text-primary tracking-wide">Love this site?</h3>
+                            <p className="text-[10px] md:text-[11px] text-white/50">Share it and let others know!</p>
+                        </div>
+                    </div>
+
                     <div className={isChanging ? 'opacity-30 pointer-events-none transition-opacity duration-300' : 'transition-opacity duration-300'}>
                         <WatchComments
                             episodeId={currentEpisodeId}

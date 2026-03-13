@@ -58,18 +58,18 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
         .slice(0, 18);
 
     return (
-        <main className="min-h-screen bg-[#0F1115] text-white/90 font-sans selection:bg-primary/30 relative">
+        <main className="min-h-screen bg-background text-white/90 font-sans selection:bg-primary/30 relative">
             <Navbar />
 
             {/* Blurred Background Hero */}
-            <div className="absolute inset-x-0 top-0 h-[890px] overflow-hidden pointer-events-none">
+            <div className="absolute inset-x-0 top-0 h-[850px] md:h-[850px] overflow-hidden pointer-events-none">
                 <img
                     src={anime.cover || anime.image}
                     alt=""
-                    className="w-full h-full object-cover blur-[8px] scale-125 opacity-40"
+                    className="w-full h-full object-cover blur-[8px] scale-125 opacity-70"
                     draggable={false}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0F1115]/60 via-[#0F1115]/80 to-[#0F1115]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
             </div>
 
             {/* main content container */}

@@ -9,12 +9,13 @@ interface WatchControlsWatchlistProps {
     animeId: string;
     animeTitle: string;
     animeImage: string;
+    isExpanded: boolean;
 }
 
 const STATUS_OPTIONS = ['Watching', 'Completed', 'Planned', 'Dropped'] as const;
 type WatchlistStatus = (typeof STATUS_OPTIONS)[number];
 
-export default function WatchControlsWatchlist({ animeId, animeTitle, animeImage }: WatchControlsWatchlistProps) {
+export default function WatchControlsWatchlist({ animeId, animeTitle, animeImage, isExpanded }: WatchControlsWatchlistProps) {
     const { user, isAuthenticated, setWatchlist, setAuthModalOpen } = useAuthStore();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -107,14 +108,13 @@ export default function WatchControlsWatchlist({ animeId, animeTitle, animeImage
                     setIsOpen(!isOpen);
                 }}
                 disabled={isLoading}
-                className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-all whitespace-nowrap ${currentStatus ? 'text-primary' : 'text-white/40 hover:text-white'
-                    }`}
+                className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-all whitespace-nowrap ${currentStatus ? 'text-primary' : 'text-white/40 hover:text-white'} ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
             >
                 {isLoading ? (
-                    <Loader2 className="w-3.5 h-3.5 md:w-3 md:h-3 animate-spin text-primary" />
+                    <Loader2 className={`animate-spin text-primary ${isExpanded ? 'md:w-4 md:h-4 w-3.5 h-3.5' : 'w-3.5 h-3.5 md:w-3 md:h-3'}`} />
                 ) : (
                     <>
-                        <Heart className={`w-3.5 h-3.5 md:w-3 md:h-3 ${currentStatus ? 'fill-current' : ''}`} strokeWidth={2.5} />
+                        <Heart className={`${isExpanded ? 'md:w-4 md:h-4 w-3.5 h-3.5' : 'w-3.5 h-3.5 md:w-3 md:h-3'} ${currentStatus ? 'fill-current' : ''}`} strokeWidth={2.5} />
                         <span className="hidden md:inline">{currentStatus || "Bookmark"}</span>
                     </>
                 )}

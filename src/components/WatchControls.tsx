@@ -363,15 +363,25 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
 
             {/* ── Actions bar (Prev / Next / AutoNext etc.) ───── */}
-            <div className={`px-2 md:px-5 py-1 md:py-2.5 bg-background/60 flex items-center justify-center gap-1 sm:gap-3 md:gap-5 shrink-0 relative overflow-visible border-b border-white/[0.03] transition-all duration-500 ${isFocusMode ? 'z-[90] opacity-20 pointer-events-none' : 'z-20 opacity-100'}`}>
+            <div className={`px-2 md:px-5 py-1 ${isExpanded ? 'md:py-3.5 lg:gap-14 md:gap-10' : 'md:py-2.5 md:gap-5'} flex items-center justify-center gap-1 sm:gap-3 shrink-0 relative border-b border-white/[0.03] transition-all duration-500 ${isFocusMode ? 'z-[90] opacity-20 pointer-events-none' : 'z-20 opacity-100'}`}>
+                {/* Blurred Background Image Container */}
+                <div className="absolute inset-0 z-[-1] overflow-hidden pointer-events-none">
+                    <img 
+                        src={animeImage} 
+                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-80"
+                        alt="" 
+                    />
+                    <div className="absolute inset-0 bg-[#0F1115]/50 backdrop-blur-sm" />
+                </div>
+
                 {/* 1. Expansion Controls */}
                 <div className="flex items-center gap-1.5 md:gap-4 mr-0.5 md:mr-2">
                     <button 
                         onClick={onToggleExpand}
-                        className={`hidden md:flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${isExpanded ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                        className={`hidden md:flex items-center gap-2 font-bold transition-colors whitespace-nowrap ${isExpanded ? 'text-primary md:text-[10px]' : 'text-white/40 hover:text-white text-[8.5px]'}`}
                     >
                         {isExpanded ? (
-                            <Minimize2 className="w-3.5 h-3.5 scale-110" strokeWidth={2.5} />
+                            <Minimize2 className="w-4 h-4" strokeWidth={2.5} />
                         ) : (
                             <Maximize2 className="w-3.5 h-3.5" strokeWidth={2.5} />
                         )}
@@ -379,10 +389,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     </button>
                     <button 
                         onClick={onToggleFocus}
-                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${isFocusMode ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${isFocusMode ? 'text-primary' : 'text-white/40 hover:text-white'} ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title={isFocusMode ? 'Unfocus' : 'Focus'}
                     >
-                        <Moon className={`w-[14px] h-[14px] md:w-3.5 md:h-3.5 ${isFocusMode ? 'fill-primary/10' : ''}`} strokeWidth={2.5} /> 
+                        <Moon className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${isFocusMode ? 'fill-primary/10' : ''}`} strokeWidth={2.5} /> 
                         <span className="hidden md:inline">{isFocusMode ? 'Unfocus' : 'Focus'}</span>
                     </button>
                 </div>
@@ -397,10 +407,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             setAutoNext(newState);
                             saveUserSettings({ autoNext: newState });
                         }}
-                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
+                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-primary' : 'text-white/20 hover:text-white/40'} ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title="Auto Next Episode"
                     >
-                        <FastForward className={`w-[14px] h-[14px] md:w-3.5 md:h-3.5 ${autoNext ? 'fill-current' : ''}`} strokeWidth={2.5} /> 
+                        <FastForward className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${autoNext ? 'fill-current' : ''}`} strokeWidth={2.5} /> 
                         <span className="hidden md:inline">AutoNext</span>
                     </button>
 
@@ -410,10 +420,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             setAutoPlay(newState);
                             saveUserSettings({ autoPlay: newState });
                         }}
-                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
+                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'} ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title="Auto Play"
                     >
-                        <CirclePlay className={`w-[14px] h-[14px] md:w-[13px] md:h-[13px] ${autoPlay ? 'fill-primary/10' : ''}`} strokeWidth={2.2} /> 
+                        <CirclePlay className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-[13px] md:h-[13px]'} ${autoPlay ? 'fill-primary/10' : ''}`} strokeWidth={2.2} /> 
                         <span className="hidden md:inline">AutoPlay</span>
                     </button>
 
@@ -428,14 +438,14 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 saveUserSettings({ autoSkip: newState });
                             }
                         }}
-                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${
+                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${
                             (autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end)) 
                             ? 'text-primary' 
                             : 'text-white/20 hover:text-white/40'
-                        }`}
+                        } ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title={introData && currentTime >= introData.start && currentTime < introData.end ? "Skip Intro Now" : "Toggle Auto Skip"}
                     >
-                        <Scissors className={`w-[14px] h-[14px] md:w-3.5 md:h-3.5 ${(autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end)) ? 'fill-primary/5' : ''}`} strokeWidth={2.5} />
+                        <Scissors className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${(autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end)) ? 'fill-primary/5' : ''}`} strokeWidth={2.5} />
                         <span className="hidden md:inline">
                             {introData && currentTime >= introData.start && currentTime < introData.end ? "Skip Intro" : "AutoSkip"}
                         </span>
@@ -450,14 +460,14 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         <button
                             onClick={() => onEpisodeChange?.(prevEpId)}
                             disabled={isLoading}
-                            className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                            className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20 ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         >
-                            <SkipBack className="w-3.5 h-3.5 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                            <SkipBack className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
                             <span className="hidden md:inline">Prev</span>
                         </button>
                     ) : (
-                        <div className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
-                            <SkipBack className="w-3.5 h-3.5 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                        <div className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/10 whitespace-nowrap cursor-not-allowed ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}>
+                            <SkipBack className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
                             <span className="hidden md:inline">Prev</span>
                         </div>
                     )}
@@ -466,14 +476,14 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         <button
                             onClick={() => onEpisodeChange?.(nextEpId)}
                             disabled={isLoading}
-                            className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                            className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20 ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         >
-                            <SkipForward className="w-3.5 h-3.5 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                            <SkipForward className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
                             <span className="hidden md:inline">Next</span>
                         </button>
                     ) : (
-                        <div className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
-                            <SkipForward className="w-3.5 h-3.5 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                        <div className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/10 whitespace-nowrap cursor-not-allowed ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}>
+                            <SkipForward className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
                             <span className="hidden md:inline">Next</span>
                         </div>
                     )}
@@ -487,10 +497,11 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         animeId={animeId}
                         animeTitle={animeTitle}
                         animeImage={animeImage}
+                        isExpanded={isExpanded}
                     />
 
-                    <button className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                        <Bug className="w-3.5 h-3.5 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                    <button className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}>
+                        <Bug className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
                         <span className="hidden md:inline">Report</span>
                     </button>
                 </div>
