@@ -448,7 +448,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                 </div>
 
                 {/* Sidebar area: Relations & Recommended */}
-                <aside className="w-full lg:w-[320px] shrink-0 space-y-10">
+                <aside className="w-full lg:w-[320px] shrink-0 space-y-10 lg:mt-[68px]">
                     {/* 1. relations sidebar */}
                     {sidebarRelations && sidebarRelations.length > 0 && (
                         <div className="rounded-2xl bg-sidebar overflow-hidden">
