@@ -17,6 +17,7 @@ interface VideoPlayerProps {
 const VideoPlayer = ({
     id,
     episodeId,
+    streamUrl,
     server = 'megaPlay',
     category = 'sub',
     autoPlay = true,
@@ -91,7 +92,17 @@ const VideoPlayer = ({
         params.set('p', timeVal); // some players use p=
     }
 
-    const streamSrc = `${baseUrl}${params.toString() ? '?' + params.toString() : ''}`;
+    let streamSrc = streamUrl || `${baseUrl}${params.toString() ? '?' + params.toString() : ''}`;
+
+    // If we have a streamUrl but no autoplay/starttime params in it, and we want them, we could add them here,
+    // but usually the backend provided iframeLink is ready to go or might not support the same params.
+    // For now, let's just use it as is if it's from the backend.
+    if (streamUrl && streamUrl.includes('megaplay.buzz') && !streamUrl.includes('autoplay')) {
+        const url = new URL(streamUrl);
+        if (autoPlay) url.searchParams.set('autoplay', '1');
+        if (startTime > 0) url.searchParams.set('start', Math.floor(startTime).toString());
+        streamSrc = url.toString();
+    }
 
     return (
         <div className="w-full bg-black" style={{ paddingBottom: '56.25%', position: 'relative' }} key={episodeId + server + category}>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import WatchControls from './WatchControls';
 import EpisodeList from './EpisodeList';
 import WatchComments from './WatchComments';
+import WatchCharacters from './WatchCharacters';
 import AnimeCard from './AnimeCard';
 import { Mic, MessageSquare, Star, Home, ChevronRight, ChevronLeft, GitBranch, Trophy, Zap } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
@@ -445,6 +446,9 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             key={currentEpisodeId}
                         />
                     </div>
+
+                    {/* Characters & Voice Actors Section */}
+                    <WatchCharacters animeId={id} />
                 </div>
 
                 {/* Sidebar area: Relations & Recommended */}

@@ -75,6 +75,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     const hasSkippedIntro = useRef(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [skipKey, setSkipKey] = useState(0); // Used to force player re-mount on hard skip
+    const [streamData, setStreamData] = useState<any>(null);
+    const [isStreamLoading, setIsStreamLoading] = useState(true);
 
     // Initial Load of Settings
     useEffect(() => {
@@ -109,26 +111,33 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         currentProgressRef.current = 0;
         hasSkippedIntro.current = false;
         setIntroData(null);
+        setStreamData(null);
+        setIsStreamLoading(true);
 
-        // Fetch Intro/Outro data
-        const loadIntroData = async () => {
+        // Fetch Stream and Intro/Outro data
+        const loadStreamData = async () => {
             try {
                 // Map frontend server names to API server names
                 const apiServer = server === 'megaPlay' ? 'HD-1' : 'vidWish';
                 const data = await fetchEpisodeStreamingLinks(episodeId, apiServer, category);
                 
-                if (data?.intro) {
-                    setIntroData({
-                        start: parseInt(data.intro.start) || 0,
-                        end: parseInt(data.intro.end) || 0
-                    });
-                    console.log(`Intro found for ${episodeId}: ${data.intro.start} - ${data.intro.end}`);
+                if (data) {
+                    setStreamData(data);
+                    if (data.intro) {
+                        setIntroData({
+                            start: parseInt(data.intro.start) || 0,
+                            end: parseInt(data.intro.end) || 0
+                        });
+                        console.log(`Intro found for ${episodeId}: ${data.intro.start} - ${data.intro.end}`);
+                    }
                 }
             } catch (err) {
-                console.warn('Failed to fetch intro data');
+                console.warn('Failed to fetch stream data');
+            } finally {
+                setIsStreamLoading(false);
             }
         };
-        loadIntroData();
+        loadStreamData();
     }, [animeId, episodeId, category, server]);
 
     useEffect(() => {
@@ -328,12 +337,12 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         ? 'w-full max-w-[900px] aspect-video shadow-[0_0_120px_rgba(0,0,0,1)] pointer-events-auto' 
                         : 'w-full h-full pointer-events-auto'}`}
                 >
-                    {hasLoadedProgress && (
+                    {hasLoadedProgress && !isStreamLoading && (
                         <VideoPlayer
                             key={`${episodeId}-${server}-${category}-${skipKey}`}
                             id={id}
                             episodeId={episodeId}
-                            streamUrl={null}
+                            streamUrl={streamData?.iframeLink || streamData?.link?.file}
                             server={server}
                             category={category}
                             autoPlay={autoPlay}
