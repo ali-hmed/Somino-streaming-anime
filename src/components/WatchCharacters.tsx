@@ -50,26 +50,28 @@ export default function WatchCharacters({ animeId }: WatchCharactersProps) {
     return (
         <div className="mt-10">
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-[18px] md:text-[22px] font-black tracking-wide text-[#ffbade]">
+                <h2 className="section-title text-[18px] md:text-[19px] font-black tracking-tight text-white uppercase">
                     Characters & Voice Actors
                 </h2>
-                <Link href="#" className="text-white/50 text-[12px] md:text-[13px] hover:text-white transition-colors flex items-center gap-1 font-medium">
-                    View more <ChevronRight size={14} />
+                <Link href="#" className="flex items-center gap-1 text-[11px] font-black tracking-widest text-white/40 hover:text-white transition-colors">
+                    view more <ChevronRight size={14} className="text-primary" />
                 </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3">
                 {characters.map((char, index) => {
                     const va = char.voiceActors?.[0];
 
                     return (
-                        <div key={`${char.id}-${index}`} className="bg-[#2A2C37]/80 hover:bg-[#343644] transition-colors rounded-[8px] p-2 flex justify-between items-center group">
+                        <div key={`${char.id}-${index}`} className="bg-surface/50 hover:bg-surface transition-colors rounded-[4px] p-2 flex justify-between items-center group border border-white/[0.03]">
                             {/* Character Side */}
                             <div className="flex items-center gap-3 w-1/2">
-                                <img src={char.imageUrl} alt={char.name} className="w-[38px] h-[38px] md:w-[46px] md:h-[46px] rounded-full object-cover shrink-0" />
+                                <div className="relative shrink-0">
+                                    <img src={char.imageUrl} alt={char.name} className="w-[42px] h-[42px] rounded-full object-cover border border-white/10" />
+                                </div>
                                 <div className="flex flex-col min-w-0">
-                                    <h4 className="text-[12px] md:text-[13px] font-bold text-white truncate group-hover:text-primary transition-colors">{char.name}</h4>
-                                    <span className="text-[10px] md:text-[11px] text-white/50">{char.role || 'Main'}</span>
+                                    <h4 className="text-[12px] font-bold text-white truncate group-hover:text-primary transition-colors">{char.name}</h4>
+                                    <span className="text-[10px] text-white/40 uppercase tracking-tighter font-medium">{char.role || 'Main'}</span>
                                 </div>
                             </div>
 
@@ -77,10 +79,12 @@ export default function WatchCharacters({ animeId }: WatchCharactersProps) {
                             {va && (
                                 <div className="flex items-center gap-3 w-1/2 justify-end text-right">
                                     <div className="flex flex-col min-w-0">
-                                        <h4 className="text-[12px] md:text-[13px] font-bold text-white truncate group-hover:text-primary transition-colors">{va.name}</h4>
-                                        <span className="text-[10px] md:text-[11px] text-white/50">{va.cast || 'Japanese'}</span>
+                                        <h4 className="text-[12px] font-bold text-white truncate group-hover:text-primary transition-colors">{va.name}</h4>
+                                        <span className="text-[10px] text-white/40 uppercase tracking-tighter font-medium">{va.cast || 'Japanese'}</span>
                                     </div>
-                                    <img src={va.imageUrl} alt={va.name} className="w-[38px] h-[38px] md:w-[46px] md:h-[46px] rounded-full object-cover shrink-0" />
+                                    <div className="relative shrink-0">
+                                        <img src={va.imageUrl} alt={va.name} className="w-[42px] h-[42px] rounded-full object-cover border border-white/10" />
+                                    </div>
                                 </div>
                             )}
                         </div>
