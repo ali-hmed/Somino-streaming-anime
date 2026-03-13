@@ -15,7 +15,7 @@ export const mapCustomToAnime = (item: any): any => ({
     isAdult: !!item.isAdult,
     description: item.synopsis || '',
     status: item.status || 'Unknown',
-    releaseDate: item.releaseDate || item.aired?.from || '',
+    releaseDate: item.releaseDate || (typeof item.aired === 'string' ? item.aired : item.aired?.from) || '',
     totalEpisodes: (() => {
         const eps = parseInt(item.episodes?.eps || item.episodes?.sub || item.episodes?.dub || '0');
         return isNaN(eps) ? 0 : eps;
@@ -37,11 +37,10 @@ export const mapCustomToAnime = (item: any): any => ({
     type: item.type || 'TV',
     year: (() => {
         if (item.year) return item.year;
-        const dateStr = item.aired?.from || item.releaseDate || '';
+        const dateStr = (typeof item.aired === 'string' ? item.aired : item.aired?.from) || item.releaseDate || '';
         const match = dateStr.match(/\b(19|20)\d{2}\b/);
         if (match) return parseInt(match[0]);
-        const y = parseInt(item.aired?.from?.split(' ')[2]);
-        return isNaN(y) ? undefined : y;
+        return undefined;
     })(),
     duration: item.duration,
     premiered: item.premiered,

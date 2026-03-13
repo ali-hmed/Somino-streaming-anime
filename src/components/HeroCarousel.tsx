@@ -207,8 +207,8 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                                 {anime.duration?.replace('per ep', '').trim() || '24m'}
                             </span>
                             <span className="hidden sm:text-white/20 text-xs sm:inline">•</span>
-                            {/* Date — Hidden on mobile */}
-                            <span className="hidden md:flex items-center gap-1 text-white/80 text-xs font-semibold">
+                            {/* Date — Visible on all devices */}
+                            <span className="flex items-center gap-1 text-white/80 text-[10px] md:text-xs font-semibold">
                                 <Calendar size={10} className="text-white/60" />
                                 {(() => {
                                     if (anime.year) return anime.year;
