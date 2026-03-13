@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { getTitle } from '@/types/anime';
 import { useAuthStore } from '@/store/authStore';
 import { usePopupStore } from '@/store/popupStore';
+import { fetchAnimeInfo } from '@/lib/consumet';
 
 interface AnimeInfoPopupProps {
     anime: any;
@@ -23,6 +24,8 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
     const [isListOpen, setIsListOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [fullInfo, setFullInfo] = useState<any>(null);
+    const [isDetailLoading, setIsDetailLoading] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -32,14 +35,43 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    // Reset fullInfo when anime changes
+    useEffect(() => {
+        setFullInfo(null);
+    }, [anime?.id]);
+
+    // Fetch full details when visible
+    useEffect(() => {
+        if (isVisible && anime?.id && !fullInfo && !isDetailLoading) {
+            // Only fetch if description or key info is missing
+            const needsFetch = !anime.description || !anime.japaneseTitle || !anime.releaseDate;
+            
+            if (needsFetch) {
+                const fetchDetails = async () => {
+                    setIsDetailLoading(true);
+                    try {
+                        const data = await fetchAnimeInfo(anime.id);
+                        if (data) setFullInfo(data);
+                    } catch (err) {
+                        console.error('Failed to fetch anime details:', err);
+                    } finally {
+                        setIsDetailLoading(false);
+                    }
+                };
+                fetchDetails();
+            }
+        }
+    }, [isVisible, anime?.id, fullInfo, isDetailLoading]);
+
     if (!anime) return null;
 
-    const title = getTitle(anime.title);
-    const bannerImage = anime.bannerImage || anime.image || anime.poster || anime.cover;
+    const displayData = fullInfo || anime;
+    const title = getTitle(displayData.title);
+    const bannerImage = displayData.bannerImage || displayData.image || displayData.poster || displayData.cover;
 
-    const subCount = anime.subEpisodes || anime.sub || 0;
-    const dubCount = anime.dubEpisodes || anime.dub || 0;
-    const totalEpisodes = anime.totalEpisodes || anime.episodeNumber || 0;
+    const subCount = displayData.subEpisodes || displayData.sub || 0;
+    const dubCount = displayData.dubEpisodes || displayData.dub || 0;
+    const totalEpisodes = displayData.totalEpisodes || displayData.episodeNumber || 0;
 
     const itemInList = user?.watchlist?.find((item: any) => item.animeId === anime.id);
     const currentStatus = itemInList?.status;
@@ -161,34 +193,59 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
                 </div>
 
                     {/* Description */}
-                    <p className="text-[12px] text-white/50 leading-snug line-clamp-3">
-                        {anime.description?.replace(/<[^>]*>/g, '') || 'No description available for this series.'}
-                    </p>
+                    <div className="min-h-[50px] relative">
+                        {isDetailLoading && !displayData.description && (
+                            <div className="absolute inset-0 flex items-center gap-2 text-[11px] text-white/20 italic">
+                                <Loader2 size={12} className="animate-spin" />
+                                <span>Loading details...</span>
+                            </div>
+                        )}
+                        {displayData.description && (
+                            <p className="text-[12px] text-white/50 leading-snug line-clamp-3">
+                                {displayData.description?.replace(/<[^>]*>/g, '')}
+                            </p>
+                        )}
+                        {!isDetailLoading && !displayData.description && (
+                            <p className="text-[12px] text-white/20 italic">
+                                No description available.
+                            </p>
+                        )}
+                    </div>
 
                     {/* Info Rows */}
                     <div className="space-y-[3px] mt-1">
-                        <div className="flex text-[11.5px]">
-                            <span className="text-white/40 w-[68px] shrink-0">Japanese:</span>
-                            <span className="text-white/80 line-clamp-1">{anime.japaneseTitle || 'Unknown'}</span>
-                        </div>
-                        <div className="flex text-[11.5px]">
-                            <span className="text-white/40 w-[68px] shrink-0">Synonyms:</span>
-                            <span className="text-white/80 line-clamp-1 truncate">{anime.synonyms?.join(', ') || 'Unknown'}</span>
-                        </div>
-                        <div className="flex text-[11.5px]">
-                            <span className="text-white/40 w-[68px] shrink-0">Aired:</span>
-                            <span className="text-white/80">{anime.releaseDate || 'Unknown'}</span>
-                        </div>
-                        <div className="flex text-[11.5px]">
-                            <span className="text-white/40 w-[68px] shrink-0">Status:</span>
-                            <span className="text-white/80">{anime.status || 'Unknown'}</span>
-                        </div>
-                        {anime.genres && anime.genres.length > 0 && (
+                        {displayData.japaneseTitle && displayData.japaneseTitle !== 'Unknown' && (
+                            <div className="flex text-[11.5px]">
+                                <span className="text-white/40 w-[68px] shrink-0">Japanese:</span>
+                                <span className="text-white/80 line-clamp-1">{displayData.japaneseTitle}</span>
+                            </div>
+                        )}
+                        {displayData.synonyms && displayData.synonyms.length > 0 && (
+                            <div className="flex text-[11.5px]">
+                                <span className="text-white/40 w-[68px] shrink-0">Synonyms:</span>
+                                <span className="text-white/80 line-clamp-1 truncate">
+                                    {Array.isArray(displayData.synonyms) ? displayData.synonyms.join(', ') : displayData.synonyms}
+                                </span>
+                            </div>
+                        )}
+                        {displayData.releaseDate && displayData.releaseDate !== 'Unknown' && (
+                            <div className="flex text-[11.5px]">
+                                <span className="text-white/40 w-[68px] shrink-0">Aired:</span>
+                                <span className="text-white/80">{displayData.releaseDate}</span>
+                            </div>
+                        )}
+                        {displayData.status && displayData.status !== 'Unknown' && (
+                            <div className="flex text-[11.5px]">
+                                <span className="text-white/40 w-[68px] shrink-0">Status:</span>
+                                <span className="text-white/80">{displayData.status}</span>
+                            </div>
+                        )}
+                        {displayData.genres && displayData.genres.length > 0 && (
                             <div className="flex text-[11.5px]">
                                 <span className="text-white/40 w-[68px] shrink-0">Genres:</span>
                                 <div className="flex flex-wrap gap-0.5 text-white/80">
-                                    {anime.genres.slice(0, 4).map((g: string, i: number) => (
-                                        <span key={i}>{g}{i < Math.min(anime.genres.length, 4) - 1 ? ', ' : ''}</span>
+                                    {displayData.genres.slice(0, 4).map((g: any, i: number) => (
+                                        <span key={i}>{typeof g === 'string' ? g : g.name}{i < Math.min(displayData.genres.length, 4) - 1 ? ', ' : ''}</span>
                                     ))}
                                 </div>
                             </div>
