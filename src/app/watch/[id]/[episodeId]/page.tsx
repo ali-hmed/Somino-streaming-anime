@@ -73,7 +73,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {/* main content container */}
-            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-12 max-w-[1400px] relative z-10">
+            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-12 max-w-[1500px] relative z-10">
                 <WatchContent
                     id={id}
                     initialEpisodeId={episodeId}

@@ -26,6 +26,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
     const [showAllRelations, setShowAllRelations] = useState(false);
     const [popularAnime, setPopularAnime] = useState<any[]>([]);
     const [focusMode, setFocusMode] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -105,7 +106,8 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
             {/* Upper Section: 3-Column Layout on Desktop */}
             <div className="flex flex-col lg:flex-row gap-5 lg:items-stretch lg:min-h-[620px]">
                 {/* 1. Anime Info Panel */}
-                <aside className="w-full lg:w-[260px] shrink-0 order-3 lg:order-1">
+                {!isExpanded && (
+                    <aside className="w-full lg:w-[260px] shrink-0 order-3 lg:order-1 transition-all duration-300">
                     <div className="bg-sidebar rounded-[8px] overflow-hidden flex flex-col h-full">
                         <div className="flex-1 overflow-y-auto custom-scrollbar">
                             <div className="relative h-32 flex items-center justify-center overflow-hidden shrink-0">
@@ -225,6 +227,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                         </div>
                     </div>
                 </aside>
+                )}
 
                 {/* 2. Video Player Panel */}
                 <div className="flex-1 min-w-0 flex flex-col order-1 lg:order-2 h-full">
@@ -270,6 +273,8 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             isLoading={isChanging}
                             isFocusMode={focusMode}
                             onToggleFocus={() => setFocusMode(!focusMode)}
+                            isExpanded={isExpanded}
+                            onToggleExpand={() => setIsExpanded(!isExpanded)}
                         />
 
                         {/* ── More from this Franchise (seasons + relations merged) ── */}

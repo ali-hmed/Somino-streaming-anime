@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import VideoPlayer from './VideoPlayer';
-import { Mic, SkipBack, SkipForward, FastForward, CirclePlay, Moon, Maximize2, Flag, MessageSquare, Heart, Scissors, Bug } from 'lucide-react';
+import { 
+    Mic, SkipBack, SkipForward, FastForward, CirclePlay, Moon, Maximize2, Minimize2, Flag, MessageSquare, Heart, Scissors, Bug 
+} from 'lucide-react';
 import WatchControlsWatchlist from './WatchControlsWatchlist';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings';
@@ -30,6 +32,8 @@ interface WatchControlsProps {
     isLoading?: boolean;
     isFocusMode?: boolean;
     onToggleFocus?: () => void;
+    isExpanded: boolean;
+    onToggleExpand: () => void;
 }
 
 const WatchControls: React.FC<WatchControlsProps> = ({
@@ -49,6 +53,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     isLoading = false,
     isFocusMode = false,
     onToggleFocus,
+    isExpanded,
+    onToggleExpand,
 }) => {
     const router = useRouter();
     const { user, setWatchHistory } = useAuthStore();
@@ -360,9 +366,16 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             <div className={`px-2 md:px-5 py-1 md:py-2.5 bg-background/60 flex items-center justify-center gap-1 sm:gap-3 md:gap-5 shrink-0 relative overflow-visible border-b border-white/[0.03] transition-all duration-500 ${isFocusMode ? 'z-[90] opacity-20 pointer-events-none' : 'z-20 opacity-100'}`}>
                 {/* 1. Expansion Controls */}
                 <div className="flex items-center gap-1.5 md:gap-4 mr-0.5 md:mr-2">
-                    <button className="hidden md:flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                        <Maximize2 className="w-3.5 h-3.5" strokeWidth={2.5} /> 
-                        <span>Expand</span>
+                    <button 
+                        onClick={onToggleExpand}
+                        className={`hidden md:flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${isExpanded ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                    >
+                        {isExpanded ? (
+                            <Minimize2 className="w-3.5 h-3.5 scale-110" strokeWidth={2.5} />
+                        ) : (
+                            <Maximize2 className="w-3.5 h-3.5" strokeWidth={2.5} />
+                        )}
+                        <span>{isExpanded ? 'Reduce' : 'Expand'}</span>
                     </button>
                     <button 
                         onClick={onToggleFocus}
