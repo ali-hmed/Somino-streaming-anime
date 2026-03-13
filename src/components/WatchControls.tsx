@@ -11,6 +11,8 @@ import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings';
 import { fetchEpisodeStreamingLinks } from '@/lib/consumet';
 
+import { motion, AnimatePresence } from 'framer-motion';
+
 interface WatchControlsProps {
     id: string;
     episodeId: string;
@@ -303,14 +305,23 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
     return (
         <>
-            {/* 1. Video Player & Centering Logic */}
-            <div className={`transition-all duration-100 ${isFocusMode 
-                ? 'fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-12 bg-black/40 pointer-events-none' 
-                : 'relative z-10 w-full'}`}>
+            {/* 1. Video Player & Centering Logic with Framer Motion Layout Animation */}
+            <div className={`transition-colors duration-700 ${isFocusMode 
+                ? 'fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-12 bg-black/60 pointer-events-none' 
+                : 'relative z-10 w-full mb-0'}`}>
                 
-                <div className={`relative group/player transition-all duration-100 ${isFocusMode 
-                    ? 'w-full max-w-[900px] aspect-video shadow-[0_0_120px_rgba(0,0,0,1)] scale-100 pointer-events-auto' 
-                    : 'w-full h-full'}`}>
+                <motion.div 
+                    layout
+                    transition={{
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 30,
+                        mass: 0.8
+                    }}
+                    className={`relative group/player shadow-2xl transition-shadow duration-700 ${isFocusMode 
+                        ? 'w-full max-w-[900px] aspect-video shadow-[0_0_120px_rgba(0,0,0,1)] pointer-events-auto' 
+                        : 'w-full h-full pointer-events-auto'}`}
+                >
                     {hasLoadedProgress && (
                         <VideoPlayer
                             key={`${episodeId}-${server}-${category}-${skipKey}`}
@@ -327,33 +338,39 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     )}
 
                     {/* PREMIUM SKIP INTRO OVERLAY (Crunchyroll Style) */}
-                    {introData && currentTime >= introData.start && currentTime < introData.end && (
-                        <button
-                            onClick={() => handleSkipIntro(introData.end)}
-                            className="absolute bottom-20 right-8 z-[200] flex items-center gap-3 px-6 py-3 bg-primary text-background font-black text-[12px] uppercase tracking-widest rounded-[4px] shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] hover:scale-110 active:scale-95 transition-all animate-in fade-in slide-in-from-right-10 duration-500"
-                        >
-                            <Scissors size={16} strokeWidth={3} />
-                            Skip Intro
-                        </button>
-                    )}
-                </div>
+                    <AnimatePresence>
+                        {introData && currentTime >= introData.start && currentTime < introData.end && (
+                            <motion.button
+                                initial={{ opacity: 0, x: 20, scale: 0.9 }}
+                                animate={{ opacity: 1, x: 0, scale: 1 }}
+                                exit={{ opacity: 0, x: 20, scale: 0.9 }}
+                                onClick={() => handleSkipIntro(introData.end)}
+                                className="absolute bottom-20 right-8 z-[200] flex items-center gap-3 px-6 py-3 bg-primary text-background font-black text-[12px] uppercase tracking-widest rounded-[4px] shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] hover:scale-110 active:scale-95 transition-transform"
+                            >
+                                <Scissors size={16} strokeWidth={3} />
+                                Skip Intro
+                            </motion.button>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
             </div>
 
 
             {/* ── Actions bar (Prev / Next / AutoNext etc.) ───── */}
-            <div className={`px-2 md:px-5 py-3 md:py-2.5 bg-background/60 flex items-center justify-center gap-1 sm:gap-3 md:gap-5 shrink-0 relative overflow-visible border-b border-white/[0.03] transition-all duration-500 ${isFocusMode ? 'z-[90] opacity-20 pointer-events-none' : 'z-20 opacity-100'}`}>
-                {/* 1. Expansion Controls (MD Only) */}
-                <div className="hidden md:flex items-center gap-4 mr-2">
-                    <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
+            <div className={`px-2 md:px-5 py-1.5 md:py-2.5 bg-background/60 flex items-center justify-center gap-1 sm:gap-3 md:gap-5 shrink-0 relative overflow-visible border-b border-white/[0.03] transition-all duration-500 ${isFocusMode ? 'z-[90] opacity-20 pointer-events-none' : 'z-20 opacity-100'}`}>
+                {/* 1. Expansion Controls */}
+                <div className="flex items-center gap-1.5 md:gap-4 mr-0.5 md:mr-2">
+                    <button className="hidden md:flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
                         <Maximize2 className="w-3.5 h-3.5" strokeWidth={2.5} /> 
                         <span>Expand</span>
                     </button>
                     <button 
                         onClick={onToggleFocus}
-                        className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${isFocusMode ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                        className={`flex items-center justify-center w-8 h-8 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${isFocusMode ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                        title={isFocusMode ? 'Unfocus' : 'Focus'}
                     >
-                        <Moon className={`w-3.5 h-3.5 ${isFocusMode ? 'fill-primary/10' : ''}`} strokeWidth={2.5} /> 
-                        <span>{isFocusMode ? 'Unfocus' : 'Focus'}</span>
+                        <Moon className={`w-[17px] h-[17px] md:w-3.5 md:h-3.5 ${isFocusMode ? 'fill-primary/10' : ''}`} strokeWidth={2.5} /> 
+                        <span className="hidden md:inline">{isFocusMode ? 'Unfocus' : 'Focus'}</span>
                     </button>
                 </div>
 
