@@ -91,6 +91,16 @@ export default async function Home() {
               </div>
             </section>
 
+            {/* Estimated Schedule - Mobile Only */}
+            <section className="mt-12 block lg:hidden">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-black tracking-tighter text-white">
+                  Estimated Schedule
+                </h2>
+              </div>
+              <Schedule scheduleList={scheduleData} />
+            </section>
+
             {/* Top Upcoming */}
             <section className="mt-12 md:mt-16">
               <div className="flex items-center justify-between mb-6 md:mb-8">
