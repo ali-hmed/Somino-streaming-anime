@@ -73,7 +73,7 @@ export default async function Home() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {(dataRef.latestEpisode?.length > 0 ? dataRef.latestEpisode : trendingAnime).slice(0, 12).map((item: any, i: number) => (
-                  <AnimeCard key={`le-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={false} showScore={false} />
+                  <AnimeCard key={`le-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={true} showScore={true} />
                 ))}
               </div>
             </section>
@@ -94,7 +94,7 @@ export default async function Home() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {(dataRef.newAdded?.length > 0 ? dataRef.newAdded : trendingAnime).slice(0, 12).map((item: any, i: number) => (
-                  <AnimeCard key={`na-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={false} showScore={false} />
+                  <AnimeCard key={`na-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={true} showScore={true} />
                 ))}
               </div>
             </section>
@@ -115,7 +115,7 @@ export default async function Home() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {(dataRef.topUpcoming?.length > 0 ? dataRef.topUpcoming : trendingAnime).slice(0, 12).map((item: any, i: number) => (
-                  <AnimeCard key={`tu-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={false} showScore={false} />
+                  <AnimeCard key={`tu-${item.id}-${i}`} anime={item} variant="portrait" isSharp={true} showEpisode={true} showScore={true} />
                 ))}
               </div>
             </section>

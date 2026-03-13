@@ -15,6 +15,34 @@ const CARD_H = 240;
 const NUM_COL_W = 52; // width of the left number+title column
 const GAP = 18;
 
+const TrendingPoster = ({ src, alt }: { src: string; alt: string }) => {
+    const [imgError, setImgError] = React.useState(false);
+    return (
+        <div
+            className="relative overflow-hidden bg-card flex-shrink-0 transition-all"
+            style={{ width: CARD_W, height: CARD_H }}
+        >
+            {src && !imgError ? (
+                <img
+                    src={src}
+                    alt={alt}
+                    onError={() => setImgError(true)}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                />
+            ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-[#1B1F2A] to-[#151821] flex flex-col items-center justify-center p-4">
+                     <span className="text-[10px] font-bold text-white/20 text-center line-clamp-2 px-2 uppercase tracking-tighter">
+                         {alt}
+                     </span>
+                </div>
+            )}
+            {/* Hover tint */}
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+    );
+};
+
 const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending' }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -99,19 +127,7 @@ const TrendingRow: React.FC<TrendingRowProps> = ({ animeList, title = 'Trending'
                             </div>
 
                             {/* Poster */}
-                            <div
-                                className="relative overflow-hidden bg-card flex-shrink-0 transition-all"
-                                style={{ width: CARD_W, height: CARD_H }}
-                            >
-                                <img
-                                    src={anime.cover || anime.image}
-                                    alt={animeTitle}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    loading="lazy"
-                                />
-                                {/* Hover tint */}
-                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
+                            <TrendingPoster src={anime.cover || anime.image} alt={animeTitle} />
                         </Link>
                     );
                 })}

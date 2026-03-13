@@ -10,52 +10,51 @@ export interface Anime {
 
 export const trendingAnime: Anime[] = [
     {
-        id: "hell-mode",
-        title: "Hell Mode: The Hardcore Gamer Dominates",
-        image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx176412-r9pI5K1u2y1T.jpg",
-        genre: ["Action", "Adventure", "Fantasy"],
-        episodes: 12,
-        status: "Ongoing",
-        description: "A hardcore gamer is reincarnated into a fantasy world with the 'Hell Mode' difficulty setting."
-    },
-    {
-        id: "solo-leveling",
-        title: "Solo Leveling",
-        image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-6iwfHJS4U4S7.jpg",
-        genre: ["Action", "Adventure", "Fantasy"],
-        episodes: 12,
-        status: "Completed"
-    },
-    {
-        id: "one-piece",
+        id: "one-piece-100",
         title: "One Piece",
-        image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg",
+        image: "https://cdn.noitatnemucod.net/thumbnail/300x400/100/bcd84737a03011913bc1d30d041ad263.jpg",
         genre: ["Action", "Adventure", "Comedy"],
-        episodes: 1155,
+        episodes: 1122,
         status: "Ongoing"
     },
     {
-        id: "jujutsu-kaisen",
-        title: "Jujutsu Kaisen",
-        image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-bbBWj4pEF9mZ.jpg",
+        id: "solo-leveling-18751",
+        title: "Solo Leveling",
+        image: "https://cdn.noitatnemucod.net/thumbnail/300x400/100/693630fbc89ed5ca19e4f509930fca68.jpg",
+        genre: ["Action", "Adventure", "Fantasy"],
+        episodes: 12,
+        status: "Completed"
+    },
+    {
+        id: "jujutsu-kaisen-2nd-season-18485",
+        title: "Jujutsu Kaisen Season 2",
+        image: "https://cdn.noitatnemucod.net/thumbnail/300x400/100/a1c21d8b67b4a99bc693f26bf8fcd2e5.jpg",
         genre: ["Action", "Supernatural"],
-        episodes: 24,
+        episodes: 23,
         status: "Completed"
     },
     {
-        id: "demon-slayer",
-        title: "Demon Slayer: Kimetsu no Yaiba",
-        image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-WBsBl0Clmgfk.jpg",
+        id: "demon-slayer-kimetsu-no-yaiba-hashira-training-arc-19077",
+        title: "Demon Slayer: Hashira Training Arc",
+        image: "https://cdn.noitatnemucod.net/thumbnail/300x400/100/f87799ef08b535fa324701ca573a0a65.jpg",
         genre: ["Action", "Fantasy"],
-        episodes: 26,
+        episodes: 8,
         status: "Completed"
     },
     {
-        id: "spy-x-family",
-        title: "SPY x FAMILY",
-        image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx140960-9THeY8y8zW6O.jpg",
+        id: "spy-x-family-season-2-18635",
+        title: "SPY x FAMILY Season 2",
+        image: "https://cdn.noitatnemucod.net/thumbnail/300x400/100/e0780282143bc556616093d5fb1034c4.jpg",
         genre: ["Comedy", "Action"],
-        episodes: 25,
+        episodes: 12,
         status: "Completed"
+    },
+    {
+        id: "blue-lock-2nd-season-19293",
+        title: "Blue Lock Season 2",
+        image: "https://cdn.noitatnemucod.net/thumbnail/300x400/100/69493902996d9294f50965e6f332612a.jpg",
+        genre: ["Sports"],
+        episodes: 14,
+        status: "Ongoing"
     }
 ];
