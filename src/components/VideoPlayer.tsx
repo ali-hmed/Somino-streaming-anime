@@ -10,6 +10,7 @@ interface VideoPlayerProps {
     category?: 'sub' | 'dub';
     autoPlay?: boolean;
     startTime?: number; // in seconds
+    playerRef?: React.RefObject<HTMLIFrameElement | null>;
     onProgress?: (currentTime: number, duration: number) => void;
 }
 
@@ -20,6 +21,7 @@ const VideoPlayer = ({
     category = 'sub',
     autoPlay = true,
     startTime = 0,
+    playerRef,
     onProgress,
 }: VideoPlayerProps) => {
     // Listen for messages from the iframe player
@@ -82,8 +84,11 @@ const VideoPlayer = ({
         params.set('onstart', '1');
     }
     if (startTime > 0) {
-        params.set('t', Math.floor(startTime).toString());
-        params.set('time', Math.floor(startTime).toString()); // some players use time=
+        const timeVal = Math.floor(startTime).toString();
+        params.set('t', timeVal);
+        params.set('time', timeVal);
+        params.set('start', timeVal);
+        params.set('p', timeVal); // some players use p=
     }
 
     const streamSrc = `${baseUrl}${params.toString() ? '?' + params.toString() : ''}`;
@@ -91,6 +96,7 @@ const VideoPlayer = ({
     return (
         <div className="w-full bg-black" style={{ paddingBottom: '56.25%', position: 'relative' }} key={episodeId + server + category}>
             <iframe
+                ref={playerRef}
                 src={streamSrc}
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
                 frameBorder="0"

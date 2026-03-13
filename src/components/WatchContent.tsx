@@ -25,6 +25,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
     const [isChanging, setIsChanging] = useState(false);
     const [showAllRelations, setShowAllRelations] = useState(false);
     const [popularAnime, setPopularAnime] = useState<any[]>([]);
+    const [focusMode, setFocusMode] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -72,36 +73,37 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
     const { user, isAuthenticated, setWatchlist } = useAuthStore();
     const poster = anime.image;
 
-    // Auto-update to 'Watching' if not already or in 'Planned'
+    // Focus Mode Keyboard listener
     useEffect(() => {
-        if (!isAuthenticated || !user || !id) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && focusMode) setFocusMode(false);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [focusMode]);
 
-        const currentItem = user.watchlist?.find(item => item.animeId === id);
-        if (!currentItem || currentItem.status === 'Planned') {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
-            fetch(`${BASE_URL}/auth/watchlist`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                },
-                body: JSON.stringify({
-                    animeId: id,
-                    animeTitle: title,
-                    animeImage: poster,
-                    status: 'Watching'
-                })
-            }).then(res => res.json()).then(data => {
-                if (data.success) setWatchlist(data.data);
-            }).catch(err => console.error("Auto-watching Error:", err));
+    // Disable scroll when in focus mode
+    useEffect(() => {
+        if (focusMode) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
         }
-    }, [id, isAuthenticated, user?.token]);
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [focusMode]);
 
     return (
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-12 relative">
+            {/* Focus Mode Overlay */}
+            {focusMode && (
+                <div 
+                    className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-3xl transition-all duration-700 pointer-events-auto"
+                    onClick={() => setFocusMode(false)}
+                />
+            )}
+
             {/* Upper Section: 3-Column Layout on Desktop */}
             <div className="flex flex-col lg:flex-row gap-5 lg:items-stretch lg:min-h-[620px]">
-
                 {/* 1. Anime Info Panel */}
                 <aside className="w-full lg:w-[260px] shrink-0 order-3 lg:order-1">
                     <div className="bg-sidebar rounded-[8px] overflow-hidden flex flex-col h-full">
@@ -226,7 +228,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                 {/* 2. Video Player Panel */}
                 <div className="flex-1 min-w-0 flex flex-col order-1 lg:order-2 h-full">
-                    <div className="bg-[#141418] rounded-[8px] overflow-hidden flex flex-col relative">
+                    <div className="bg-[#141418] rounded-[8px] overflow-hidden flex flex-col relative transition-opacity duration-500">
                         {isChanging && (
                             <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
                                 <div className="flex flex-col items-center gap-4">
@@ -266,6 +268,8 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
                             subEpisodes={anime.subEpisodes || episodes.length || 0}
                             onEpisodeChange={handleEpisodeChange}
                             isLoading={isChanging}
+                            isFocusMode={focusMode}
+                            onToggleFocus={() => setFocusMode(!focusMode)}
                         />
 
                         {/* ── More from this Franchise (seasons + relations merged) ── */}
@@ -402,7 +406,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                 {/* 3. Episode List Panel */}
                 <aside className="w-full lg:w-[320px] shrink-0 order-2 lg:order-3">
-                    <div className="bg-sidebar rounded-[6px] overflow-hidden flex flex-col h-[540px] lg:h-full">
+                    <div className="bg-sidebar rounded-[6px] overflow-hidden flex flex-col h-[300px] lg:h-full">
                         <EpisodeList
                             animeId={id}
                             episodes={episodes}

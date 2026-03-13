@@ -9,6 +9,7 @@ import { Mic, SkipBack, SkipForward, FastForward, CirclePlay, Moon, Maximize2, F
 import WatchControlsWatchlist from './WatchControlsWatchlist';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings';
+import { fetchEpisodeStreamingLinks } from '@/lib/consumet';
 
 interface WatchControlsProps {
     id: string;
@@ -25,6 +26,8 @@ interface WatchControlsProps {
     animeImage: string;
     onEpisodeChange?: (newId: string) => void;
     isLoading?: boolean;
+    isFocusMode?: boolean;
+    onToggleFocus?: () => void;
 }
 
 const WatchControls: React.FC<WatchControlsProps> = ({
@@ -42,6 +45,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     animeImage,
     onEpisodeChange,
     isLoading = false,
+    isFocusMode = false,
+    onToggleFocus,
 }) => {
     const router = useRouter();
     const { user, setWatchHistory } = useAuthStore();
@@ -49,6 +54,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     const [category, setCategory] = useState<'sub' | 'dub'>('sub');
     const [autoNext, setAutoNext] = useState(false);
     const [autoPlay, setAutoPlay] = useState(true);
+    const [autoSkip, setAutoSkip] = useState(false);
 
     // Resume Logic
     const [initialTime, setInitialTime] = useState(0);
@@ -57,12 +63,17 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
     // Use a ref for the exact current time to avoid stale closures in save intervals
     const currentProgressRef = useRef(0);
+    const [introData, setIntroData] = useState<{ start: number; end: number } | null>(null);
+    const hasSkippedIntro = useRef(false);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const [skipKey, setSkipKey] = useState(0); // Used to force player re-mount on hard skip
 
     // Initial Load of Settings
     useEffect(() => {
         const settings = getUserSettings();
         setAutoNext(settings.autoNext);
         setAutoPlay(settings.autoPlay);
+        setAutoSkip(settings.autoSkip);
 
         // Sub/Dub Preference Logic:
         // Do not override user choice if it exists
@@ -88,7 +99,29 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         setInitialTime(0);
         setCurrentTime(0);
         currentProgressRef.current = 0;
-    }, [animeId, episodeId]);
+        hasSkippedIntro.current = false;
+        setIntroData(null);
+
+        // Fetch Intro/Outro data
+        const loadIntroData = async () => {
+            try {
+                // Map frontend server names to API server names
+                const apiServer = server === 'megaPlay' ? 'HD-1' : 'vidWish';
+                const data = await fetchEpisodeStreamingLinks(episodeId, apiServer, category);
+                
+                if (data?.intro) {
+                    setIntroData({
+                        start: parseInt(data.intro.start) || 0,
+                        end: parseInt(data.intro.end) || 0
+                    });
+                    console.log(`Intro found for ${episodeId}: ${data.intro.start} - ${data.intro.end}`);
+                }
+            } catch (err) {
+                console.warn('Failed to fetch intro data');
+            }
+        };
+        loadIntroData();
+    }, [animeId, episodeId, category, server]);
 
     useEffect(() => {
         if (hasLoadedProgress) return;
@@ -162,7 +195,34 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         };
     }, [hasLoadedProgress, animeId, episodeId, animeTitle, animeImage, episodeNumber, user?.token]);
 
-    // Handle incoming time updates from the player (skips, seeks, etc.)
+    // Dedicated Effect for Auto-Detecting and Triggering Skips
+    useEffect(() => {
+        if (!autoSkip || !introData || hasSkippedIntro.current || !hasLoadedProgress) return;
+
+        // Check if current time is within intro range (with a small buffer)
+        if (currentTime >= introData.start && currentTime < introData.end - 1) {
+            console.log("AutoSkip Triggered: Jumping to", introData.end);
+            
+            // 1. Mark as skipped locally
+            hasSkippedIntro.current = true;
+
+            // 2. Perform 'Hard Skip' - update initial time and force player reload
+            setInitialTime(introData.end);
+            currentProgressRef.current = introData.end;
+            setCurrentTime(introData.end);
+            setSkipKey(prev => prev + 1);
+        }
+    }, [currentTime, autoSkip, introData, hasLoadedProgress]);
+
+    const handleSkipIntro = (toTime: number) => {
+        // Manual 'Hard Skip'
+        setInitialTime(toTime);
+        currentProgressRef.current = toTime;
+        setCurrentTime(toTime);
+        hasSkippedIntro.current = true;
+        setSkipKey(prev => prev + 1);
+    };
+
     // Handle incoming time updates from the player (skips, seeks, etc.)
     const handleProgress = (newTime: number, duration: number) => {
         // Server fallback logic
@@ -175,15 +235,14 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         }
 
         // PREVENTION: Don't let an initial '0' from the iframe clobber our resume point!
-        // We only trust '0' if we genuinely have no previous progress OR if the video has played/jumped.
-        if (newTime === 0 && currentProgressRef.current > 5) {
-            // Likely an initial status message from the player starting up.
-            return;
-        }
+        if (newTime === 0 && currentProgressRef.current > 5) return;
 
         if (newTime >= 0) {
-            setCurrentTime(newTime);
-            currentProgressRef.current = newTime;
+            // Only update if it's a significant change to avoid jitter with the local timer
+            if (Math.abs(newTime - currentProgressRef.current) >= 1) {
+                setCurrentTime(newTime);
+                currentProgressRef.current = newTime;
+            }
 
             // Immediate save on player update to ensure skips are caught
             const syncProgress = async () => {
@@ -244,111 +303,165 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
     return (
         <>
-            {/* Video Player — self-contained 16:9 aspect ratio, no buttons inside */}
-            {hasLoadedProgress && (
-                <VideoPlayer
-                    id={id}
-                    episodeId={episodeId}
-                    streamUrl={null}
-                    server={server}
-                    category={category}
-                    autoPlay={autoPlay}
-                    startTime={initialTime}
-                    onProgress={handleProgress}
-                />
-            )}
+            {/* 1. Video Player & Centering Logic */}
+            <div className={`transition-all duration-100 ${isFocusMode 
+                ? 'fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-12 bg-black/40 pointer-events-none' 
+                : 'relative z-10 w-full'}`}>
+                
+                <div className={`relative group/player transition-all duration-100 ${isFocusMode 
+                    ? 'w-full max-w-[900px] aspect-video shadow-[0_0_120px_rgba(0,0,0,1)] scale-100 pointer-events-auto' 
+                    : 'w-full h-full'}`}>
+                    {hasLoadedProgress && (
+                        <VideoPlayer
+                            key={`${episodeId}-${server}-${category}-${skipKey}`}
+                            id={id}
+                            episodeId={episodeId}
+                            streamUrl={null}
+                            server={server}
+                            category={category}
+                            autoPlay={autoPlay}
+                            startTime={initialTime}
+                            playerRef={iframeRef}
+                            onProgress={handleProgress}
+                        />
+                    )}
+
+                    {/* PREMIUM SKIP INTRO OVERLAY (Crunchyroll Style) */}
+                    {introData && currentTime >= introData.start && currentTime < introData.end && (
+                        <button
+                            onClick={() => handleSkipIntro(introData.end)}
+                            className="absolute bottom-20 right-8 z-[200] flex items-center gap-3 px-6 py-3 bg-primary text-background font-black text-[12px] uppercase tracking-widest rounded-[4px] shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] hover:scale-110 active:scale-95 transition-all animate-in fade-in slide-in-from-right-10 duration-500"
+                        >
+                            <Scissors size={16} strokeWidth={3} />
+                            Skip Intro
+                        </button>
+                    )}
+                </div>
+            </div>
+
 
             {/* ── Actions bar (Prev / Next / AutoNext etc.) ───── */}
-            <div className="px-2 md:px-5 py-3 md:py-2.5 bg-background/60 flex items-center justify-center gap-1 sm:gap-4 md:gap-8 shrink-0 relative z-20 overflow-visible border-b border-white/[0.03]">
-                {/* AutoNext (Position 1 on mobile) */}
-                <button
-                    onClick={() => {
-                        const newState = !autoNext;
-                        setAutoNext(newState);
-                        saveUserSettings({ autoNext: newState });
-                    }}
-                    className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
-                >
-                    <FastForward className={`w-[18px] h-[18px] md:w-3.5 md:h-3.5 ${autoNext ? 'fill-current' : ''}`} strokeWidth={2.5} /> 
-                    <span className="hidden md:inline">AutoNext</span>
-                </button>
-
-                {/* AutoPlay (Position 2 on mobile) */}
-                <button
-                    onClick={() => {
-                        const newState = !autoPlay;
-                        setAutoPlay(newState);
-                        saveUserSettings({ autoPlay: newState });
-                    }}
-                    className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
-                >
-                    <CirclePlay className={`w-[18px] h-[18px] md:w-[13px] md:h-[13px] ${autoPlay ? 'fill-primary/10' : ''}`} strokeWidth={2.2} /> 
-                    <span className="hidden md:inline">AutoPlay</span>
-                </button>
-
-                {/* SkipTime (Position 3 on mobile - Scissors) */}
-                <button className="flex md:hidden items-center justify-center w-9 h-9 text-primary transition-colors whitespace-nowrap" title="Skip Intro">
-                    <Scissors className="w-[18px] h-[18px]" strokeWidth={2.5} />
-                </button>
-
-                <div className="w-px h-4 bg-white/5 mx-0.5 md:hidden" />
-
-                {/* Prev (4) */}
-                {prevEpId ? (
-                    <button
-                        onClick={() => onEpisodeChange?.(prevEpId)}
-                        disabled={isLoading}
-                        className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
-                    >
-                        <SkipBack className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
-                        <span className="hidden md:inline">Prev</span>
-                    </button>
-                ) : (
-                    <div className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
-                        <SkipBack className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
-                        <span className="hidden md:inline">Prev</span>
-                    </div>
-                )}
-
-                {/* Next (5) */}
-                {nextEpId ? (
-                    <button
-                        onClick={() => onEpisodeChange?.(nextEpId)}
-                        disabled={isLoading}
-                        className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
-                    >
-                        <SkipForward className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
-                        <span className="hidden md:inline">Next</span>
-                    </button>
-                ) : (
-                    <div className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
-                        <SkipForward className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
-                        <span className="hidden md:inline">Next</span>
-                    </div>
-                )}
-
-                <div className="w-px h-4 bg-white/5 mx-0.5 md:hidden" />
-
-                {/* Bookmark (6) */}
-                <WatchControlsWatchlist
-                    animeId={animeId}
-                    animeTitle={animeTitle}
-                    animeImage={animeImage}
-                />
-
-                {/* Report (7) */}
-                <button className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                    <Bug className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
-                    <span className="hidden md:inline">Report</span>
-                </button>
-
-                {/* Expand & Focus (MD Only) */}
-                <div className="hidden md:flex items-center gap-6 ml-2">
+            <div className={`px-2 md:px-5 py-3 md:py-2.5 bg-background/60 flex items-center justify-center gap-1 sm:gap-3 md:gap-5 shrink-0 relative overflow-visible border-b border-white/[0.03] transition-all duration-500 ${isFocusMode ? 'z-[90] opacity-20 pointer-events-none' : 'z-20 opacity-100'}`}>
+                {/* 1. Expansion Controls (MD Only) */}
+                <div className="hidden md:flex items-center gap-4 mr-2">
                     <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                        <Maximize2 className="w-3 h-3" strokeWidth={2.5} /> Expand
+                        <Maximize2 className="w-3.5 h-3.5" strokeWidth={2.5} /> 
+                        <span>Expand</span>
                     </button>
-                    <button className="flex items-center gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
-                        <Moon className="w-3 h-3" strokeWidth={2.5} /> Focus
+                    <button 
+                        onClick={onToggleFocus}
+                        className={`flex items-center gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${isFocusMode ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+                    >
+                        <Moon className={`w-3.5 h-3.5 ${isFocusMode ? 'fill-primary/10' : ''}`} strokeWidth={2.5} /> 
+                        <span>{isFocusMode ? 'Unfocus' : 'Focus'}</span>
+                    </button>
+                </div>
+
+                <div className="hidden md:block w-px h-4 bg-white/5 mx-1" />
+
+                {/* 2. Automation Toggles */}
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-5">
+                    <button
+                        onClick={() => {
+                            const newState = !autoNext;
+                            setAutoNext(newState);
+                            saveUserSettings({ autoNext: newState });
+                        }}
+                        className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
+                        title="Auto Next Episode"
+                    >
+                        <FastForward className={`w-[18px] h-[18px] md:w-3.5 md:h-3.5 ${autoNext ? 'fill-current' : ''}`} strokeWidth={2.5} /> 
+                        <span className="hidden md:inline">AutoNext</span>
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            const newState = !autoPlay;
+                            setAutoPlay(newState);
+                            saveUserSettings({ autoPlay: newState });
+                        }}
+                        className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}
+                        title="Auto Play"
+                    >
+                        <CirclePlay className={`w-[18px] h-[18px] md:w-[13px] md:h-[13px] ${autoPlay ? 'fill-primary/10' : ''}`} strokeWidth={2.2} /> 
+                        <span className="hidden md:inline">AutoPlay</span>
+                    </button>
+
+                    {/* Skip Intro Button (Contextual) */}
+                    <button
+                        onClick={() => {
+                            if (introData && currentTime >= introData.start && currentTime < introData.end) {
+                                handleSkipIntro(introData.end);
+                            } else {
+                                const newState = !autoSkip;
+                                setAutoSkip(newState);
+                                saveUserSettings({ autoSkip: newState });
+                            }
+                        }}
+                        className={`flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold transition-colors whitespace-nowrap ${
+                            (autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end)) 
+                            ? 'text-primary' 
+                            : 'text-white/20 hover:text-white/40'
+                        }`}
+                        title={introData && currentTime >= introData.start && currentTime < introData.end ? "Skip Intro Now" : "Toggle Auto Skip"}
+                    >
+                        <Scissors className={`w-[18px] h-[18px] md:w-3.5 md:h-3.5 ${(autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end)) ? 'fill-primary/5' : ''}`} strokeWidth={2.5} />
+                        <span className="hidden md:inline">
+                            {introData && currentTime >= introData.start && currentTime < introData.end ? "Skip Intro" : "AutoSkip"}
+                        </span>
+                    </button>
+                </div>
+
+                <div className="w-px h-4 bg-white/5 mx-0.5" />
+
+                {/* 3. Navigation Controls */}
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-5">
+                    {prevEpId ? (
+                        <button
+                            onClick={() => onEpisodeChange?.(prevEpId)}
+                            disabled={isLoading}
+                            className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                        >
+                            <SkipBack className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                            <span className="hidden md:inline">Prev</span>
+                        </button>
+                    ) : (
+                        <div className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
+                            <SkipBack className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                            <span className="hidden md:inline">Prev</span>
+                        </div>
+                    )}
+
+                    {nextEpId ? (
+                        <button
+                            onClick={() => onEpisodeChange?.(nextEpId)}
+                            disabled={isLoading}
+                            className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20"
+                        >
+                            <SkipForward className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                            <span className="hidden md:inline">Next</span>
+                        </button>
+                    ) : (
+                        <div className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/10 whitespace-nowrap cursor-not-allowed">
+                            <SkipForward className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                            <span className="hidden md:inline">Next</span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="w-px h-4 bg-white/5 mx-0.5" />
+
+                {/* 4. Utilities (Bookmark / Report) */}
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-5">
+                    <WatchControlsWatchlist
+                        animeId={animeId}
+                        animeTitle={animeTitle}
+                        animeImage={animeImage}
+                    />
+
+                    <button className="flex items-center justify-center w-9 h-9 md:w-auto md:h-auto gap-2 text-[8.5px] font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap">
+                        <Bug className="w-4 h-4 md:w-3 md:h-3" strokeWidth={2.5} /> 
+                        <span className="hidden md:inline">Report</span>
                     </button>
                 </div>
             </div>

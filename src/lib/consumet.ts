@@ -437,9 +437,9 @@ export const fetchGenresList = async (): Promise<any[]> => {
     }
 };
 
-export const fetchEpisodeStreamingLinks = async (episodeId: string): Promise<any> => {
+export const fetchEpisodeStreamingLinks = async (episodeId: string, server: string = 'HD-1', category: string = 'sub'): Promise<any> => {
     try {
-        const res = await fetch(`${BASE_URL}/stream?id=${episodeId}&server=HD-1&type=sub`);
+        const res = await fetch(`${BASE_URL}/stream?id=${episodeId}&server=${server}&type=${category}`);
         const json = await res.json();
         return json.success ? json.data : null;
     } catch (error) {

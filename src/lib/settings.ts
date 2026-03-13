@@ -3,6 +3,7 @@
 export interface UserSettings {
     autoNext: boolean;
     autoPlay: boolean;
+    autoSkip: boolean;
     lastServer: 'megaPlay' | 'vidWish';
     preferredCategory: 'sub' | 'dub';
 }
@@ -12,6 +13,7 @@ const STORAGE_KEY = 'somino_user_settings';
 const DEFAULT_SETTINGS: UserSettings = {
     autoNext: false, // Default is OFF
     autoPlay: false, // Default is OFF as requested
+    autoSkip: false,
     lastServer: 'megaPlay',
     preferredCategory: 'sub',
 };
