@@ -62,7 +62,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
             <Navbar />
 
             {/* Blurred Background Hero */}
-            <div className="absolute inset-x-0 top-0 h-[850px] md:h-[850px] overflow-hidden pointer-events-none border-b border-white/[0.04] z-0">
+            <div className="absolute inset-x-0 top-0 h-[950px] md:h-[950px] overflow-hidden pointer-events-none border-b border-white/[0.04] z-0">
                 <img
                     src={anime.cover || anime.image}
                     alt=""
