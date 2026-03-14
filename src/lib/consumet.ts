@@ -461,3 +461,13 @@ export const fetchEpisodeStreamingLinks = async (episodeId: string, server: stri
         return null;
     }
 };
+
+export const fetchServerList = async (episodeId: string): Promise<{ sub: any[], dub: any[] }> => {
+    try {
+        const res = await fetch(`${BASE_URL}/servers?id=${episodeId}`);
+        const json = await res.json();
+        return json.success ? json.data : { sub: [], dub: [] };
+    } catch (error) {
+        return { sub: [], dub: [] };
+    }
+};

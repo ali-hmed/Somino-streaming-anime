@@ -128,13 +128,13 @@ export default function ProfilePage() {
 
             {/* Edit Profile Box */}
             <div className="max-w-[680px]">
-                <div className="flex items-center gap-2 mb-5">
-                    <div className="w-1 h-5 rounded-full" style={{ background: "var(--primary)" }} />
-                    <h2 className="text-[17px] font-bold text-white">Edit Profile</h2>
+                <div className="flex items-center gap-2 mb-4 md:mb-5">
+                    <div className="w-1 h-4 md:h-5 rounded-full" style={{ background: "var(--primary)" }} />
+                    <h2 className="text-[14px] md:text-[17px] font-bold text-white">Edit Profile</h2>
                 </div>
 
-                <div className="rounded-2xl p-6 sm:p-8" style={{ background: "var(--surface)" }}>
-                    <div className="flex flex-col-reverse md:flex-row gap-10">
+                <div className="rounded-xl md:rounded-2xl p-5 md:p-8" style={{ background: "var(--surface)" }}>
+                    <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-10">
 
                         {/* Left: Form */}
                         <div className="flex-1">
@@ -223,9 +223,9 @@ export default function ProfilePage() {
                                     />
                                 </div>
 
-                                <button type="button" className="flex items-center gap-2 text-[12px] font-medium transition-colors hover:opacity-100 opacity-60 hover:text-white pt-1"
+                                <button type="button" className="flex items-center gap-2 text-[11px] md:text-[12px] font-medium transition-colors hover:opacity-100 opacity-60 hover:text-white pt-1"
                                     style={{ color: "var(--text-muted)" }}>
-                                    <Key size={13} />
+                                    <Key size={12} className="md:w-[13px] md:h-[13px]" />
                                     Change password
                                 </button>
 
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                         <div className="flex-shrink-0 flex md:block justify-center">
                             <div className="relative">
                                 <div
-                                    className="w-[110px] h-[110px] rounded-full overflow-hidden flex items-center justify-center text-4xl font-black"
+                                    className="w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full overflow-hidden flex items-center justify-center text-3xl md:text-4xl font-black"
                                     style={{ background: "var(--surface-raised)", border: "2px solid var(--border)", color: "var(--primary)" }}
                                 >
                                     {formData.avatar ? (
@@ -260,11 +260,11 @@ export default function ProfilePage() {
                                 </div>
                                 <button
                                     type="button"
-                                    className="absolute bottom-1 right-0 w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                                    className="absolute bottom-1 right-0 w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
                                     style={{ background: "var(--primary)", color: "#0f1012" }}
                                     onClick={() => document.querySelector<HTMLInputElement>('[name="avatar"]')?.focus()}
                                 >
-                                    <Pencil size={14} strokeWidth={2.5} />
+                                    <Pencil size={12} strokeWidth={2.5} className="md:w-[14px] md:h-[14px]" />
                                 </button>
                             </div>
                         </div>

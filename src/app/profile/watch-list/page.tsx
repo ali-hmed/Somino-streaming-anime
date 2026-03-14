@@ -37,9 +37,9 @@ function StatusMenu({
         <div ref={ref} className="absolute top-2 right-2 z-30">
             <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(o => !o); }}
-                className="w-7 h-7 rounded-md bg-white/90 backdrop-blur flex items-center justify-center text-black hover:bg-white transition-colors"
+                className="w-6 h-6 md:w-7 md:h-7 rounded-md bg-white/90 backdrop-blur flex items-center justify-center text-black hover:bg-white transition-colors"
             >
-                <MoreVertical size={14} />
+                <MoreVertical size={12} className="md:w-[14px] md:h-[14px]" />
             </button>
 
             <AnimatePresence>
@@ -171,38 +171,43 @@ export default function WatchListPage() {
     return (
         <div className="space-y-8 pb-16">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                    <Heart size={24} className="text-white fill-white" />
-                    <h2 className="text-[22px] font-black text-white tracking-tight">Watch List</h2>
-                    <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-black">
+            <div className="flex flex-row items-center justify-between gap-2 md:gap-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                    <Heart size={20} className="text-white fill-white md:w-6 md:h-6" />
+                    <h2 className="text-base md:text-[22px] font-black text-white tracking-tight">Watch List</h2>
+                    <span className="px-1.5 py-0.5 rounded-full bg-primary/20 text-primary text-[8px] md:text-[10px] font-black">
                         {filteredList.length}
                     </span>
                 </div>
 
-                <button
-                    onClick={handleToggleVisibility}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl transition-all self-start"
-                >
-                    {user?.isWatchlistPublic !== false ? (
-                        <>
-                            <Eye size={16} className="text-primary" />
-                            <span className="text-[11px] font-black text-white/50 uppercase tracking-widest">Public</span>
-                        </>
-                    ) : (
-                        <>
-                            <EyeOff size={16} className="text-red-400" />
-                            <span className="text-[11px] font-black text-white/50 uppercase tracking-widest">Private</span>
-                        </>
-                    )}
-                </button>
+                <div className="flex items-center gap-2">
+                    <span className="hidden sm:inline text-[9px] font-black text-white/30 uppercase tracking-widest">Visibility</span>
+                    <button
+                        onClick={handleToggleVisibility}
+                        className="flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 bg-white/5 hover:bg-white/10 rounded-lg md:rounded-xl transition-all"
+                    >
+                        {user?.isWatchlistPublic !== false ? (
+                            <>
+                                <Eye size={14} className="text-primary md:w-4 md:h-4" />
+                                <span className="text-[9px] md:text-[11px] font-black text-white/60 uppercase tracking-widest">Public</span>
+                                <span className="hidden md:inline-block px-1 py-0.5 rounded-[3px] bg-primary text-background text-[8px] font-black">ON</span>
+                            </>
+                        ) : (
+                            <>
+                                <EyeOff size={14} className="text-red-400 md:w-4 md:h-4" />
+                                <span className="text-[9px] md:text-[11px] font-black text-white/60 uppercase tracking-widest">Private</span>
+                                <span className="hidden md:inline-block px-1 py-0.5 rounded-[3px] bg-white/10 text-white/40 text-[8px] font-black">OFF</span>
+                            </>
+                        )}
+                    </button>
+                </div>
             </div>
 
             {/* Status Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto no-scrollbar pb-1">
                 {tabs.map(tab => (
                     <button key={tab} onClick={() => { setActiveTab(tab); setPage(1); }}
-                        className={`px-4 py-2 rounded-[6px] text-[10px] font-black tracking-widest uppercase transition-all whitespace-nowrap ${activeTab === tab
+                        className={`px-3 py-1.5 md:px-4 md:py-2 rounded-[4px] md:rounded-[6px] text-[9px] md:text-[10px] font-black tracking-widest uppercase transition-all whitespace-nowrap ${activeTab === tab
                             ? 'bg-primary text-white'
                             : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'}`}>
                         {tab}
@@ -226,7 +231,7 @@ export default function WatchListPage() {
             ) : (
                 <>
                     {/* Same grid as filter/popular pages: 2 → 3 → 4 → 5 → 6 cols */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-2 md:gap-x-4 gap-y-6 md:gap-y-8">
                         <AnimatePresence mode="popLayout">
                             {pagedList.map(item => (
                                 <motion.div

@@ -78,6 +78,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     const [streamData, setStreamData] = useState<any>(null);
     const [serverList, setServerList] = useState<{ sub: any[], dub: any[] }>({ sub: [], dub: [] });
     const [isStreamLoading, setIsStreamLoading] = useState(true);
+    const isFetchingServers = React.useRef(false);
 
     // Initial Load of Settings
     useEffect(() => {
@@ -104,8 +105,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         }
     }, [subEpisodes, dubEpisodes]);
 
+    // 1. Reset progress states when episode changes
     useEffect(() => {
-        // Reset progress states when episode changes
         setHasLoadedProgress(false);
         setInitialTime(0);
         setCurrentTime(0);
@@ -114,37 +115,70 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         setIntroData(null);
         setStreamData(null);
         setIsStreamLoading(true);
+        isFetchingServers.current = true;
+    }, [episodeId]);
 
-        // Fetch Server List
+    // 2. Fetch Server List when episode changes
+    useEffect(() => {
+        let mounted = true;
         const loadServers = async () => {
-            const list = await fetchServerList(episodeId);
-            setServerList(list);
-            
-            // Logic to select default server if current is not in list
-            const currentList = category === 'sub' ? list.sub : list.dub;
-            if (currentList.length > 0) {
-                const exists = currentList.find(s => s.name === server);
-                if (!exists) {
-                    setServer(currentList[0].name);
+            try {
+                const list = await fetchServerList(episodeId);
+                if (mounted) {
+                    setServerList(list);
+                    isFetchingServers.current = false;
                 }
+            } catch (err) {
+                console.error("Failed to fetch server list", err);
+                if (mounted) isFetchingServers.current = false;
             }
         };
+        loadServers();
+        return () => { mounted = false; };
+    }, [episodeId]);
 
-        // Fetch Stream and Intro/Outro data
+    // 3. Ensure a valid server is selected when category or serverList changes
+    useEffect(() => {
+        if (isFetchingServers.current) return;
+        
+        const currentList = category === 'sub' ? serverList.sub : serverList.dub;
+        if (currentList.length > 0) {
+            const exists = currentList.find(s => s.name === server);
+            if (!exists) {
+                setServer(currentList[0].name);
+            }
+        }
+    }, [serverList, category, server]);
+
+    // 4. Fetch Stream Data when server, category, or episode changes
+    useEffect(() => {
+        let mounted = true;
         const loadStreamData = async () => {
+            if (isFetchingServers.current) return;
+            
+            const currentList = category === 'sub' ? serverList.sub : serverList.dub;
+            if (currentList.length === 0) {
+                setIsStreamLoading(false);
+                return; // No servers available
+            }
+            
+            const activeServer = currentList.find(s => s.name === server);
+            if (!activeServer) return; // Wait until effect #3 corrects the server state
+
+            setIsStreamLoading(true);
+            setStreamData(null);
+
             try {
                 // Determine the correct server identifier for the API
-                const currentList = category === 'sub' ? serverList.sub : serverList.dub;
-                const activeServer = currentList.find(s => s.name === server);
-                
-                // Fallback mapping if list hasn't loaded or server not found
                 let apiServer = server;
                 if (server === 'MegaCloud') apiServer = 'HD-1';
                 else if (server === 'VidStreaming' || server === 'VidSrc') apiServer = 'HD-2';
-                else if (activeServer?.index) apiServer = activeServer.name;
+                else if (activeServer?.name) apiServer = activeServer.name;
 
                 const data = await fetchEpisodeStreamingLinks(episodeId, apiServer, category);
                 
+                if (!mounted) return;
+
                 if (data) {
                     setStreamData(data);
                     if (data.intro) {
@@ -155,14 +189,15 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     }
                 }
             } catch (err) {
-                console.warn('Failed to fetch stream data');
+                if (mounted) console.warn('Failed to fetch stream data');
             } finally {
-                setIsStreamLoading(false);
+                if (mounted) setIsStreamLoading(false);
             }
         };
         
-        loadServers().then(() => loadStreamData());
-    }, [animeId, episodeId, category, server]);
+        loadStreamData();
+        return () => { mounted = false; };
+    }, [episodeId, category, server, serverList]);
 
     useEffect(() => {
         if (hasLoadedProgress) return;

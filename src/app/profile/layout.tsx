@@ -27,7 +27,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             <Navbar />
 
             {/* Profile Header Banner */}
-            <div className="relative h-[40vh] pt-[80px] overflow-hidden flex flex-col justify-end">
+            <div className="relative h-[25vh] md:h-[40vh] pt-[60px] md:pt-[80px] overflow-hidden flex flex-col justify-end">
                 {/* Blurred BG using user avatar or fallback */}
                 <div
                     className="absolute inset-0 z-0 opacity-15 blur-[5px] scale-110"
@@ -42,12 +42,12 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                 <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(to top, var(--background) 5%, transparent 80%)" }} />
 
                 <div className="relative z-10 container mx-auto px-4 md:px-8 flex flex-col items-center">
-                    <h1 className="text-3xl md:text-5xl font-black text-white mb-8 tracking-wide">
+                    <h1 className="text-xl md:text-5xl font-black text-white mb-4 md:mb-8 tracking-wide">
                         Hi, <span style={{ color: "var(--primary)" }}>{user.username}</span>
                     </h1>
 
                     {/* Tab Navigation */}
-                    <div className="flex items-center justify-center overflow-x-auto no-scrollbar w-full">
+                    <div className="flex items-center justify-center overflow-x-auto no-scrollbar w-full border-b border-white/[0.05]">
                         <div className="flex items-center justify-center gap-1 sm:gap-6 w-full">
                             {tabs.map((tab) => {
                                 const isActive = pathname === tab.href;
@@ -55,14 +55,14 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
                                     <Link
                                         key={tab.name}
                                         href={tab.href}
-                                        className="flex items-center gap-2 text-[12px] py-4 px-3 sm:px-3 border-b-2 whitespace-nowrap transition-colors"
+                                        className="flex items-center gap-2 text-[11px] md:text-[12px] py-3 md:py-4 px-3 sm:px-3 border-b-2 whitespace-nowrap transition-colors"
                                         style={{
                                             color: isActive ? "var(--primary)" : "var(--text-muted)",
                                             borderColor: isActive ? "var(--primary)" : "transparent",
                                             fontWeight: isActive ? "700" : "500"
                                         }}
                                     >
-                                        <tab.icon size={15} />
+                                        <tab.icon size={14} className="md:w-[15px] md:h-[15px]" />
                                         <span className="hidden sm:inline">{tab.name}</span>
                                     </Link>
                                 );
