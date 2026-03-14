@@ -333,34 +333,7 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                     {/* ─── MAIN CONTENT ─── */}
                     <div className="flex-1 space-y-6 min-w-0">
 
-                        {/* Relations Section */}
-                        {anime.relations && anime.relations.length > 0 && (
-                            <section className="bg-[#141418] rounded-xl p-6 md:p-8">
-                                <div className="flex items-center gap-2 mb-6">
-                                    <h2 className="text-sm font-black text-white tracking-widest pl-3 border-l-4 border-primary">Relations</h2>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {anime.relations.map((rel: any, i: number) => (
-                                        <Link
-                                            key={i}
-                                            href={`/watch/${rel.entry.mal_id}`}
-                                            className="group flex items-center gap-3 bg-background/40 hover:bg-white/5 transition-all p-3 rounded-lg"
-                                        >
-                                            <div className="w-12 h-16 shrink-0 rounded overflow-hidden">
-                                                <img src={rel.entry.image} alt={rel.entry.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="text-[12px] font-bold text-white line-clamp-1 group-hover:text-primary transition-colors">{rel.entry.name}</h4>
-                                                <div className="flex flex-wrap gap-x-2 gap-y-1 mt-1">
-                                                    <span className="text-[9px] font-black text-primary/80 uppercase">{rel.relation}</span>
-                                                    <span className="text-[9px] text-white/30 truncate">{rel.entry.type || 'TV'} · {rel.entry.subEpisodes || rel.entry.episodes || '?'} eps</span>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
+
 
                         {/* Synopsis */}
                         <section className="bg-[#141418] rounded-xl p-7 md:p-8">
@@ -389,6 +362,9 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                 {synopsis}
                             </p>
                         </section>
+
+                        {/* Relations Section */}
+                        <Relations relations={anime.relations || []} />
 
                         {/* Trailer */}
                         {trailer?.embedUrl && (
