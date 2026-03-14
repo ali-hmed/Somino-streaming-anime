@@ -129,8 +129,9 @@ export default async function Home() {
           {/* Right Column / Sidebar */}
           <div className="lg:w-1/4 space-y-10 md:space-y-12">
             <TopTrending trendingData={dataRef.top10 || {}} />
-            <Schedule scheduleList={scheduleData} />
-
+            <div className="hidden lg:block">
+              <Schedule scheduleList={scheduleData} />
+            </div>
           </div>
 
         </div>
