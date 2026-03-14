@@ -267,13 +267,13 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
             </Link>
 
             {/* Info Button (Top Left) */}
-            <div className={`absolute top-2 left-2 z-[20] transition-opacity duration-300 pointer-events-none ${isPopupVisible ? 'opacity-100' : 'opacity-100 lg:opacity-0 lg:group-hover:opacity-100'}`}>
+            <div className={`hidden lg:block absolute top-2 left-2 z-[20] transition-opacity duration-300 pointer-events-none ${isPopupVisible ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                 <button 
                     onClick={handleInfoBtnClick}
-                    className={`w-8 h-8 lg:w-7 lg:h-7 text-white rounded-full flex items-center justify-center transition-all active:scale-95 pointer-events-auto ${isPopupVisible ? 'bg-primary/90' : 'bg-primary hover:bg-primary/80'}`}
+                    className={`w-7 h-7 text-white rounded-full flex items-center justify-center transition-all active:scale-95 pointer-events-auto ${isPopupVisible ? 'bg-primary/90' : 'bg-primary hover:bg-primary/80'}`}
                     title="Show info"
                 >
-                    <Info size={16} className="lg:w-3.5 lg:h-3.5" strokeWidth={2.5} />
+                    <Info size={16} className="w-3.5 h-3.5" strokeWidth={2.5} />
                 </button>
             </div>
         </div>
