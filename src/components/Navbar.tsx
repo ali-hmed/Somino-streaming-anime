@@ -242,7 +242,7 @@ const Navbar = ({ className }: NavbarProps) => {
                     <div className="flex items-center gap-1.5 sm:gap-5">
                         <Link
                             href="/random"
-                            className="p-2 text-white/80 hover:text-white transition-colors"
+                            className="hidden lg:block p-2 text-white/80 hover:text-white transition-colors"
                         >
                             <Shuffle size={20} strokeWidth={2.5} />
                         </Link>
