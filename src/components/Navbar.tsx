@@ -308,7 +308,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                                         if (!rank && user?.rank) {
                                                             rank = getRankByName(user.rank);
                                                         }
-                                                        
+
                                                         const rankIcon = rank?.icon;
                                                         const nameColor = rank?.color || 'var(--primary)';
 
@@ -416,7 +416,7 @@ const Navbar = ({ className }: NavbarProps) => {
                             onClick={() => setIsSearchOpen(false)}
                         />
                         <div className="relative w-full max-w-xl animate-in zoom-in-95 slide-in-from-top-4 duration-300">
-                             <form
+                            <form
                                 onSubmit={handleSearch}
                                 className="group relative bg-sidebar rounded-2xl overflow-hidden"
                             >
@@ -514,7 +514,7 @@ const Navbar = ({ className }: NavbarProps) => {
                             className="absolute inset-0 bg-transparent"
                             onClick={() => setIsMenuOpen(false)}
                         />
-                            <motion.div
+                        <motion.div
                             initial={{ opacity: 0, y: -10, scale: 0.95 }}
                             animate={{
                                 opacity: 1,
@@ -582,6 +582,19 @@ const Navbar = ({ className }: NavbarProps) => {
                                         )}
                                     </div>
                                 ))}
+                                {/* Random Button at the bottom of the Mobile Menu */}
+                                <div className="relative group/item border-t border-white/5 mt-1 pt-1">
+                                    <Link
+                                        href="/random"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="flex items-center gap-3 px-5 py-2.5 transition-all text-white/70 hover:text-white"
+                                    >
+                                        <Shuffle size={14} className="text-white/70 group-hover:text-white" />
+                                        <span className="text-[14px] font-medium tracking-wide">
+                                            Random
+                                        </span>
+                                    </Link>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
