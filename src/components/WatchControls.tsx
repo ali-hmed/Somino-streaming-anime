@@ -377,10 +377,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 <div className="absolute inset-0 z-[-1] overflow-hidden pointer-events-none">
                     <img 
                         src={animeImage} 
-                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-80"
+                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-60"
                         alt="" 
                     />
-                    <div className="absolute inset-0 bg-[#0F1115]/50 backdrop-blur-sm" />
+                    <div className="absolute inset-0 bg-[#0F1115]/85 backdrop-blur-sm" />
                 </div>
 
                 {/* 1. Expansion Controls */}
