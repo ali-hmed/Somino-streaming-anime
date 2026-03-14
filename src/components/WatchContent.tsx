@@ -453,61 +453,6 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                 {/* Sidebar area: Relations & Recommended */}
                 <aside className="w-full lg:w-[320px] shrink-0 space-y-10 lg:mt-[68px]">
-                    {/* 1. relations sidebar */}
-                    {sidebarRelations && sidebarRelations.length > 0 && (
-                        <div className="rounded-2xl bg-sidebar overflow-hidden">
-                            <div className="flex items-center justify-between p-5 pb-3">
-                                <div className="flex items-center gap-2">
-                                    <GitBranch size={16} className="text-primary" />
-                                    <h3 className="text-[13px] font-black text-white tracking-widest">Relations</h3>
-                                </div>
-                                {sidebarRelations.length > 3 && (
-                                    <button
-                                        onClick={() => setShowAllRelations(!showAllRelations)}
-                                        className="flex items-center gap-1 px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-white/40 transition-colors uppercase hover:text-primary"
-                                    >
-                                        {showAllRelations ? 'Less' : `All (${sidebarRelations.length})`}
-                                        <ChevronRight size={12} className={`ml-1 transition-transform ${showAllRelations ? 'rotate-[-90deg]' : 'rotate-90'}`} />
-                                    </button>
-                                )}
-                            </div>
-                            <div className="flex flex-col gap-2 p-2">
-                                {(showAllRelations ? sidebarRelations : sidebarRelations.slice(0, 3)).map((rel: any, i: number) => (
-                                        <Link
-                                            key={i}
-                                            href={`/watch/${rel.id}`}
-                                            className="group relative flex h-[76px] bg-card hover:bg-surface rounded-xl overflow-hidden transition-all duration-300 active:scale-[0.98]"
-                                        >
-                                            {/* Left Content */}
-                                            <div className="relative z-10 flex flex-col justify-center pl-4 pr-2 w-[70%] h-full">
-                                                <h4 className="text-[13px] font-bold text-white leading-tight truncate mb-2 group-hover:text-primary transition-colors">
-                                                    {rel.name}
-                                                </h4>
-    
-                                                <div className="flex items-center gap-2">
-                                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-pink/10 text-pink shrink-0 border border-pink/20">
-                                                        <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
-                                                        <span className="text-[9px] font-black">{rel.subEpisodes || rel.episodes || '?'}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-primary shrink-0 border border-primary/20">
-                                                        <Mic size={9} fill="currentColor" />
-                                                        <span className="text-[9px] font-black">{rel.dubEpisodes || rel.subEpisodes || rel.episodes || '?'}</span>
-                                                    </div>
-                                                    <span className="text-[10px] font-bold text-white/30">{rel.type}</span>
-                                                    <span className="text-[9px] font-black text-white/40 truncate">{rel.relationType}</span>
-                                                </div>
-                                            </div>
-    
-                                            {/* Right Image Overlay */}
-                                            <div className="absolute top-0 right-0 w-[45%] h-full">
-                                                <div className="absolute inset-0 z-1 bg-gradient-to-r from-[#181818] via-[#181818]/60 to-transparent" />
-                                                <img src={rel.image} className="w-full h-full object-cover transition-all duration-700 opacity-60 group-hover:opacity-100" alt="" />
-                                            </div>
-                                        </Link>
-                                ))}
-                            </div>
-                        </div>
-                    )}
 
                     {/* 2. Most Popular sidebar */}
                     {popularAnime && popularAnime.length > 0 && (
