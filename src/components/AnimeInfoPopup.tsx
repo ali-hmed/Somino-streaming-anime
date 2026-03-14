@@ -114,40 +114,39 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
 
     return (
         <>
-            {/* Mobile Backdrop */}
+            {/* Main Popup Content with AnimatePresence */}
             <AnimatePresence>
-                {isMobile && isVisible && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setActiveId(null);
-                        }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110]"
-                    />
-                )}
-            </AnimatePresence>
+                {isVisible && (
+                    <>
+                        {/* Mobile Backdrop */}
+                        {isMobile && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setActiveId(null);
+                                }}
+                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110]"
+                            />
+                        )}
 
-            <motion.div
-                initial={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.95, x: side === 'right' ? -10 : 10 }}
-                animate={isVisible
-                    ? (isMobile ? { y: 0 } : { opacity: 1, scale: 1, x: 0 })
-                    : (isMobile ? { y: '100%' } : { opacity: 0, scale: 0.95, x: side === 'right' ? -10 : 10 })
-                }
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className={`${isMobile ? 'fixed inset-x-0 bottom-0 z-[120] w-full rounded-t-2xl' : 'absolute z-[100] w-[260px] rounded-[10px]'} bg-[#1a1a1ae6] backdrop-blur-xl overflow-hidden pointer-events-auto border border-white/5 shadow-2xl`}
-                style={{
-                    left: !isMobile ? (side === 'right' ? '50% ' : 'auto') : '0',
-                    right: !isMobile ? (side === 'left' ? '50%' : 'auto') : '0',
-                    top: !isMobile ? '0' : 'auto',
-                    marginLeft: !isMobile ? (side === 'right' ? '10px' : '0') : '0',
-                    marginRight: !isMobile ? (side === 'left' ? '10px' : '0') : '0',
-                    display: isVisible ? 'block' : (isMobile ? 'block' : 'none')
-                }}
-            >
+                        <motion.div
+                            initial={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.95, x: side === 'right' ? -10 : 10 }}
+                            animate={isMobile ? { y: 0 } : { opacity: 1, scale: 1, x: 0 }}
+                            exit={isMobile ? { y: '100%' } : { opacity: 0, scale: 0.95, x: side === 'right' ? -10 : 10 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className={`${isMobile ? 'fixed inset-x-0 bottom-0 z-[120] w-full rounded-t-2xl' : 'absolute z-[100] w-[260px] rounded-[10px]'} bg-[#1a1a1ae6] backdrop-blur-xl overflow-hidden pointer-events-auto border border-white/5 shadow-2xl`}
+                            style={{
+                                left: !isMobile ? (side === 'right' ? '50% ' : 'auto') : '0',
+                                right: !isMobile ? (side === 'left' ? '50%' : 'auto') : '0',
+                                top: !isMobile ? '0' : 'auto',
+                                marginLeft: !isMobile ? (side === 'right' ? '10px' : '0') : '0',
+                                marginRight: !isMobile ? (side === 'left' ? '10px' : '0') : '0',
+                            }}
+                        >
                 {/* Mobile Handle */}
                 {isMobile && (
                     <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-3 mb-1" />
@@ -328,7 +327,10 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
                         </div>
                     </div>
                 </div>
-            </motion.div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </>
     );
 };
