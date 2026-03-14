@@ -144,25 +144,41 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         if (hasLoadedProgress) return;
 
         // 1. Try remote history first if user is logged in
-        const remoteProgress = user?.watchHistory?.find(item => item.animeId === animeId && item.episodeId === episodeId);
+        const remoteProgress = user?.watchHistory?.find(item => item.animeId === animeId);
         
         // 2. Try local history (always check as fallback)
         const localProgress = getAnimeProgress(animeId);
 
         let savedTime = 0;
+        
+        // Fuzzy episode match helper
+        const isEpMatch = (id1?: string, id2?: string) => {
+            if (!id1 || !id2) return false;
+            if (id1 === id2) return true;
+            const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split('::').pop()?.split('=').pop();
+            const n1 = getNum(id1);
+            const n2 = getNum(id2);
+            return n1 && n1 === n2;
+        };
 
-        if (remoteProgress) {
-            savedTime = remoteProgress.currentTime || 0;
-            console.log(`Resuming from remote history: ${savedTime}s (Ep: ${episodeId})`);
-        } else if (localProgress && localProgress.episodeId === episodeId) {
-            savedTime = localProgress.currentTime || 0;
-            console.log(`Resuming from local history: ${savedTime}s (Ep: ${episodeId})`);
+        const progressItem = remoteProgress || localProgress;
+
+        if (progressItem) {
+            // Only resume if it's the SAME episode (fuzzy matched)
+            if (isEpMatch(progressItem.episodeId, episodeId)) {
+                savedTime = progressItem.currentTime || 0;
+                console.log(`[WatchControls] Resuming episode ${episodeId} from ${savedTime}s`);
+            } else {
+                console.log(`[WatchControls] Progress exists for this anime but for episode ${progressItem.episodeId}, not ${episodeId}`);
+            }
         }
 
         if (savedTime > 0) {
-            setInitialTime(savedTime || 0.1);
-            setCurrentTime(savedTime);
-            currentProgressRef.current = savedTime;
+            // Small buffer
+            const safeTime = Math.max(0, savedTime - 2); 
+            setInitialTime(safeTime || 0.1);
+            setCurrentTime(safeTime);
+            currentProgressRef.current = safeTime;
         }
 
         // Only set loaded if we have the history data (for logged in users) or if guest
@@ -171,19 +187,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         }
     }, [animeId, episodeId, user?.watchHistory, hasLoadedProgress]);
 
-    // Timer to estimate progress (one source of truth: local state synced with player)
+    // Periodically save to localStorage & backend
     useEffect(() => {
         if (!hasLoadedProgress) return;
 
-        const interval = setInterval(() => {
-            setCurrentTime(prev => {
-                const updated = prev + 1;
-                currentProgressRef.current = updated;
-                return updated;
-            });
-        }, 1000);
-
-        // Periodically save to localStorage & backend
         const saveInterval = setInterval(async () => {
             const updated = await saveWatchProgress({
                 animeId,
@@ -201,7 +208,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         }, 5000);
 
         return () => {
-            clearInterval(interval);
             clearInterval(saveInterval);
             // Final save on unmount or navigation
             saveWatchProgress({

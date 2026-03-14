@@ -24,10 +24,20 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
     const useGridMode = episodes.length > 18;
     const totalChunks = Math.ceil(episodes.length / CHUNK_SIZE);
 
+    // Fuzzy episode match helper
+    const isEpMatch = (id1?: string, id2?: string) => {
+        if (!id1 || !id2) return false;
+        if (id1 === id2) return true;
+        const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split('::').pop()?.split('=').pop();
+        const n1 = getNum(id1);
+        const n2 = getNum(id2);
+        return !!(n1 && n1 === n2);
+    };
+
     // Auto-jump to the chunk containing the active episode
     useEffect(() => {
         if (!useGridMode) return;
-        const idx = episodes.findIndex(ep => ep.id === currentEpisodeId);
+        const idx = episodes.findIndex(ep => isEpMatch(ep.id, currentEpisodeId));
         if (idx >= 0) setActiveChunk(Math.floor(idx / CHUNK_SIZE));
     }, [currentEpisodeId, episodes, useGridMode]);
 
@@ -131,7 +141,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                         /* ── Compact Number Grid (HiAnime style) ─── */
                         <div className="grid grid-cols-5 gap-[3px]">
                             {displayEpisodes.map(ep => {
-                                const isActive = ep.id === currentEpisodeId;
+                                const isActive = isEpMatch(ep.id, currentEpisodeId);
                                 const isFiller = ep.isFiller;
 
                                 return (
@@ -153,7 +163,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                         /* ── List Mode (short anime or search) ──── */
                         <div className="flex flex-col gap-0.5">
                             {(searchQuery ? filteredEpisodes : episodes).map(ep => {
-                                const isActive = ep.id === currentEpisodeId;
+                                const isActive = isEpMatch(ep.id, currentEpisodeId);
                                 const baseClass = `w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-[4px] transition-all group text-left`;
                                 const activeClass = `bg-primary/20`;
                                 const inactiveClass = `bg-card/40 hover:bg-card`;

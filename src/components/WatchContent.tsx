@@ -46,8 +46,18 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
         fetchPopular();
     }, [anime.mostPopular]);
 
+    // Fuzzy episode match helper
+    const isEpMatch = (id1?: string, id2?: string) => {
+        if (!id1 || !id2) return false;
+        if (id1 === id2) return true;
+        const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split('::').pop()?.split('=').pop();
+        const n1 = getNum(id1);
+        const n2 = getNum(id2);
+        return !!(n1 && n1 === n2);
+    };
+
     const episodes = anime.episodes || [];
-    const currentEpisodeIndex = episodes.findIndex((ep: Episode) => ep.id === currentEpisodeId);
+    const currentEpisodeIndex = episodes.findIndex((ep: Episode) => isEpMatch(ep.id, currentEpisodeId));
     const currentEpisode = episodes[currentEpisodeIndex] || episodes[0];
 
     const prevEp = episodes[currentEpisodeIndex - 1];

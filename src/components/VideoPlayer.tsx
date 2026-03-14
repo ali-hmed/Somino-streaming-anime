@@ -92,16 +92,39 @@ const VideoPlayer = ({
         params.set('p', timeVal); // some players use p=
     }
 
-    let streamSrc = streamUrl || `${baseUrl}${params.toString() ? '?' + params.toString() : ''}`;
+    let streamSrc = streamUrl || baseUrl;
 
-    // If we have a streamUrl but no autoplay/starttime params in it, and we want them, we could add them here,
-    // but usually the backend provided iframeLink is ready to go or might not support the same params.
-    // For now, let's just use it as is if it's from the backend.
-    if (streamUrl && streamUrl.includes('megaplay.buzz') && !streamUrl.includes('autoplay')) {
-        const url = new URL(streamUrl);
-        if (autoPlay) url.searchParams.set('autoplay', '1');
-        if (startTime > 0) url.searchParams.set('start', Math.floor(startTime).toString());
-        streamSrc = url.toString();
+    // Aggressively inject parameters into the stream URL for maximum compatibility
+    if (streamSrc && (streamSrc.includes('http') || streamSrc.includes('//'))) {
+        try {
+            const tempUrl = streamSrc.startsWith('//') ? `https:${streamSrc}` : streamSrc;
+            const url = new URL(tempUrl);
+            
+            // Common Autoplay params for various players
+            if (autoPlay) {
+                url.searchParams.set('autoplay', '1');
+                url.searchParams.set('auto', '1');
+                url.searchParams.set('autostart', '1');
+                url.searchParams.set('mute', '1');
+            }
+
+            // Common Time params for various players (Zoro, Gogo, MegaCloud, etc.)
+            if (startTime > 0) {
+                const t = Math.floor(startTime).toString();
+                url.searchParams.set('start', t);
+                url.searchParams.set('t', t);
+                url.searchParams.set('time', t);
+                url.searchParams.set('p', t);
+            }
+            
+            streamSrc = url.toString();
+        } catch (e) {
+            // If URL parsing fails, stick to original but append if possible
+            if (startTime > 0 && !streamSrc.includes('start=')) {
+                const separator = streamSrc.includes('?') ? '&' : '?';
+                streamSrc += `${separator}start=${Math.floor(startTime)}&t=${Math.floor(startTime)}`;
+            }
+        }
     }
 
     return (
