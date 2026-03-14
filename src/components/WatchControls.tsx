@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import VideoPlayer from './VideoPlayer';
-import { 
-    Mic, SkipBack, SkipForward, FastForward, CirclePlay, Moon, Maximize2, Minimize2, Flag, MessageSquare, Heart, Scissors, Bug 
+import {
+    Mic, SkipBack, SkipForward, FastForward, CirclePlay, Moon, Maximize2, Minimize2, Flag, MessageSquare, Heart, Scissors, Bug
 } from 'lucide-react';
 import WatchControlsWatchlist from './WatchControlsWatchlist';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
@@ -14,6 +14,13 @@ import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings'
 import { fetchEpisodeStreamingLinks, fetchServerList } from '@/lib/consumet';
 
 import { motion, AnimatePresence } from 'framer-motion';
+
+const formatServerName = (name: string) => {
+    if (name === 'MegaCloud' || name === 'megaPlay') return 'HD-2';
+    if (name === 'VidStreaming' || name === 'VidSrc' || name === 'vidWish') return 'HD-1';
+    if (name === 'T-Cloud') return 'HD-3';
+    return name;
+};
 
 interface WatchControlsProps {
     id: string;
@@ -58,7 +65,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 }) => {
     const router = useRouter();
     const { user, setWatchHistory } = useAuthStore();
-    const [server, setServer] = useState<'megaPlay' | 'vidWish'>('megaPlay');
+    const [server, setServer] = useState<string>('megaPlay');
     const [category, setCategory] = useState<'sub' | 'dub'>('sub');
     const [autoNext, setAutoNext] = useState(false);
     const [autoPlay, setAutoPlay] = useState(true);
@@ -140,7 +147,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     // 3. Ensure a valid server is selected when category or serverList changes
     useEffect(() => {
         if (isFetchingServers.current) return;
-        
+
         const currentList = category === 'sub' ? serverList.sub : serverList.dub;
         if (currentList.length > 0) {
             const exists = currentList.find(s => s.name === server);
@@ -155,13 +162,13 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         let mounted = true;
         const loadStreamData = async () => {
             if (isFetchingServers.current) return;
-            
+
             const currentList = category === 'sub' ? serverList.sub : serverList.dub;
             if (currentList.length === 0) {
                 setIsStreamLoading(false);
                 return; // No servers available
             }
-            
+
             const activeServer = currentList.find(s => s.name === server);
             if (!activeServer) return; // Wait until effect #3 corrects the server state
 
@@ -176,7 +183,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 else if (activeServer?.name) apiServer = activeServer.name;
 
                 const data = await fetchEpisodeStreamingLinks(episodeId, apiServer, category);
-                
+
                 if (!mounted) return;
 
                 if (data) {
@@ -194,7 +201,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 if (mounted) setIsStreamLoading(false);
             }
         };
-        
+
         loadStreamData();
         return () => { mounted = false; };
     }, [episodeId, category, server, serverList]);
@@ -204,17 +211,17 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
         // 1. Try remote history first if user is logged in
         const remoteProgress = user?.watchHistory?.find(item => item.animeId === animeId);
-        
+
         // 2. Try local history (always check as fallback)
         const localProgress = getAnimeProgress(animeId);
 
         let savedTime = 0;
-        
+
         // Fuzzy episode match helper
         const isEpMatch = (id1?: string, id2?: string) => {
             if (!id1 || !id2) return false;
             if (id1 === id2) return true;
-        const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split(/::|-ep=|-episode-/).pop()?.split('=').pop();
+            const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split(/::|-ep=|-episode-/).pop()?.split('=').pop();
             const n1 = getNum(id1);
             const n2 = getNum(id2);
             return n1 && n1 === n2;
@@ -234,7 +241,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
         if (savedTime > 0) {
             // Small buffer
-            const safeTime = Math.max(0, savedTime - 2); 
+            const safeTime = Math.max(0, savedTime - 2);
             setInitialTime(safeTime || 0.1);
             setCurrentTime(safeTime);
             currentProgressRef.current = safeTime;
@@ -288,7 +295,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         // Check if current time is within intro range (with a small buffer)
         if (currentTime >= introData.start && currentTime < introData.end - 1) {
             console.log("AutoSkip Triggered: Jumping to", introData.end);
-            
+
             // 1. Mark as skipped locally
             hasSkippedIntro.current = true;
 
@@ -390,11 +397,11 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     return (
         <>
             {/* 1. Video Player & Centering Logic with Framer Motion Layout Animation */}
-            <div className={`transition-colors duration-700 ${isFocusMode 
-                ? 'fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-12 bg-black/60 pointer-events-none' 
+            <div className={`transition-colors duration-700 ${isFocusMode
+                ? 'fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-12 bg-black/60 pointer-events-none'
                 : 'relative z-10 w-full mb-0'}`}>
-                
-                <motion.div 
+
+                <motion.div
                     layout
                     transition={{
                         type: "spring",
@@ -402,8 +409,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         damping: 30,
                         mass: 0.8
                     }}
-                    className={`relative group/player shadow-2xl transition-shadow duration-700 ${isFocusMode 
-                        ? 'w-full max-w-[900px] aspect-video shadow-[0_0_120px_rgba(0,0,0,1)] pointer-events-auto' 
+                    className={`relative group/player shadow-2xl transition-shadow duration-700 ${isFocusMode
+                        ? 'w-full max-w-[900px] aspect-video shadow-[0_0_120px_rgba(0,0,0,1)] pointer-events-auto'
                         : 'w-full h-full pointer-events-auto'}`}
                 >
                     {hasLoadedProgress && !isStreamLoading && (
@@ -445,17 +452,17 @@ const WatchControls: React.FC<WatchControlsProps> = ({
             <div className={`px-2 md:px-5 py-1 ${isExpanded ? 'md:py-3.5 lg:gap-14 md:gap-10' : 'md:py-2.5 md:gap-5'} flex items-center justify-center gap-1 sm:gap-3 shrink-0 relative border-b border-white/[0.03] transition-all duration-500 ${isFocusMode ? 'z-[90] opacity-20 pointer-events-none' : 'z-20 opacity-100'}`}>
                 {/* Blurred Background Image Container */}
                 <div className="absolute inset-0 z-[-1] overflow-hidden pointer-events-none">
-                    <img 
-                        src={animeImage} 
+                    <img
+                        src={animeImage}
                         className="absolute inset-0 w-full h-full object-cover blur-xl scale-125 opacity-60"
-                        alt="" 
+                        alt=""
                     />
                     <div className="absolute inset-0 bg-[#0F1115]/85 backdrop-blur-sm" />
                 </div>
 
                 {/* 1. Expansion Controls */}
                 <div className="flex items-center gap-1.5 md:gap-4 mr-0.5 md:mr-2">
-                    <button 
+                    <button
                         onClick={onToggleExpand}
                         className={`hidden md:flex items-center gap-2 font-bold transition-colors whitespace-nowrap ${isExpanded ? 'text-primary md:text-[10px]' : 'text-white/40 hover:text-white text-[8.5px]'}`}
                     >
@@ -466,12 +473,12 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         )}
                         <span>{isExpanded ? 'Reduce' : 'Expand'}</span>
                     </button>
-                    <button 
+                    <button
                         onClick={onToggleFocus}
                         className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${isFocusMode ? 'text-primary' : 'text-white/40 hover:text-white'} ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title={isFocusMode ? 'Unfocus' : 'Focus'}
                     >
-                        <Moon className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${isFocusMode ? 'fill-primary/10' : ''}`} strokeWidth={2.5} /> 
+                        <Moon className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${isFocusMode ? 'fill-primary/10' : ''}`} strokeWidth={2.5} />
                         <span className="hidden md:inline">{isFocusMode ? 'Unfocus' : 'Focus'}</span>
                     </button>
                 </div>
@@ -489,7 +496,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${autoNext ? 'text-primary' : 'text-white/20 hover:text-white/40'} ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title="Auto Next Episode"
                     >
-                        <FastForward className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${autoNext ? 'fill-current' : ''}`} strokeWidth={2.5} /> 
+                        <FastForward className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${autoNext ? 'fill-current' : ''}`} strokeWidth={2.5} />
                         <span className="hidden md:inline">AutoNext</span>
                     </button>
 
@@ -502,7 +509,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                         className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${autoPlay ? 'text-primary' : 'text-white/20 hover:text-white/40'} ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title="Auto Play"
                     >
-                        <CirclePlay className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-[13px] md:h-[13px]'} ${autoPlay ? 'fill-primary/10' : ''}`} strokeWidth={2.2} /> 
+                        <CirclePlay className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-[13px] md:h-[13px]'} ${autoPlay ? 'fill-primary/10' : ''}`} strokeWidth={2.2} />
                         <span className="hidden md:inline">AutoPlay</span>
                     </button>
 
@@ -517,11 +524,10 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 saveUserSettings({ autoSkip: newState });
                             }
                         }}
-                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${
-                            (autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end)) 
-                            ? 'text-primary' 
-                            : 'text-white/20 hover:text-white/40'
-                        } ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
+                        className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold transition-colors whitespace-nowrap ${(autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end))
+                                ? 'text-primary'
+                                : 'text-white/20 hover:text-white/40'
+                            } ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         title={introData && currentTime >= introData.start && currentTime < introData.end ? "Skip Intro Now" : "Toggle Auto Skip"}
                     >
                         <Scissors className={`w-[14px] h-[14px] ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3.5 md:h-3.5'} ${(autoSkip || (introData && currentTime >= introData.start && currentTime < introData.end)) ? 'fill-primary/5' : ''}`} strokeWidth={2.5} />
@@ -541,12 +547,12 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             disabled={isLoading}
                             className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20 ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         >
-                            <SkipBack className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
+                            <SkipBack className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} />
                             <span className="hidden md:inline">Prev</span>
                         </button>
                     ) : (
                         <div className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/10 whitespace-nowrap cursor-not-allowed ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}>
-                            <SkipBack className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
+                            <SkipBack className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} />
                             <span className="hidden md:inline">Prev</span>
                         </div>
                     )}
@@ -557,12 +563,12 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             disabled={isLoading}
                             className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap disabled:opacity-20 ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}
                         >
-                            <SkipForward className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
+                            <SkipForward className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} />
                             <span className="hidden md:inline">Next</span>
                         </button>
                     ) : (
                         <div className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/10 whitespace-nowrap cursor-not-allowed ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}>
-                            <SkipForward className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
+                            <SkipForward className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} />
                             <span className="hidden md:inline">Next</span>
                         </div>
                     )}
@@ -580,7 +586,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     />
 
                     <button className={`flex items-center justify-center w-7 h-7 md:w-auto md:h-auto gap-2 font-bold text-white/40 hover:text-white transition-colors whitespace-nowrap ${isExpanded ? 'md:text-[10px] text-[8.5px]' : 'text-[8.5px]'}`}>
-                        <Bug className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} /> 
+                        <Bug className={`w-3.5 h-3.5 ${isExpanded ? 'md:w-4 md:h-4' : 'md:w-3 md:h-3'}`} strokeWidth={2.5} />
                         <span className="hidden md:inline">Report</span>
                     </button>
                 </div>
@@ -619,8 +625,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                     }}
                                     className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[9px] font-black tracking-tighter transition-all ${category === 'dub'
                                         ? 'bg-[#53CCB8]/15 text-[#53CCB8]'
-                                    : 'bg-white/[0.03] text-white/20 hover:text-white/50'
-                                    }`}
+                                        : 'bg-white/[0.03] text-white/20 hover:text-white/50'
+                                        }`}
                                 >
                                     <div className={`w-1.5 h-1.5 rounded-full ${category === 'dub' ? 'bg-[#53CCB8]' : 'bg-white/10'}`} />
                                     dub
@@ -640,7 +646,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                         : 'bg-white/5 text-white/40 hover:bg-white/10'
                                         }`}
                                 >
-                                    {s.name}
+                                    {formatServerName(s.name)}
                                 </button>
                             ))}
                         </div>
@@ -671,8 +677,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                 }}
                                 className={`flex items-center gap-2 px-2.5 py-1 rounded-full text-[9px] font-bold transition-colors ${category === 'dub'
                                     ? 'bg-[#53CCB8]/10 text-[#53CCB8]'
-                                : 'bg-white/[0.04] text-white/60 hover:text-white'
-                                }`}
+                                    : 'bg-white/[0.04] text-white/60 hover:text-white'
+                                    }`}
                             >
                                 <Mic size={9} className={category === 'dub' ? 'text-[#53CCB8]' : 'text-[#53CCB8]/60'} />
                                 dub
@@ -692,7 +698,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                                     : 'bg-white/5 text-white/40'
                                     }`}
                             >
-                                {s.name}
+                                {formatServerName(s.name)}
                             </button>
                         ))}
                     </div>
