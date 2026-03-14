@@ -518,7 +518,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
 
             {/* ── Desktop Controls Footer ─────────────────────────────── */}
             <div className="bg-background/20">
-                <div className="hidden md:flex p-6 items-center justify-between gap-6">
+                <div className="hidden md:flex px-6 py-3 items-center justify-between gap-6">
                     <div className="space-y-1.5">
                         <h4 className="text-[12px] font-black text-white leading-none">
                             you are watching episode {episodeNumber}
@@ -527,7 +527,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             if the current server is not working, please try switching to other servers.
                         </p>
                     </div>
-                    <div className="flex flex-col items-end gap-3.5 shrink-0">
+                    <div className="flex flex-col items-end gap-2 shrink-0">
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => {
@@ -588,7 +588,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 </div>
 
                 {/* ── Mobile Controls Footer ──────────────────────────── */}
-                <div className="flex md:hidden flex-col items-center p-4 px-5 gap-4">
+                <div className="flex md:hidden flex-col items-center py-2 px-5 gap-2">
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => {
