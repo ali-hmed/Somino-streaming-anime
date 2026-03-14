@@ -74,7 +74,11 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
                 <div
                     key={`${item.id}-${i}`}
                     className="absolute inset-0 transition-opacity duration-700"
-                    style={{ opacity: i === current ? 1 : 0, zIndex: 0 }}
+                    style={{ 
+                        opacity: i === current ? 1 : 0, 
+                        zIndex: i === current ? 1 : 0,
+                        transitionDelay: i === current ? '0ms' : '700ms'
+                    }}
                 >
                     {/* Blurred ambient bg */}
                     <div
@@ -102,18 +106,19 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
             {list.map((item, i) => (
                 <div
                     key={`art-${item.id}-${i}`}
-                    className="absolute right-0 top-0 h-full transition-all duration-700 pointer-events-none"
+                    className="absolute right-0 top-0 h-full transition-opacity duration-700 pointer-events-none"
                     style={{
                         opacity: i === current ? 1 : 0,
-                        zIndex: 2,
+                        zIndex: i === current ? 2 : 1,
                         width: '100%',
                         maxWidth: '1200px',
+                        transitionDelay: i === current ? '0ms' : '700ms'
                     }}
                 >
                     <img
                         src={item.cover || item.image}
                         alt=""
-                        className="absolute right-0 top-0 h-full w-full object-center md:object-cover object-center md:object-right"
+                        className="absolute right-0 top-0 h-full w-full object-cover object-center md:object-right"
                         style={{
                             /* Mask: fade left, top, and bottom edges — reduced/none on small screens */
                             // maskImage: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'none' : [
