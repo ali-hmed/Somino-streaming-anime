@@ -143,20 +143,24 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     useEffect(() => {
         if (hasLoadedProgress) return;
 
-        // Find progress in user's remote watch history first, then fallback to local
+        // 1. Try remote history first if user is logged in
         const remoteProgress = user?.watchHistory?.find(item => item.animeId === animeId && item.episodeId === episodeId);
+        
+        // 2. Try local history (always check as fallback)
         const localProgress = getAnimeProgress(animeId);
 
         let savedTime = 0;
 
         if (remoteProgress) {
             savedTime = remoteProgress.currentTime || 0;
-        } else if (!user && localProgress && localProgress.episodeId === episodeId) {
+            console.log(`Resuming from remote history: ${savedTime}s (Ep: ${episodeId})`);
+        } else if (localProgress && localProgress.episodeId === episodeId) {
             savedTime = localProgress.currentTime || 0;
+            console.log(`Resuming from local history: ${savedTime}s (Ep: ${episodeId})`);
         }
 
         if (savedTime > 0) {
-            setInitialTime(savedTime || 0.1); // Small offset to avoid 0 check issues
+            setInitialTime(savedTime || 0.1);
             setCurrentTime(savedTime);
             currentProgressRef.current = savedTime;
         }
@@ -165,7 +169,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         if (user === null || user?.watchHistory !== undefined) {
             setHasLoadedProgress(true);
         }
-    }, [animeId, episodeId, user?.watchHistory, hasLoadedProgress, initialTime]);
+    }, [animeId, episodeId, user?.watchHistory, hasLoadedProgress]);
 
     // Timer to estimate progress (one source of truth: local state synced with player)
     useEffect(() => {

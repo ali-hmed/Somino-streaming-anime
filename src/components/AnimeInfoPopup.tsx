@@ -8,6 +8,7 @@ import { getTitle } from '@/types/anime';
 import { useAuthStore } from '@/store/authStore';
 import { usePopupStore } from '@/store/popupStore';
 import { fetchAnimeInfo } from '@/lib/consumet';
+import { getAnimeProgress } from '@/lib/watchHistory';
 
 interface AnimeInfoPopupProps {
     anime: any;
@@ -253,15 +254,32 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
 
                     {/* Bottom Section */}
                     <div className="flex items-center gap-2 pt-2">
-                        {/* Watch Now — goes to watch page */}
-                        <Link
-                            href={`/watch/${anime.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-[#1a1a1a] font-bold text-[13px] py-2 rounded-full transition-all active:scale-95"
-                        >
-                            <Play size={13} fill="currentColor" />
-                            Watch now
-                        </Link>
+                        {/* Watch Now — goes to watch page with resume logic */}
+                        {(() => {
+                            const lastEpId = (() => {
+                                if (isAuthenticated && user?.watchHistory) {
+                                    const remote = user.watchHistory.find(i => i.animeId === anime.id);
+                                    if (remote) return remote.episodeId;
+                                }
+                                const local = getAnimeProgress(anime.id);
+                                if (local) return local.episodeId;
+                                return null;
+                            })();
+
+                            const watchLink = lastEpId ? `/watch/${anime.id}/${lastEpId}` : `/watch/${anime.id}`;
+                            const isResume = !!lastEpId;
+
+                            return (
+                                <Link
+                                    href={watchLink}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={`flex-1 flex items-center justify-center gap-2 ${isResume ? 'bg-[#53CCB8]' : 'bg-primary'} hover:opacity-90 text-[#1a1a1a] font-bold text-[13px] py-2 rounded-full transition-all active:scale-95`}
+                                >
+                                    <Play size={13} fill="currentColor" />
+                                    {isResume ? 'Resume' : 'Watch now'}
+                                </Link>
+                            );
+                        })()}
 
                         {/* Watchlist Dropdown Button */}
                         <div className="relative shrink-0" ref={dropdownRef}>

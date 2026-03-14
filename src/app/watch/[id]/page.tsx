@@ -9,6 +9,7 @@ import CharacterSection from '@/components/CharacterSection';
 import WatchComments from '@/components/WatchComments';
 import Relations from '@/components/Relations';
 import WatchlistButton from '@/components/WatchlistButton';
+import WatchNowButton from '@/components/WatchNowButton';
 
 export default async function WatchPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -168,16 +169,12 @@ export default async function WatchPage({ params }: { params: Promise<{ id: stri
                                     </p>
                                 )}
 
-                                {/* Main CTA Buttons */}
                                 <div className="flex flex-wrap items-center gap-3 mt-4">
                                     {status?.toLowerCase() === 'not yet aired' || status?.toLowerCase() === 'upcoming' ? null : anime.episodes?.[0] ? (
-                                        <Link
-                                            href={`/watch/${id}/${anime.episodes[0].id}`}
-                                            className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-black text-sm transition-all hover:scale-105 active:scale-95"
-                                        >
-                                            <Play size={10} className="fill-current" />
-                                            Watch Now
-                                        </Link>
+                                        <WatchNowButton 
+                                            animeId={id} 
+                                            firstEpisodeId={anime.episodes[0].id} 
+                                        />
                                     ) : (
                                         <button className="flex items-center gap-2 bg-white/10 text-white/40 px-6 py-2.5 rounded-full font-black text-sm cursor-not-allowed">
                                             No Episodes
