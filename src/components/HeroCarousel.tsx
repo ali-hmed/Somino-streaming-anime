@@ -18,10 +18,10 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
     const goTo = useCallback((index: number) => {
         if (isAnimating || index === current) return;
         setIsAnimating(true);
+        setCurrent(index);
         setTimeout(() => {
-            setCurrent(index);
             setIsAnimating(false);
-        }, 400);
+        }, 500);
     }, [isAnimating, current]);
 
     const next = useCallback(() => goTo((current + 1) % list.length), [current, list.length, goTo]);
@@ -58,229 +58,177 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ animeList }) => {
 
     if (list.length === 0) return null;
 
-    const anime = list[current];
-    const title = getTitle(anime.title);
-
     return (
         <section
-            className="hero-carousel-section relative w-full overflow-hidden h-[60vh] md:h-[max(550px,82vh)] touch-pan-y"
+            className="hero-carousel-section relative w-full overflow-hidden h-[60vh] md:h-[max(550px,82vh)] touch-pan-y group"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
         >
+            {/* Sliding Track */}
+            <div 
+                className="flex h-full w-full transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${current * 100}%)` }}
+            >
+                {list.map((item, i) => {
+                    const title = getTitle(item.title);
+                    return (
+                        <div key={`slide-${item.id}-${i}`} className="relative w-full h-full flex-shrink-0">
+                            {/* Blurred ambient bg */}
+                            <div className="absolute inset-0 overflow-hidden">
+                                <div
+                                    className="absolute inset-0 scale-110"
+                                    style={{
+                                        backgroundImage: `url(${item.cover || item.image})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        filter: 'blur(40px) brightness(0.2)',
+                                    }}
+                                />
+                            </div>
+                            
+                            {/* Dark overlay */}
+                            <div className="absolute inset-0 bg-[#0A0A0A]/70 hidden md:block" />
+                            <div className="absolute inset-0 bg-[#0A0A0A]/40 block md:hidden" />
+                            
+                            {/* Strong left gradient — text area */}
+                            <div className="absolute inset-0" style={{ zIndex: 1, background: 'linear-gradient(to right, #0A0A0A 20%, rgba(10,10,10,0.55) 35%, rgba(10,10,10,0.05) 45%, transparent 100%)' }} />
+                            {/* TOP fade — keeps navbar area dark so text is legible */}
+                            <div className="absolute top-0 inset-x-0 h-28" style={{ zIndex: 1, background: 'linear-gradient(to bottom, #0A0A0A 0%, rgba(10,10,10,0.65) 50%, transparent 100%)' }} />
+                            {/* BOTTOM fade — blends into page bg */}
+                            <div className="absolute bottom-0 inset-x-0 h-36" style={{ zIndex: 1, background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10,10,10,0.6) 55%, transparent 100%)' }} />
 
-            {/* Background layers */}
-            {list.map((item, i) => (
-                <div
-                    key={`${item.id}-${i}`}
-                    className="absolute inset-0 transition-opacity duration-700"
-                    style={{ 
-                        opacity: i === current ? 1 : 0, 
-                        zIndex: i === current ? 1 : 0,
-                        transitionDelay: i === current ? '0ms' : '700ms'
-                    }}
-                >
-                    {/* Blurred ambient bg */}
-                    <div
-                        className="absolute inset-0 scale-110"
-                        style={{
-                            backgroundImage: `url(${item.cover || item.image})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            filter: 'blur(40px) brightness(0.2)',
-                        }}
-                    />
-                    {/* Dark overlay — lighter on mobile to remove "dark right space" */}
-                    <div className="absolute inset-0 bg-[#0A0A0A]/70 hidden md:block" />
-                    <div className="absolute inset-0 bg-[#0A0A0A]/40 block md:hidden" />
-                    {/* Strong left gradient — text area */}
-                    <div className="absolute inset-0" style={{ zIndex: 1, background: 'linear-gradient(to right, #0A0A0A 20%, rgba(10,10,10,0.55) 35%, rgba(10,10,10,0.05) 45%, transparent 100%)' }} />
-                    {/* TOP fade — keeps navbar area dark so text is legible */}
-                    <div className="absolute top-0 inset-x-0 h-28" style={{ zIndex: 1, background: 'linear-gradient(to bottom, #0A0A0A 0%, rgba(10,10,10,0.65) 50%, transparent 100%)' }} />
-                    {/* BOTTOM fade — blends into page bg */}
-                    <div className="absolute bottom-0 inset-x-0 h-36" style={{ zIndex: 1, background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10,10,10,0.6) 55%, transparent 100%)' }} />
-                </div>
-            ))}
+                            {/* Character Art */}
+                            <div
+                                className="absolute right-0 top-0 h-full pointer-events-none"
+                                style={{ zIndex: 2, width: '100%', maxWidth: '1200px' }}
+                            >
+                                <img
+                                    src={item.cover || item.image}
+                                    alt=""
+                                    className="absolute right-0 top-0 h-full w-full object-cover object-center md:object-right"
+                                    style={{
+                                        WebkitMaskImage: [
+                                            'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.6) 30%, black 50%)',
+                                            'linear-gradient(to bottom, transparent 0%, black 18%)',
+                                            'linear-gradient(to top, transparent 0%, black 18%)',
+                                        ].join(', '),
+                                        maskComposite: 'intersect',
+                                    }}
+                                />
+                                {/* TOP fade over image */}
+                                <div
+                                    className="absolute top-0 inset-x-0 h-24 pointer-events-none"
+                                    style={{ background: 'linear-gradient(to bottom, #0A0A0A 0%, rgba(10,10,10,0.55) 55%, transparent 100%)', zIndex: 3 }}
+                                />
+                                {/* LEFT feathered blend */}
+                                <div
+                                    className="absolute inset-y-0 left-0 w-1/2 pointer-events-none"
+                                    style={{ background: 'linear-gradient(to right, #0A0A0A 0%, rgba(10,10,10,0.5) 35%, rgba(10,10,10,0.1) 65%, transparent 100%)', zIndex: 3 }}
+                                />
+                                {/* BOTTOM fade */}
+                                <div
+                                    className="absolute bottom-0 inset-x-0 h-32 pointer-events-none"
+                                    style={{ background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10,10,10,0.5) 55%, transparent 100%)', zIndex: 3 }}
+                                />
+                            </div>
 
-            {/* Character Art */}
-            {list.map((item, i) => (
-                <div
-                    key={`art-${item.id}-${i}`}
-                    className="absolute right-0 top-0 h-full transition-opacity duration-700 pointer-events-none"
-                    style={{
-                        opacity: i === current ? 1 : 0,
-                        zIndex: i === current ? 2 : 1,
-                        width: '100%',
-                        maxWidth: '1200px',
-                        transitionDelay: i === current ? '0ms' : '700ms'
-                    }}
-                >
-                    <img
-                        src={item.cover || item.image}
-                        alt=""
-                        className="absolute right-0 top-0 h-full w-full object-cover object-center md:object-right"
-                        style={{
-                            /* Mask: fade left, top, and bottom edges — reduced/none on small screens */
-                            // maskImage: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'none' : [
-                            //     'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.6) 30%, black 50%)',
-                            //     'linear-gradient(to bottom, transparent 0%, black 18%)',
-                            //     'linear-gradient(to top, transparent 0%, black 18%)',
-                            // ].join(', '),
-                            WebkitMaskImage: [
-                                'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.6) 30%, black 50%)',
-                                'linear-gradient(to bottom, transparent 0%, black 18%)',
-                                'linear-gradient(to top, transparent 0%, black 18%)',
-                            ].join(', '),
-                            maskComposite: 'intersect',
+                            {/* Content */}
+                            <div className="relative z-10 h-full flex items-end pb-12 md:pb-20">
+                                <div className="container mx-auto px-3 md:px-12 transition-all duration-700 ease-out" 
+                                     style={{ 
+                                         opacity: current === i ? 1 : 0.4, 
+                                         transform: current === i ? 'translateY(0)' : 'translateY(15px)' 
+                                     }}>
+                                    <div className="max-w-[300px] md:max-w-[540px]">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-primary font-bold text-xs md:text-sm tracking-wide">
+                                                #{i + 1} Spotlight
+                                            </span>
+                                        </div>
 
-                        }}
-                    />
-                    {/* TOP fade over image — navbar legibility */}
-                    <div
-                        className="absolute top-0 inset-x-0 h-24 pointer-events-none"
-                        style={{
-                            background: 'linear-gradient(to bottom, #0A0A0A 0%, rgba(10,10,10,0.55) 55%, transparent 100%)',
-                            zIndex: 3,
-                        }}
-                    />
-                    {/* LEFT feathered blend — text area */}
-                    <div
-                        className="absolute inset-y-0 left-0 w-1/2 pointer-events-none"
-                        style={{
-                            background: 'linear-gradient(to right, #0A0A0A 0%, rgba(10,10,10,0.5) 35%, rgba(10,10,10,0.1) 65%, transparent 100%)',
-                            zIndex: 3,
-                        }}
-                    />
-                    {/* BOTTOM fade */}
-                    <div
-                        className="absolute bottom-0 inset-x-0 h-32 pointer-events-none"
-                        style={{
-                            background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10,10,10,0.5) 55%, transparent 100%)',
-                            zIndex: 3,
-                        }}
-                    />
-                </div>
-            ))}
+                                        <h1 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-[1.2] tracking-tight line-clamp-1">
+                                            {title}
+                                        </h1>
 
-            {/* Content */}
-            <div className="relative z-10 h-full flex items-end pb-12 md:pb-20">
-                <div className="container mx-auto px-3 md:px-12">
-                    <div className="max-w-[300px] md:max-w-[540px]">
+                                        <div className="mb-4">
+                                            <p className="text-[11px] md:text-[12px] text-white/40 font-bold tracking-wider truncate">
+                                                {[item.japaneseTitle, ...(Array.isArray(item.synonyms) ? item.synonyms : [])].filter(Boolean).slice(0, 2).join(' · ')}
+                                            </p>
+                                        </div>
 
-                        {/* Spotlight label — pink, like reference */}
-                        <div
-                            className="flex items-center gap-2 mb-2 transition-all duration-500"
-                            style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(8px)' : 'translateY(0)' }}
-                        >
-                            <span className="text-primary font-bold text-xs md:text-sm tracking-wide">
-                                #{current + 1} Spotlight
-                            </span>
-                        </div>
+                                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mb-5">
+                                            <span className="flex items-center gap-1 text-white font-semibold text-[10px] md:text-xs">
+                                                <Tv size={10} className="text-primary" />
+                                                {item.type || 'TV'}
+                                            </span>
+                                            <span className="text-white/20 text-xs">•</span>
+                                            <span className="hidden sm:flex items-center gap-1 text-white/80 text-[10px] md:text-xs font-semibold">
+                                                <Clock size={10} className="text-white/60" />
+                                                {item.duration?.replace('per ep', '').trim() || '24m'}
+                                            </span>
+                                            <span className="hidden sm:text-white/20 text-xs sm:inline">•</span>
+                                            <span className="flex items-center gap-1 text-white/80 text-[10px] md:text-xs font-semibold">
+                                                <Calendar size={10} className="text-white/60" />
+                                                {(() => {
+                                                    if (item.year) return item.year;
+                                                    if (item.releaseDate) {
+                                                        const match = String(item.releaseDate).match(/\b(19|20)\d{2}\b/);
+                                                        return match ? match[0] : item.releaseDate;
+                                                    }
+                                                    return item.premiered || 'TBA';
+                                                })()}
+                                            </span>
+                                            <span className="hidden md:text-white/20 text-xs md:inline">•</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[2px] bg-primary text-white tracking-wider">HD</span>
+                                                <span className="text-white/20 text-xs">•</span>
+                                                <span className="text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[4px] bg-pink/30 text-pink tracking-wider flex items-center gap-1 border border-pink/40">
+                                                    <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
+                                                    {item.totalEpisodes || item.subEpisodes || '?'}
+                                                </span>
+                                                {item.dubEpisodes > 0 && (
+                                                    <>
+                                                        <span className="text-white/20 text-xs">•</span>
+                                                        <span className="flex text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[4px] bg-primary/30 text-primary tracking-wider items-center gap-1 border border-primary/40">
+                                                            <Mic size={10} fill="currentColor" className="text-primary" />
+                                                            {item.dubEpisodes}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
 
-                        {/* Title — Single line and slightly smaller */}
-                        <h1
-                            className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 leading-[1.2] tracking-tight transition-all duration-500 delay-75 line-clamp-1"
-                            style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(10px)' : 'translateY(0)' }}
-                        >
-                            {title}
-                        </h1>
+                                        <div className="hidden md:block mb-6">
+                                            <p className="text-white/60 text-xs md:text-[13px] leading-relaxed line-clamp-3 max-w-[460px]">
+                                                {item.description?.replace(/<[^>]*>/g, '') || 'An extraordinary anime filled with breathtaking action sequences, compelling characters, and an unforgettable story.'}
+                                            </p>
+                                        </div>
 
-                        {/* Japanese Title / Synonyms — like detail page */}
-                        <div
-                            className="mb-4 transition-all duration-500 delay-100"
-                            style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(10px)' : 'translateY(0)' }}
-                        >
-                            <p className="text-[11px] md:text-[12px] text-white/40 font-bold tracking-wider truncate">
-                                {[anime.japaneseTitle, ...(Array.isArray(anime.synonyms) ? anime.synonyms : [])].filter(Boolean).slice(0, 2).join(' · ')}
-                            </p>
-                        </div>
-
-                        {/* Info row — visible on mobile with reduced density */}
-                        <div
-                            className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mb-5 transition-all duration-500 delay-100"
-                            style={{ opacity: isAnimating ? 0 : 1 }}
-                        >
-                            {/* Type */}
-                            <span className="flex items-center gap-1 text-white font-semibold text-[10px] md:text-xs">
-                                <Tv size={10} className="text-primary" />
-                                {anime.type || 'TV'}
-                            </span>
-                            <span className="text-white/20 text-xs">•</span>
-                            {/* Duration — Hidden on small mobile */}
-                            <span className="hidden sm:flex items-center gap-1 text-white/80 text-[10px] md:text-xs font-semibold">
-                                <Clock size={10} className="text-white/60" />
-                                {anime.duration?.replace('per ep', '').trim() || '24m'}
-                            </span>
-                            <span className="hidden sm:text-white/20 text-xs sm:inline">•</span>
-                            {/* Date — Visible on all devices */}
-                            <span className="flex items-center gap-1 text-white/80 text-[10px] md:text-xs font-semibold">
-                                <Calendar size={10} className="text-white/60" />
-                                {(() => {
-                                    if (anime.year) return anime.year;
-                                    if (anime.releaseDate) {
-                                        const match = String(anime.releaseDate).match(/\b(19|20)\d{2}\b/);
-                                        return match ? match[0] : anime.releaseDate;
-                                    }
-                                    return anime.premiered || 'TBA';
-                                })()}
-                            </span>
-                            <span className="hidden md:text-white/20 text-xs md:inline">•</span>
-                            {/* Badges */}
-                            <div className="flex items-center gap-2">
-                                <span className="text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[2px] bg-primary text-white tracking-wider">HD</span>
-                                <span className="text-white/20 text-xs">•</span>
-                                <span className="text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[4px] bg-pink/30 text-pink tracking-wider flex items-center gap-1 border border-pink/40">
-                                    <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
-                                    {anime.totalEpisodes || anime.subEpisodes || '?'}
-                                </span>
-                                {anime.dubEpisodes > 0 && (
-                                    <>
-                                        <span className="text-white/20 text-xs">•</span>
-                                        <span className="flex text-[9px] md:text-[8px] font-black px-1.5 py-0.5 rounded-[4px] bg-primary/30 text-primary tracking-wider items-center gap-1 border border-primary/40">
-                                            <Mic size={10} fill="currentColor" className="text-primary" />
-                                            {anime.dubEpisodes}
-                                        </span>
-                                    </>
-                                )}
+                                        <div className="flex items-center gap-3">
+                                            {!(item.status?.toLowerCase() === 'not yet aired' || item.status?.toLowerCase() === 'upcoming') && (
+                                                <Link
+                                                    href={`/watch/${item.id}/1`}
+                                                    className="flex items-center gap-2 font-normal text-[11px] px-4 py-1.5 rounded-full transition-all group bg-primary hover:bg-primary-hover text-white flex-shrink-0"
+                                                >
+                                                    <Play size={10} className="fill-current group-hover:scale-110 transition-transform" />
+                                                    Watch Now
+                                                </Link>
+                                            )}
+                                            <Link
+                                                href={`/watch/${item.id}`}
+                                                className="flex items-center gap-1 font-normal text-[11px] px-4 py-1.5 rounded-full text-white/70 hover:text-white transition-all bg-card flex-shrink-0"
+                                            >
+                                                Detail
+                                                <ChevronRight size={10} />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        {/* Description — hidden on mobile */}
-                        <div
-                            className="hidden md:block mb-6 transition-all duration-500 delay-150"
-                            style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(8px)' : 'translateY(0)' }}
-                        >
-                            <p className="text-white/60 text-xs md:text-[13px] leading-relaxed line-clamp-3 max-w-[460px]">
-                                {anime.description?.replace(/<[^>]*>/g, '') || 'An extraordinary anime filled with breathtaking action sequences, compelling characters, and an unforgettable story.'}
-                            </p>
-                        </div>
-
-                        {/* Action Buttons — pill shape, pink Watch Now + dark Detail */}
-                        <div
-                            className="flex items-center gap-3 transition-all duration-500 delay-200"
-                            style={{ opacity: isAnimating ? 0 : 1, transform: isAnimating ? 'translateY(8px)' : 'translateY(0)' }}
-                        >
-                            {/* Watch Now — primary teal pill (only if aired) */}
-                            {!(anime.status?.toLowerCase() === 'not yet aired' || anime.status?.toLowerCase() === 'upcoming') && (
-                                <Link
-                                    href={`/watch/${anime.id}/1`}
-                                    className="flex items-center gap-2 font-normal text-[11px] px-4 py-1.5 rounded-full transition-all group bg-primary hover:bg-primary-hover text-white"
-                                >
-                                    <Play size={10} className="fill-current group-hover:scale-110 transition-transform" />
-                                    Watch Now
-                                </Link>
-                            )}
-                            {/* Detail — dark pill */}
-                            <Link
-                                href={`/watch/${anime.id}`}
-                                className="flex items-center gap-1 font-normal text-[11px] px-4 py-1.5 rounded-full text-white/70 hover:text-white transition-all bg-card"
-                            >
-                                Detail
-                                <ChevronRight size={10} />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+                    );
+                })}
             </div>
 
             {/* Navigation Controls — Refined HiAnime Style */}
