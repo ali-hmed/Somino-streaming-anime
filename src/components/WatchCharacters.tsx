@@ -32,7 +32,11 @@ export default function WatchCharacters({ animeId }: WatchCharactersProps) {
                 const url = `${API_URL}/characters/${animeId}`;
                 
                 const res = await fetch(url);
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                if (!res.ok) {
+                    console.warn(`[WatchCharacters] API returned ${res.status}. Characters section will be hidden.`);
+                    setIsLoading(false);
+                    return;
+                }
                 
                 const data = await res.json();
                 if (data.success && data.data?.response) {

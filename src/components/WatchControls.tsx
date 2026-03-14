@@ -11,7 +11,7 @@ import {
 import WatchControlsWatchlist from './WatchControlsWatchlist';
 import { saveWatchProgress, getAnimeProgress } from '@/lib/watchHistory';
 import { getUserSettings, saveUserSettings, UserSettings } from '@/lib/settings';
-import { fetchEpisodeStreamingLinks } from '@/lib/consumet';
+import { fetchEpisodeStreamingLinks, fetchServerList } from '@/lib/consumet';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -76,6 +76,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [skipKey, setSkipKey] = useState(0); // Used to force player re-mount on hard skip
     const [streamData, setStreamData] = useState<any>(null);
+    const [serverList, setServerList] = useState<{ sub: any[], dub: any[] }>({ sub: [], dub: [] });
     const [isStreamLoading, setIsStreamLoading] = useState(true);
 
     // Initial Load of Settings
@@ -114,11 +115,34 @@ const WatchControls: React.FC<WatchControlsProps> = ({
         setStreamData(null);
         setIsStreamLoading(true);
 
+        // Fetch Server List
+        const loadServers = async () => {
+            const list = await fetchServerList(episodeId);
+            setServerList(list);
+            
+            // Logic to select default server if current is not in list
+            const currentList = category === 'sub' ? list.sub : list.dub;
+            if (currentList.length > 0) {
+                const exists = currentList.find(s => s.name === server);
+                if (!exists) {
+                    setServer(currentList[0].name);
+                }
+            }
+        };
+
         // Fetch Stream and Intro/Outro data
         const loadStreamData = async () => {
             try {
-                // Map frontend server names to API server names
-                const apiServer = server === 'megaPlay' ? 'HD-1' : 'HD-2';
+                // Determine the correct server identifier for the API
+                const currentList = category === 'sub' ? serverList.sub : serverList.dub;
+                const activeServer = currentList.find(s => s.name === server);
+                
+                // Fallback mapping if list hasn't loaded or server not found
+                let apiServer = server;
+                if (server === 'MegaCloud') apiServer = 'HD-1';
+                else if (server === 'VidStreaming' || server === 'VidSrc') apiServer = 'HD-2';
+                else if (activeServer?.index) apiServer = activeServer.name;
+
                 const data = await fetchEpisodeStreamingLinks(episodeId, apiServer, category);
                 
                 if (data) {
@@ -128,7 +152,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             start: parseInt(data.intro.start) || 0,
                             end: parseInt(data.intro.end) || 0
                         });
-                        console.log(`Intro found for ${episodeId}: ${data.intro.start} - ${data.intro.end}`);
                     }
                 }
             } catch (err) {
@@ -137,7 +160,8 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                 setIsStreamLoading(false);
             }
         };
-        loadStreamData();
+        
+        loadServers().then(() => loadStreamData());
     }, [animeId, episodeId, category, server]);
 
     useEffect(() => {
@@ -357,6 +381,7 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             category={category}
                             autoPlay={autoPlay}
                             startTime={initialTime}
+                            isFocusMode={isFocusMode}
                             playerRef={iframeRef}
                             onProgress={handleProgress}
                         />
@@ -525,7 +550,6 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                     </button>
                 </div>
             </div>
-
             {/* ── Desktop Controls Footer ─────────────────────────────── */}
             <div className="bg-background/20">
                 <div className="hidden md:flex px-6 py-3 items-center justify-between gap-6">
@@ -569,30 +593,21 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             )}
                         </div>
                         <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => {
-                                    setServer('megaPlay');
-                                    saveUserSettings({ lastServer: 'megaPlay' });
-                                }}
-                                className={`px-5 py-2 font-black text-[9px] rounded-[4px] transition-all active:scale-95 ${server === 'megaPlay'
-                                    ? 'bg-[#53CCB8] text-[#0b0c10]'
-                                    : 'bg-white/5 text-white/40 hover:bg-white/10'
-                                    }`}
-                            >
-                                server 1
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setServer('vidWish');
-                                    saveUserSettings({ lastServer: 'vidWish' });
-                                }}
-                                className={`px-5 py-2 font-black text-[9px] rounded-[4px] transition-all active:scale-95 ${server === 'vidWish'
-                                    ? 'bg-[#53CCB8] text-[#0b0c10]'
-                                    : 'bg-white/5 text-white/40 hover:bg-white/10'
-                                    }`}
-                            >
-                                server 2
-                            </button>
+                            {(category === 'sub' ? serverList.sub : serverList.dub).map((s, i) => (
+                                <button
+                                    key={`${category}-${s.name}-${i}`}
+                                    onClick={() => {
+                                        setServer(s.name);
+                                        saveUserSettings({ lastServer: s.name });
+                                    }}
+                                    className={`px-5 py-2 font-black text-[9px] rounded-[4px] transition-all active:scale-95 ${server === s.name
+                                        ? 'bg-[#53CCB8] text-[#0b0c10]'
+                                        : 'bg-white/5 text-white/40 hover:bg-white/10'
+                                        }`}
+                                >
+                                    {s.name}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -629,31 +644,22 @@ const WatchControls: React.FC<WatchControlsProps> = ({
                             </button>
                         )}
                     </div>
-                    <div className="flex items-center justify-center gap-2 w-full max-w-[280px]">
-                        <button
-                            onClick={() => {
-                                setServer('megaPlay');
-                                saveUserSettings({ lastServer: 'megaPlay' });
-                            }}
-                            className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'megaPlay'
-                                ? 'bg-[#53CCB8] text-[#0b0c10]'
-                                : 'bg-white/5 text-white/40'
-                                }`}
-                        >
-                            server 1
-                        </button>
-                        <button
-                            onClick={() => {
-                                setServer('vidWish');
-                                saveUserSettings({ lastServer: 'vidWish' });
-                            }}
-                            className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === 'vidWish'
-                                ? 'bg-[#53CCB8] text-[#0b0c10]'
-                                : 'bg-white/5 text-white/40'
-                                }`}
-                        >
-                            server 2
-                        </button>
+                    <div className="flex flex-wrap items-center justify-center gap-2 w-full max-w-[280px]">
+                        {(category === 'sub' ? serverList.sub : serverList.dub).map((s, i) => (
+                            <button
+                                key={`mob-${category}-${s.name}-${i}`}
+                                onClick={() => {
+                                    setServer(s.name);
+                                    saveUserSettings({ lastServer: s.name });
+                                }}
+                                className={`flex-1 py-1.5 font-black text-[9px] rounded-[5px] transition-all active:scale-95 ${server === s.name
+                                    ? 'bg-[#53CCB8] text-[#0b0c10]'
+                                    : 'bg-white/5 text-white/40'
+                                    }`}
+                            >
+                                {s.name}
+                            </button>
+                        ))}
                     </div>
                     <div className="space-y-1 text-center mt-1">
                         <h4 className="text-[13px] font-black text-white/90 tracking-tight leading-none">

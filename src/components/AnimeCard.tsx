@@ -183,7 +183,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
             <Link href={`/watch/${id}`} className="block group cursor-pointer">
                 <div className="w-full">
                     {/* Image Container */}
-                    <div className={`relative aspect-[3/4] ${roundedClass} overflow-hidden bg-card mb-3`}>
+                    <div className={`relative aspect-[2/3] md:aspect-[3/4] ${roundedClass} overflow-hidden bg-card mb-2 md:mb-3`}>
                         {displayImage && !imgError ? (
                             <img
                                 src={displayImage}
@@ -200,14 +200,16 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                             </div>
                         )}
 
-                        {/* Episode badge */}
+                        {/* Episode badge (Top Left) */}
                         {anime.episodeNumber && showEpisode && (
-                            <div className="absolute bottom-9 left-2 z-10">
-                                <span className="bg-black/60 backdrop-blur-md text-white/60 text-[8px] font-black px-1.5 py-0.5 rounded-[2px] tracking-tighter">
+                            <div className="absolute top-1.5 left-1.5 z-10">
+                                <span className="bg-black/60 backdrop-blur-md text-white/80 text-[8px] font-black px-1.5 py-0.5 rounded-[2px] tracking-tighter border border-white/5">
                                     EP {anime.episodeNumber}
                                 </span>
                             </div>
                         )}
+
+
 
                         {/* Top Right: 18+ badge + Score */}
                         <div className="absolute top-1.5 right-1.5 z-10 flex flex-col items-end gap-1 pointer-events-none">
@@ -228,38 +230,43 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
                         </div>
                     </div>
 
-                    <div className="space-y-2 px-0.5">
-                        <h3 className="text-[12px] lg:text-[13px] font-bold text-white group-hover:text-[#53CCB8] transition-colors truncate leading-tight tracking-[0.01em]">
+                    <div className="space-y-1.5 px-0.5 mt-2">
+                        <h3 className="text-[12px] md:text-[14px] font-bold text-white group-hover:text-[#53CCB8] transition-colors truncate tracking-tight">
                             {title}
                         </h3>
 
-                        <div className="flex items-center justify-between gap-1 overflow-hidden">
-                            <div className="flex items-center gap-1 min-w-0">
-                                {!isUpcoming && (
-                                    <>
-                                        {subCount > 0 && (
-                                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-pink/10 text-[9px] font-black text-pink shrink-0 border border-pink/20">
-                                                <div className="flex items-center justify-center bg-pink text-background rounded-[1px] px-0.5 text-[7px] leading-none h-2.5 font-black">CC</div>
-                                                {subCount}
-                                            </div>
-                                        )}
-                                        {dubCount > 0 && (
-                                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-primary/10 text-[9px] font-black text-primary shrink-0 border border-primary/20">
-                                                <Mic size={9} fill="currentColor" />
-                                                {dubCount}
-                                            </div>
-                                        )}
-                                    </>
+                        <div className="flex items-center justify-between gap-2 overflow-hidden">
+                            <div className="flex items-center gap-1.5 shrink-0">
+                                {subCount > 0 && (
+                                    <div className="flex items-center gap-1 bg-[#FF6E9F]/10 text-[#FF6E9F] text-[10px] font-black px-1.5 py-0.5 rounded-[4px] border border-[#FF6E9F]/30">
+                                        <div className="flex items-center justify-center bg-[#FF6E9F] text-background rounded-[2px] px-0.5 text-[8px] leading-none h-3 font-black uppercase">CC</div>
+                                        <span>{subCount}</span>
+                                    </div>
                                 )}
-                                {isUpcoming && (
-                                    <span className="text-[9px] font-black text-[#53CCB8] tracking-widest leading-none">
-                                        {anime.premiered || anime.releaseDate || 'TBA'}
-                                    </span>
+                                {dubCount > 0 && (
+                                    <div className="flex items-center gap-1 bg-[#53CCB8]/10 text-[#53CCB8] text-[10px] font-black px-1.5 py-0.5 rounded-[4px] border border-[#53CCB8]/30">
+                                        <Mic size={10} fill="currentColor" />
+                                        <span>{dubCount}</span>
+                                    </div>
                                 )}
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <span className="px-1.5 py-0.5 rounded-[2px] bg-white/5 text-white/50 text-[8px] font-black uppercase tracking-wider">{anime.type || 'tv'}</span>
+                            <div className="flex items-center gap-1 text-white/40 text-[8px] font-black uppercase shrink-0 min-w-0 truncate">
+                                <span>{anime.type || 'TV'}</span>
+                                {anime.duration && (
+                                    <>
+                                        <div className="w-0.9 h-0.9 rounded-full bg-white/30" />
+                                        <span className="truncate">{anime.duration}</span>
+                                    </>
+                                )}
+                                {isUpcoming && (
+                                    <>
+                                        <div className="w-1 h-1 rounded-full bg-white/60" />
+                                        <span className="text-[#53CCB8] truncate">
+                                            {anime.premiered || anime.releaseDate || 'TBA'}
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

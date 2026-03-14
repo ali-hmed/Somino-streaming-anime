@@ -6,10 +6,11 @@ interface VideoPlayerProps {
     id: string;
     episodeId: string;
     streamUrl: string | null;
-    server?: 'megaPlay' | 'vidWish';
+    server?: string;
     category?: 'sub' | 'dub';
     autoPlay?: boolean;
     startTime?: number; // in seconds
+    isFocusMode?: boolean;
     playerRef?: React.RefObject<HTMLIFrameElement | null>;
     onProgress?: (currentTime: number, duration: number) => void;
 }
@@ -18,10 +19,11 @@ const VideoPlayer = ({
     id,
     episodeId,
     streamUrl,
-    server = 'megaPlay',
+    server = 'MegaCloud',
     category = 'sub',
     autoPlay = true,
     startTime = 0,
+    isFocusMode = false,
     playerRef,
     onProgress,
 }: VideoPlayerProps) => {
@@ -72,27 +74,24 @@ const VideoPlayer = ({
 
     if (!epHash || epHash === '') epHash = '1';
 
-    const domain = server === 'vidWish' ? 'vidwish.live' : 'megaplay.buzz';
-    const baseUrl = `https://${domain}/stream/s-2/${epHash}/${category}`;
-    const params = new URLSearchParams();
-    if (autoPlay) {
-        params.set('autoplay', '1');
-        params.set('auto', '1');
-        params.set('autostart', '1');
-        params.set('muted', '1');
-        params.set('mute', '1');
-        params.set('play', '1');
-        params.set('onstart', '1');
-    }
-    if (startTime > 0) {
-        const timeVal = Math.floor(startTime).toString();
-        params.set('t', timeVal);
-        params.set('time', timeVal);
-        params.set('start', timeVal);
-        params.set('p', timeVal); // some players use p=
-    }
+    // if (!streamUrl) {
+    //     return (
+    //         <div className={`w-full bg-[#0b0c0f] flex items-center justify-center rounded-xl overflow-hidden border border-white/5 transition-all duration-700 ${isFocusMode ? 'aspect-video' : 'h-[250px] md:h-full'}`} key={episodeId + server + category}>
+    //             <div className="flex flex-col items-center gap-5 text-center p-8 max-w-sm">
+    //                 <div className="relative">
+    //                     <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+    //                     <img src="/miku-not-found.png" alt="Loading" className="w-32 h-auto relative drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)] opacity-40 grayscale" />
+    //                 </div>
+    //                 <div className="space-y-2">
+    //                     <p className="text-primary text-[11px] font-black uppercase tracking-[0.3em] animate-pulse">Establishing Connection...</p>
+    //                     <p className="text-white/20 text-[10px] leading-relaxed">If this screen stays for more than 5 seconds, please switch to <span className="text-white/40 font-bold">Server 1</span> or refresh.</p>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
-    let streamSrc = streamUrl || baseUrl;
+    let streamSrc = streamUrl;
 
     // Aggressively inject parameters into the stream URL for maximum compatibility
     if (streamSrc && (streamSrc.includes('http') || streamSrc.includes('//'))) {
