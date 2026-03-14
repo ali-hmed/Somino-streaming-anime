@@ -36,7 +36,7 @@ export default function ProfilePage() {
         setJoinedAt(user.createdAt || "");
 
         if (!user.token) return;
-        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
         fetch(`${BASE_URL}/auth/me`, {
             headers: { 'Authorization': `Bearer ${user.token}` }
         })
@@ -68,7 +68,7 @@ export default function ProfilePage() {
         setSuccess("");
 
         try {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
 
             const res = await fetch(`${BASE_URL}/auth/me`, {
                 method: 'PUT',

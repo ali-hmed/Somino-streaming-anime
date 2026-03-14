@@ -33,7 +33,7 @@ export default function NotificationsPage() {
     const [activeTab, setActiveTab] = useState<'anime' | 'community'>('anime');
     const { user, isAuthenticated } = useAuthStore();
     const router = useRouter();
-    const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+    const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
 
     const fetchNotifications = async () => {
         if (!isAuthenticated || !user) return;

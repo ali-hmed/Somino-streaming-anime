@@ -85,7 +85,7 @@ const Navbar = ({ className }: NavbarProps) => {
             }
             setIsSearching(true);
             try {
-                const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+                const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
                 const res = await fetch(`${BASE_URL}/search?keyword=${encodeURIComponent(query.trim())}&page=1`);
                 if (!res.ok) throw new Error('API Error');
                 const json = await res.json();
@@ -130,7 +130,7 @@ const Navbar = ({ className }: NavbarProps) => {
     const fetchUnreadCount = async () => {
         if (!isAuthenticated || !user) return;
         try {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
             const res = await fetch(`${BASE_URL}/notifications`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });

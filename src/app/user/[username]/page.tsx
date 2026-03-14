@@ -64,7 +64,7 @@ const PublicProfilePage = () => {
     const [enrichedWatchlist, setEnrichedWatchlist] = useState<any[]>([]);
     const [showExactPower, setShowExactPower] = useState(false);
 
-    const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+    const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
     const CONSUMET_API = API_URL; // same base
 
     useEffect(() => {

@@ -28,7 +28,7 @@ export default function WatchCharacters({ animeId }: WatchCharactersProps) {
     useEffect(() => {
         const fetchCharacters = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030'}/api/v1/characters/${animeId}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app'}/api/v1/characters/${animeId}`);
                 const data = await res.json();
                 if (data.success && data.data?.response) {
                     setCharacters(data.data.response.slice(0, 6)); // Show max 6 as per screenshot

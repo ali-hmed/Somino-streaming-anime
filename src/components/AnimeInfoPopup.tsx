@@ -77,7 +77,7 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
     const itemInList = user?.watchlist?.find((item: any) => item.animeId === anime.id);
     const currentStatus = itemInList?.status;
 
-    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
 
     const handleUpdateStatus = async (status: WatchlistStatus, e: React.MouseEvent) => {
         e.preventDefault();

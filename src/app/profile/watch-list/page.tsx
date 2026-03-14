@@ -100,7 +100,7 @@ export default function WatchListPage() {
     const safePage = Math.min(page, totalPages);
     const pagedList = filteredList.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
 
-    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030') + '/api/v1';
+    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
 
     const handleRemove = async (animeId: string) => {
         if (!user?.token) return;
