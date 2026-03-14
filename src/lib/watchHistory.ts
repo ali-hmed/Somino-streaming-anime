@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from './api';
 
 export interface WatchHistoryItem {
     animeId: string;
@@ -49,8 +50,7 @@ export const saveWatchProgress = async (item: Omit<WatchHistoryItem, 'lastWatche
 
         // Sync to backend if token is provided
         if (token) {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
-            const res = await fetch(`${BASE_URL}/auth/history`, {
+            const res = await fetch(`${API_URL}/auth/history`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

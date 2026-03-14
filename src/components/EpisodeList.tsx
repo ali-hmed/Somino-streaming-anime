@@ -28,7 +28,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
     const isEpMatch = (id1?: string, id2?: string) => {
         if (!id1 || !id2) return false;
         if (id1 === id2) return true;
-        const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split('::').pop()?.split('=').pop();
+        const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split(/[::]|-ep=|-episode-/).pop()?.split('=').pop();
         const n1 = getNum(id1);
         const n2 = getNum(id2);
         return !!(n1 && n1 === n2);

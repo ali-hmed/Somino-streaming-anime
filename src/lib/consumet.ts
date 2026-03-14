@@ -1,6 +1,6 @@
 import { AnimeInfo, SearchResult, RecentAnime } from '@/types/anime';
+import { API_URL as BASE_URL } from '@/lib/api';
 
-const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
 
 export const mapCustomToAnime = (item: any): any => ({
     ...item,
@@ -70,20 +70,33 @@ export const fetchAnimeInfo = async (id: string): Promise<AnimeInfo | null> => {
 
         // Fetch episodes
         let episodes: any[] = [];
-        try {
-            const epRes = await fetch(`${BASE_URL}/episodes/${id}`);
-            const epJson = await epRes.json();
-            if (epJson.success) {
-                episodes = epJson.data.map((ep: any) => ({
-                    id: ep.id,
-                    number: ep.episodeNumber,
-                    title: ep.title,
-                    isFiller: ep.isFiller,
-                    url: ''
-                }));
+        const episodesMetadata = anime.episodes || {};
+        const initialEpisodes = Array.isArray(anime.episodes) ? anime.episodes : [];
+
+        if (initialEpisodes.length > 0) {
+            episodes = initialEpisodes.map((ep: any) => ({
+                id: ep.id,
+                number: ep.episodeNumber || ep.number,
+                title: ep.title,
+                isFiller: ep.isFiller,
+                url: ''
+            }));
+        } else {
+            try {
+                const epRes = await fetch(`${BASE_URL}/episodes/${id}`);
+                const epJson = await epRes.json();
+                if (epJson.success && Array.isArray(epJson.data)) {
+                    episodes = epJson.data.map((ep: any) => ({
+                        id: ep.id,
+                        number: ep.episodeNumber,
+                        title: ep.title,
+                        isFiller: ep.isFiller,
+                        url: ''
+                    }));
+                }
+            } catch (err) {
+                console.warn(`Could not fetch episodes for ${id}.`);
             }
-        } catch (err) {
-            console.warn(`Could not fetch episodes for ${id}.`);
         }
 
         const relations = anime.related?.map((rel: any) => ({
@@ -99,14 +112,16 @@ export const fetchAnimeInfo = async (id: string): Promise<AnimeInfo | null> => {
             }
         })) || [];
 
+        const totalEpsCount = episodesMetadata.eps || Number(episodesMetadata.sub) || episodes.length || 12;
+
         return {
             ...mapCustomToAnime(anime),
             relations,
             moreSeasons: (anime.moreSeasons || []).map(mapCustomToAnime),
             recommended: (anime.recommended || []).map(mapCustomToAnime),
             mostPopular: (anime.mostPopular || []).map(mapCustomToAnime),
-            episodes: episodes.length > 0 ? episodes : Array.from({ length: anime.episodes?.eps || Number(anime.episodes?.sub) || 12 }, (_, i) => ({
-                id: `${id}::ep=${i + 1}`,
+            episodes: episodes.length > 0 ? episodes : Array.from({ length: totalEpsCount }, (_, i) => ({
+                id: `${id}-ep=${i + 1}`,
                 number: i + 1,
                 title: `Episode ${i + 1}`
             }))

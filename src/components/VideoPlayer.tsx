@@ -68,7 +68,7 @@ const VideoPlayer = ({
     const decodedEpisodeId = decodeURIComponent(episodeId);
     let epHash = decodedEpisodeId.includes('ep=')
         ? decodedEpisodeId.split('ep=').pop()
-        : decodedEpisodeId.split('::').pop();
+        : decodedEpisodeId.split(/::|-/).pop();
 
     if (!epHash || epHash === '') epHash = '1';
 
@@ -125,6 +125,18 @@ const VideoPlayer = ({
                 streamSrc += `${separator}start=${Math.floor(startTime)}&t=${Math.floor(startTime)}`;
             }
         }
+    }
+
+    if (!streamSrc) {
+        return (
+            <div className="w-full bg-black flex items-center justify-center aspect-video" key={episodeId + server + category}>
+                <div className="flex flex-col items-center gap-4 text-center p-6">
+                    <img src="/miku-not-found.png" alt="Not Found" className="w-32 h-auto opacity-20" />
+                    <p className="text-white/40 text-xs font-black uppercase tracking-[0.2em]">No stream found for this server</p>
+                    <p className="text-white/20 text-[10px] max-w-[200px]">Please try switching to another server or category.</p>
+                </div>
+            </div>
+        );
     }
 
     return (

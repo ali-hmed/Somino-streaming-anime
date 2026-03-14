@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { API_URL } from '@/lib/api';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -31,10 +32,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         setError('');
 
         try {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
             const endpoint = isLogin ? '/auth/login' : '/auth/signup';
 
-            const res = await fetch(`${BASE_URL}${endpoint}`, {
+            const res = await fetch(`${API_URL}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(isLogin ? {

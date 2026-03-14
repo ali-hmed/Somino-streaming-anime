@@ -10,6 +10,7 @@ import { getTitle } from '@/types/anime';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
 import { getRankByXP, getRankByName } from '@/utils/rankUtils';
+import { API_URL } from '@/lib/api';
 
 interface NavbarProps {
     className?: string;
@@ -85,8 +86,7 @@ const Navbar = ({ className }: NavbarProps) => {
             }
             setIsSearching(true);
             try {
-                const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
-                const res = await fetch(`${BASE_URL}/search?keyword=${encodeURIComponent(query.trim())}&page=1`);
+                const res = await fetch(`${API_URL}/search?keyword=${encodeURIComponent(query.trim())}&page=1`);
                 if (!res.ok) throw new Error('API Error');
                 const json = await res.json();
 
@@ -130,8 +130,7 @@ const Navbar = ({ className }: NavbarProps) => {
     const fetchUnreadCount = async () => {
         if (!isAuthenticated || !user) return;
         try {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
-            const res = await fetch(`${BASE_URL}/notifications`, {
+            const res = await fetch(`${API_URL}/notifications`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
             const data = await res.json();

@@ -30,6 +30,24 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
     const [isExpanded, setIsExpanded] = useState(false);
     const router = useRouter();
 
+    const episodes = anime.episodes || [];
+
+    // Fuzzy episode match helper
+    const isEpMatch = (id1?: string, id2?: string) => {
+        if (!id1 || !id2) return false;
+        if (id1 === id2) return true;
+        const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split(/::|-ep=|-episode-/).pop()?.split('=').pop();
+        const n1 = getNum(id1);
+        const n2 = getNum(id2);
+        return !!(n1 && n1 === n2);
+    };
+
+    const currentEpisodeIndex = episodes.findIndex((ep: Episode) => isEpMatch(ep.id, currentEpisodeId));
+    const currentEpisode = episodes[currentEpisodeIndex] || episodes[0];
+
+    const prevEp = episodes[currentEpisodeIndex - 1];
+    const nextEp = episodes[currentEpisodeIndex + 1];
+
     useEffect(() => {
         const fetchPopular = async () => {
             // First check if anime object already has the data
@@ -46,22 +64,18 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
         fetchPopular();
     }, [anime.mostPopular]);
 
-    // Fuzzy episode match helper
-    const isEpMatch = (id1?: string, id2?: string) => {
-        if (!id1 || !id2) return false;
-        if (id1 === id2) return true;
-        const getNum = (str: string) => str.match(/(?:ep=|\-episode\-)(\d+)$/)?.[1] || str.split('::').pop()?.split('=').pop();
-        const n1 = getNum(id1);
-        const n2 = getNum(id2);
-        return !!(n1 && n1 === n2);
-    };
-
-    const episodes = anime.episodes || [];
-    const currentEpisodeIndex = episodes.findIndex((ep: Episode) => isEpMatch(ep.id, currentEpisodeId));
-    const currentEpisode = episodes[currentEpisodeIndex] || episodes[0];
-
-    const prevEp = episodes[currentEpisodeIndex - 1];
-    const nextEp = episodes[currentEpisodeIndex + 1];
+    // Normalize episodeId if it was passed as a number/shorthand from URL
+    useEffect(() => {
+        if (episodes.length > 0) {
+            const matched = episodes.find((ep: Episode) => isEpMatch(ep.id, currentEpisodeId));
+            if (matched && matched.id !== currentEpisodeId) {
+                console.log(`[WatchContent] Normalizing episode ID: ${currentEpisodeId} -> ${matched.id}`);
+                setCurrentEpisodeId(matched.id);
+                // Sync URL
+                window.history.replaceState(null, '', `/watch/${id}/${matched.id}`);
+            }
+        }
+    }, [episodes, currentEpisodeId, id]);
 
     const handleEpisodeChange = (newId: string) => {
         if (newId === currentEpisodeId) return;
@@ -269,7 +283,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                         <WatchControls
                             id={id}
-                            episodeId={currentEpisodeId}
+                            episodeId={currentEpisode.id || currentEpisodeId}
                             animeId={id}
                             animeTitle={title}
                             animeImage={anime.image}
@@ -448,7 +462,7 @@ const WatchContent: React.FC<WatchContentProps> = ({ id, initialEpisodeId, anime
 
                     <div className={isChanging ? 'opacity-30 pointer-events-none transition-opacity duration-300' : 'transition-opacity duration-300'}>
                         <WatchComments
-                            episodeId={currentEpisodeId}
+                            episodeId={currentEpisode.id || currentEpisodeId}
                             animeId={id}
                             animeTitle={title}
                             animeImage={anime.image}

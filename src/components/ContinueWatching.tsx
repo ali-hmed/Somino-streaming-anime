@@ -7,6 +7,7 @@ import Link from 'next/link';
 import AnimeCard from './AnimeCard';
 import { getWatchHistory, WatchHistoryItem } from '@/lib/watchHistory';
 import { useAuthStore } from '@/store/authStore';
+import { API_URL } from '@/lib/api';
 
 const ContinueWatching = () => {
     const { user, isAuthenticated, setWatchHistory } = useAuthStore();
@@ -36,10 +37,8 @@ const ContinueWatching = () => {
             return;
         }
 
-        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
-
         try {
-            const res = await fetch(`${BASE_URL}/auth/history/${animeId}`, {
+            const res = await fetch(`${API_URL}/auth/history/${animeId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user?.token}`

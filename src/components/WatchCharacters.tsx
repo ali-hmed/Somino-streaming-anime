@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { API_URL } from '@/lib/api';
 
 interface Character {
     name: string;
@@ -28,13 +29,17 @@ export default function WatchCharacters({ animeId }: WatchCharactersProps) {
     useEffect(() => {
         const fetchCharacters = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app'}/api/v1/characters/${animeId}`);
+                const url = `${API_URL}/characters/${animeId}`;
+                
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                
                 const data = await res.json();
                 if (data.success && data.data?.response) {
                     setCharacters(data.data.response.slice(0, 6)); // Show max 6 as per screenshot
                 }
             } catch (error) {
-                console.error("Failed to fetch characters:", error);
+                console.error("[WatchCharacters] Failed to fetch characters:", error);
             } finally {
                 setIsLoading(false);
             }

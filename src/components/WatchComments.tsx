@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
 import { timeAgo } from '@/utils/dateUtils';
 import { getRankByXP, getRankByName } from '@/utils/rankUtils';
+import { API_URL } from '@/lib/api';
 
 interface CommentType {
     _id: string;
@@ -49,7 +50,6 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
     const [isInputExpanded, setIsInputExpanded] = useState(false);
 
     const { user, isAuthenticated } = useAuthStore();
-    const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
 
     const fetchComments = useCallback(async () => {
         if (!episodeId) return;

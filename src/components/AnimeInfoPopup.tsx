@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 import { usePopupStore } from '@/store/popupStore';
 import { fetchAnimeInfo } from '@/lib/consumet';
 import { getAnimeProgress } from '@/lib/watchHistory';
+import { API_URL } from '@/lib/api';
 
 interface AnimeInfoPopupProps {
     anime: any;
@@ -77,15 +78,13 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
     const itemInList = user?.watchlist?.find((item: any) => item.animeId === anime.id);
     const currentStatus = itemInList?.status;
 
-    const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
-
     const handleUpdateStatus = async (status: WatchlistStatus, e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         if (!isAuthenticated) { setAuthModalOpen(true); return; }
         setIsLoading(true);
         try {
-            const res = await fetch(`${BASE_URL}/auth/watchlist`, {
+            const res = await fetch(`${API_URL}/auth/watchlist`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user?.token}` },
                 body: JSON.stringify({ animeId: anime.id, animeTitle: title, animeImage: bannerImage, status })
@@ -103,7 +102,7 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
         e.stopPropagation();
         setIsLoading(true);
         try {
-            const res = await fetch(`${BASE_URL}/auth/watchlist/${anime.id}`, {
+            const res = await fetch(`${API_URL}/auth/watchlist/${anime.id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${user?.token}` }
             });
