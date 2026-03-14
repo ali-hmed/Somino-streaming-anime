@@ -88,7 +88,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, animeId, currentEpi
                             </button>
 
                             {dropdownOpen && (
-                                <div className="absolute top-full left-0 mt-1 z-50 bg-card rounded-[6px] overflow-hidden min-w-[130px]">
+                                <div className="absolute top-full left-0 mt-1 z-50 bg-card rounded-[6px] max-h-[250px] overflow-y-auto custom-scrollbar min-w-[130px]">
                                     {Array.from({ length: totalChunks }).map((_, i) => (
                                         <button
                                             key={i}
