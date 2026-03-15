@@ -10,6 +10,7 @@ import { usePopupStore } from '@/store/popupStore';
 import { fetchAnimeInfo } from '@/lib/consumet';
 import { getAnimeProgress } from '@/lib/watchHistory';
 import { API_URL } from '@/lib/api';
+import WatchlistToast, { WatchlistToastStatus } from './WatchlistToast';
 
 interface AnimeInfoPopupProps {
     anime: any;
@@ -25,6 +26,14 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
     const { setActiveId } = usePopupStore();
     const [isListOpen, setIsListOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [toast, setToast] = useState<WatchlistToastStatus>(null);
+    const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const showToast = (status: WatchlistToastStatus) => {
+        if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+        setToast(status);
+        toastTimerRef.current = setTimeout(() => setToast(null), 3200);
+    };
     const [isMobile, setIsMobile] = useState(false);
     const [fullInfo, setFullInfo] = useState<any>(null);
     const [isDetailLoading, setIsDetailLoading] = useState(false);
@@ -91,7 +100,10 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
             });
             if (res.ok) {
                 const data = await res.json();
-                if (data.success) setWatchlist(data.data);
+                if (data.success) {
+                    setWatchlist(data.data);
+                    showToast(status);
+                }
             }
         } catch { /* silent */ }
         finally { setIsLoading(false); setIsListOpen(false); }
@@ -107,7 +119,10 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
                 headers: { 'Authorization': `Bearer ${user?.token}` }
             });
             const data = await res.json();
-            if (data.success) setWatchlist(data.data);
+            if (data.success) {
+                setWatchlist(data.data);
+                showToast('Removed');
+            }
         } catch { /* silent */ }
         finally { setIsLoading(false); setIsListOpen(false); }
     };
@@ -348,6 +363,13 @@ const AnimeInfoPopup: React.FC<AnimeInfoPopupProps> = ({ anime, isVisible, side 
                     </>
                 )}
             </AnimatePresence>
+
+            {/* Toast Notification */}
+            <WatchlistToast
+                status={toast}
+                animeTitle={title}
+                onClose={() => setToast(null)}
+            />
         </>
     );
 };

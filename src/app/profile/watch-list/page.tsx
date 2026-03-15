@@ -87,9 +87,17 @@ export default function WatchListPage() {
     const watchlist = user?.watchlist || [];
     const uniqueWatchlist = Array.from(new Map(watchlist.map(item => [item.animeId, item])).values());
 
+    // Display label → stored value (what the API actually saves)
     const mapStatus = (status: string): WatchlistStatus => {
         if (status === 'Planned') return 'Plan to Watch';
+        if (status === 'On-Hold') return 'On-Hold';
         return status as WatchlistStatus;
+    };
+
+    // Display label (tab) → what gets sent to API
+    const toApiStatus = (tabStatus: Exclude<WatchlistStatus, 'All'>): string => {
+        if (tabStatus === 'Plan to Watch') return 'Planned';
+        return tabStatus; // Watching, On-Hold, Dropped, Completed pass through as-is
     };
 
     const filteredList = activeTab === 'All'
@@ -124,7 +132,7 @@ export default function WatchListPage() {
             const res = await fetch(`${BASE_URL}/auth/watchlist`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${user.token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ animeId: item.animeId, animeTitle: item.animeTitle, animeImage: item.animeImage, status: newStatus })
+                body: JSON.stringify({ animeId: item.animeId, animeTitle: item.animeTitle, animeImage: item.animeImage, status: toApiStatus(newStatus) })
             });
             if (res.ok) {
                 const data = await res.json();
