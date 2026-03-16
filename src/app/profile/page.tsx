@@ -87,10 +87,6 @@ export default function ProfilePage() {
             return;
         }
 
-        if (file.size > 2 * 1024 * 1024) {
-            setError("File size too large. Maximum limit is 2MB.");
-            return;
-        }
 
         // Preview
         const reader = new FileReader();
