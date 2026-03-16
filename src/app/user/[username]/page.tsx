@@ -66,7 +66,13 @@ const PublicProfilePage = () => {
     const [enrichedWatchlist, setEnrichedWatchlist] = useState<any[]>([]);
     const [showExactPower, setShowExactPower] = useState(false);
     const { user: currentUser } = useAuthStore();
-    const isOwnProfile = !!(currentUser && userData && currentUser._id === userData._id);
+    const isOwnProfile = React.useMemo(() => {
+        if (!currentUser || !userData) return false;
+        const curId = currentUser._id?.toString();
+        const uId = userData._id?.toString();
+        if (curId && uId && curId === uId) return true;
+        return currentUser.username?.toLowerCase() === userData.username?.toLowerCase();
+    }, [currentUser, userData]);
 
     const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
     const CONSUMET_API = API_URL; // same base
