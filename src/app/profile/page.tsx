@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { Loader2, UserCheck, Key, Pencil, Calendar } from "lucide-react";
+import { Loader2, UserCheck, Key, Pencil, Calendar, Image as ImageIcon, Upload } from "lucide-react";
 
 export default function ProfilePage() {
     const { user, isAuthenticated, login } = useAuthStore();
@@ -17,9 +17,18 @@ export default function ProfilePage() {
     });
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [joinedAt, setJoinedAt] = useState(user?.createdAt || "");
+
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [bannerFile, setBannerFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState(user?.avatar || "");
+    const [bannerPreview, setBannerPreview] = useState(user?.banner || "");
+
+    const avatarInputRef = React.useRef<HTMLInputElement>(null);
+    const bannerInputRef = React.useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (!isAuthenticated || !user) {
@@ -34,6 +43,8 @@ export default function ProfilePage() {
             banner: user.banner || "",
         });
         setJoinedAt(user.createdAt || "");
+        setAvatarPreview(user.avatar || "");
+        setBannerPreview(user.banner || "");
 
         if (!user.token) return;
         const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
@@ -52,13 +63,69 @@ export default function ProfilePage() {
                         banner: fresh.banner || user.banner || "",
                     });
                     setJoinedAt(fresh.createdAt || user.createdAt || "");
+                    setAvatarPreview(fresh.avatar || user.avatar || "");
+                    setBannerPreview(fresh.banner || user.banner || "");
                 }
             })
             .catch(() => { });
-    }, [isAuthenticated, user?.token, login, router]);
+    }, [isAuthenticated, user, login, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (e.target.name === 'avatar') setAvatarPreview(e.target.value);
+        if (e.target.name === 'banner') setBannerPreview(e.target.value);
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'banner') => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validation
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            setError("Invalid file type. Only JPG, PNG, and WEBP are allowed.");
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            setError("File size too large. Maximum limit is 2MB.");
+            return;
+        }
+
+        // Preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            if (type === 'avatar') {
+                setAvatarFile(file);
+                setAvatarPreview(reader.result as string);
+            } else {
+                setBannerFile(file);
+                setBannerPreview(reader.result as string);
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const uploadFile = async (file: File, type: 'avatar' | 'banner') => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', type);
+
+        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
+        const res = await fetch(`${BASE_URL}/upload`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${user?.token}`
+            },
+            body: formData
+        });
+
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || `Failed to upload ${type}`);
+
+        // Return full URL
+        const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app');
+        return `${API_BASE}${data.data.url}`;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -70,6 +137,21 @@ export default function ProfilePage() {
         try {
             const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
 
+            let currentAvatar = formData.avatar;
+            let currentBanner = formData.banner;
+
+            // Upload files first if any
+            if (avatarFile || bannerFile) {
+                setIsUploading(true);
+                if (avatarFile) {
+                    currentAvatar = await uploadFile(avatarFile, 'avatar');
+                }
+                if (bannerFile) {
+                    currentBanner = await uploadFile(bannerFile, 'banner');
+                }
+                setIsUploading(false);
+            }
+
             const res = await fetch(`${BASE_URL}/auth/me`, {
                 method: 'PUT',
                 headers: {
@@ -79,8 +161,8 @@ export default function ProfilePage() {
                 body: JSON.stringify({
                     username: formData.username,
                     email: formData.email,
-                    avatar: formData.avatar,
-                    banner: formData.banner
+                    avatar: currentAvatar,
+                    banner: currentBanner
                 })
             });
 
@@ -208,19 +290,44 @@ export default function ProfilePage() {
 
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                                        BANNER URL
+                                        BANNER
                                     </label>
+                                    <div className="relative group overflow-hidden rounded-lg aspect-[3/1] bg-surface-raised border border-white/5 cursor-pointer"
+                                         onClick={() => bannerInputRef.current?.click()}>
+                                        {bannerPreview ? (
+                                            <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                        ) : (
+                                            <div className="w-full h-full flex flex-col items-center justify-center text-white/20 gap-2">
+                                                <ImageIcon size={24} />
+                                                <span className="text-[11px] font-bold">Upload Banner</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <Upload size={16} className="text-white" />
+                                            <span className="text-[12px] font-bold text-white uppercase tracking-wider">Change Banner</span>
+                                        </div>
+                                    </div>
                                     <input
-                                        type="url"
-                                        name="banner"
-                                        value={formData.banner}
-                                        onChange={handleChange}
-                                        className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium text-white outline-none transition-all"
-                                        style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}
-                                        placeholder="https://example.com/banner.jpg"
-                                        onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
-                                        onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
+                                        type="file"
+                                        ref={bannerInputRef}
+                                        className="hidden"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        onChange={(e) => handleFileChange(e, 'banner')}
                                     />
+                                    <div className="pt-2">
+                                        <label className="text-[9px] font-bold text-white/20 uppercase tracking-[0.1em] block mb-1">Or provide URL</label>
+                                        <input
+                                            type="url"
+                                            name="banner"
+                                            value={formData.banner}
+                                            onChange={handleChange}
+                                            className="w-full rounded-lg py-2 px-3 text-[12px] font-medium text-white outline-none transition-all placeholder:text-white/10"
+                                            style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}
+                                            placeholder="https://example.com/banner.jpg"
+                                            onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
+                                            onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
+                                        />
+                                    </div>
                                 </div>
 
                                 <button type="button" className="flex items-center gap-2 text-[11px] md:text-[12px] font-medium transition-colors hover:opacity-100 opacity-60 hover:text-white pt-1"
@@ -232,12 +339,12 @@ export default function ProfilePage() {
                                 <div className="pt-2">
                                     <button
                                         type="submit"
-                                        disabled={isLoading}
+                                        disabled={isLoading || isUploading}
                                         className="w-full font-bold text-[13px] py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                                         style={{ background: "var(--primary)", color: "#0f1012" }}
                                     >
-                                        {isLoading
-                                            ? <><Loader2 className="animate-spin" size={16} /> Saving...</>
+                                        {isLoading || isUploading
+                                            ? <><Loader2 className="animate-spin" size={16} /> {isUploading ? 'Uploading...' : 'Saving...'}</>
                                             : "Save Changes"
                                         }
                                     </button>
@@ -247,24 +354,34 @@ export default function ProfilePage() {
 
                         {/* Right: Avatar */}
                         <div className="flex-shrink-0 flex md:block justify-center">
-                            <div className="relative">
+                            <div className="relative group">
                                 <div
-                                    className="w-[90px] h-[90px] md:w-[110px] md:h-[110px] rounded-full overflow-hidden flex items-center justify-center text-3xl md:text-4xl font-black"
-                                    style={{ background: "var(--surface-raised)", border: "2px solid var(--border)", color: "var(--primary)" }}
+                                    className="w-[100px] h-[100px] md:w-[130px] md:h-[130px] rounded-full overflow-hidden flex items-center justify-center text-4xl md:text-5xl font-black cursor-pointer bg-surface-raised border-2 border-white/5"
+                                    onClick={() => avatarInputRef.current?.click()}
                                 >
-                                    {formData.avatar ? (
-                                        <img src={formData.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                                    {avatarPreview ? (
+                                        <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                                     ) : (
-                                        <span className="uppercase">{user.username?.[0]}</span>
+                                        <span className="uppercase text-primary/20">{user.username?.[0]}</span>
                                     )}
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <Upload size={20} className="text-white" />
+                                    </div>
                                 </div>
+                                <input
+                                    type="file"
+                                    ref={avatarInputRef}
+                                    className="hidden"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={(e) => handleFileChange(e, 'avatar')}
+                                />
                                 <button
                                     type="button"
-                                    className="absolute bottom-1 right-0 w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                                    className="absolute bottom-1 right-1 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-xl"
                                     style={{ background: "var(--primary)", color: "#0f1012" }}
-                                    onClick={() => document.querySelector<HTMLInputElement>('[name="avatar"]')?.focus()}
+                                    onClick={() => avatarInputRef.current?.click()}
                                 >
-                                    <Pencil size={12} strokeWidth={2.5} className="md:w-[14px] md:h-[14px]" />
+                                    <Pencil size={14} strokeWidth={2.5} className="md:w-[16px] md:h-[16px]" />
                                 </button>
                             </div>
                         </div>

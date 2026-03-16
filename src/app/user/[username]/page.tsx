@@ -18,12 +18,14 @@ import {
     Grid,
     Clock,
     EyeOff,
+    Users,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import AnimeCard from '@/components/AnimeCard';
 import { timeAgo } from '@/utils/dateUtils';
 import { getRankIconByXP } from '@/utils/rankUtils';
+import { useAuthStore } from '@/store/authStore';
 
 interface UserData {
     _id: string;
@@ -63,6 +65,8 @@ const PublicProfilePage = () => {
     const [watchlistLimit, setWatchlistLimit] = useState(10);
     const [enrichedWatchlist, setEnrichedWatchlist] = useState<any[]>([]);
     const [showExactPower, setShowExactPower] = useState(false);
+    const { user: currentUser } = useAuthStore();
+    const isOwnProfile = !!(currentUser && userData && currentUser._id === userData._id);
 
     const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
     const CONSUMET_API = API_URL; // same base
@@ -140,79 +144,61 @@ const PublicProfilePage = () => {
         return (
             <div className="min-h-screen bg-background text-white flex flex-col">
                 <Navbar className="bg-background/50 backdrop-blur-md !py-2 md:!py-3" />
+                
+                {/* Banner Skeleton */}
+                <div className="w-full h-[230px] md:h-[350px] bg-sidebar animate-pulse" />
 
-                {/* Hero Skeleton */}
-                <div className="relative w-full overflow-hidden h-[66vh]">
-                    <div className="absolute inset-0 bg-[#1a1b20] animate-pulse" />
-                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
-                    <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
-                        <div className="w-full px-4">
-                            <div className="w-full max-w-[896px] h-auto md:h-[142px] mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
-                                <div className="flex flex-row items-center gap-5 md:contents w-full justify-center md:w-auto">
-                                    {/* Left: Avatar Skeleton */}
-                                    <div className="relative shrink-0 flex items-center md:min-w-[100px] justify-center md:justify-end md:pr-4">
-                                        <div className="w-[90px] h-[90px] rounded-[50%] bg-white/5 animate-pulse" />
-                                    </div>
+                {/* Profile Header Skeleton */}
+                <div className="max-w-[1280px] mx-auto px-4 md:px-6 relative">
+                    {/* Avatar Skeleton */}
+                    <div className="absolute -top-[50px] md:-top-[75px] left-4 md:left-6">
+                        <div className="w-[100px] h-[100px] md:w-[150px] md:h-[150px] rounded-full border-[4px] border-background bg-sidebar animate-pulse" />
+                    </div>
 
-                                    {/* Center: Info Column Skeleton */}
-                                    <div className="flex flex-col items-start justify-center space-y-3 md:space-y-4 w-auto md:w-[200px]">
-                                        <div className="flex items-center gap-2">
-                                            <div className="hidden md:flex w-5 h-5 rounded-full bg-white/5 animate-pulse" />
-                                            <div className="h-6 w-32 bg-white/5 rounded-md animate-pulse" />
-                                        </div>
-                                        <div className="flex flex-col items-start gap-2 md:gap-3">
-                                            <div className="h-4 w-16 bg-white/5 rounded-[3px] animate-pulse" />
-                                            <div className="h-3 w-24 bg-white/5 rounded-md animate-pulse" />
-                                        </div>
-                                    </div>
-                                </div>
+                    {/* Action Button Skeleton */}
+                    <div className="flex justify-end pt-3 pb-2 md:py-4 h-[70px] md:h-[80px]">
+                        <div className="w-32 h-10 rounded-full bg-sidebar animate-pulse" />
+                    </div>
 
-                                {/* Right: Stats Column Skeleton */}
-                                <div className="shrink-0 w-full md:w-[240px] flex flex-col items-center md:items-start justify-center space-y-4 md:space-y-5 pt-4 md:pt-0 border-t border-white/5 md:border-transparent">
-                                    <div className="flex items-center justify-center md:justify-start gap-3">
-                                        <div className="h-5 w-16 bg-white/5 rounded-md animate-pulse" />
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-5 h-5 rounded-full bg-white/5 animate-pulse" />
-                                            <div className="h-6 w-12 bg-white/5 rounded-md animate-pulse" />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-3 flex flex-col items-center md:items-start w-full">
-                                        <div className="flex items-center justify-center md:justify-start gap-3 w-full">
-                                            <div className="h-[5px] w-[120px] bg-white/5 rounded-full animate-pulse" />
-                                            <div className="h-3 w-8 bg-white/5 rounded-md animate-pulse" />
-                                        </div>
-                                        <div className="h-2 w-20 bg-white/5 rounded-md animate-pulse" />
-                                    </div>
-                                </div>
-                            </div>
+                    {/* Info Skeleton */}
+                    <div className="mt-2 md:mt-4 space-y-4 pb-6 border-b border-white/5">
+                        <div className="space-y-2">
+                            <div className="h-7 w-48 bg-sidebar rounded-md animate-pulse" />
+                            <div className="h-4 w-32 bg-sidebar rounded-md animate-pulse" />
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="h-4 w-40 bg-sidebar rounded-md animate-pulse" />
+                            <div className="h-4 w-40 bg-sidebar rounded-md animate-pulse" />
+                        </div>
+                        <div className="flex gap-6">
+                            <div className="h-5 w-24 bg-sidebar rounded-md animate-pulse" />
+                            <div className="h-5 w-24 bg-sidebar rounded-md animate-pulse" />
                         </div>
                     </div>
                 </div>
 
                 {/* Content Sections Skeleton */}
-                <div className="max-w-[1290px] mx-auto w-full px-0 md:px-6 pt-0 pb-6 md:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
-                    {/* Left Side: Rank System & Watchlist */}
-                    <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
-                        {/* Rank Progression Skeleton */}
-                        <div className="bg-sidebar rounded-none md:rounded-[3rem] relative overflow-hidden flex flex-col items-center pt-10 pb-14 h-[280px] animate-pulse" />
-
-                        {/* Watch List Section Skeleton */}
-                        <div className="space-y-8 px-4 md:px-0">
-                            <div className="flex items-center justify-between">
-                                <div className="h-6 w-32 bg-white/5 rounded-md animate-pulse" />
-                                <div className="h-6 w-20 bg-white/5 rounded-full animate-pulse" />
-                            </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-x-3 gap-y-7">
-                                {[...Array(14)].map((_, i) => (
-                                    <div key={i} className="aspect-[3/4] bg-white/5 rounded-xl animate-pulse" />
+                <div className="max-w-[1290px] mx-auto w-full px-0 md:px-6 pt-6 pb-6 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
+                    {/* Left Side Skeleton */}
+                    <div className="lg:col-span-8 space-y-8">
+                        <div className="h-40 bg-sidebar rounded-xl animate-pulse" />
+                        <div className="space-y-4">
+                            <div className="h-6 w-32 bg-sidebar rounded-md animate-pulse" />
+                            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                {[...Array(10)].map((_, i) => (
+                                    <div key={i} className="aspect-[3/4] bg-sidebar rounded-xl animate-pulse" />
                                 ))}
                             </div>
                         </div>
                     </div>
-
-                    {/* Right Side: Activity Sidebar Section */}
-                    <div className="lg:col-span-4 space-y-8 px-4 md:px-0">
-                        <div className="bg-sidebar rounded-[2rem] overflow-hidden h-[500px] animate-pulse" />
+                    {/* Right Side Skeleton */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="h-8 w-40 bg-sidebar rounded-md animate-pulse" />
+                        <div className="space-y-4">
+                            {[...Array(5)].map((_, i) => (
+                                <div key={i} className="h-20 bg-sidebar rounded-lg animate-pulse" />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -297,160 +283,109 @@ const PublicProfilePage = () => {
         <div className="min-h-screen bg-background text-white flex flex-col">
             <Navbar className="bg-background/50 backdrop-blur-md !py-2 md:!py-3" />
 
-            {/* 1. Profile Hero Section */}
-            <div className="relative w-full overflow-hidden h-[66vh]">
-                {/* Background Hero Image with Layers */}
-                <div className="absolute inset-0">
-                    {/* Banner-style Hero Background (Requested: like banner, fill the space) */}
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            backgroundImage: `url(${userData.banner || userData.avatar || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop'})`,
-                            backgroundSize: 'cover', // Fills the banner area completely
-                            backgroundPosition: 'center 30%', // Focused slightly higher for better framing
-                            filter: 'brightness(0.6) blur(7px)', // Added a subtle blur as requested
-                        }}
+            {/* 1. Profile Hero Section - Twitter Redesign */}
+            <div className="relative w-full bg-background">
+                {/* Banner Image */}
+                <div className="relative w-full h-[220px] md:h-[350px] bg-sidebar overflow-hidden">
+                    <img 
+                        src={userData.banner || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop'} 
+                        className="w-full h-full object-cover" 
+                        alt="Profile Banner"
                     />
-
-                    {/* Dotted Pattern Overlay with Backdrop Blur (Requested: points as blur to hide image) */}
-                    <div
-                        className="absolute inset-0 z-[2] opacity-[0.75]"
-                        style={{
-                            backgroundImage: 'radial-gradient(rgba(46, 46, 46, 0.55) 0.8px, transparent 0)',
-                            backgroundSize: '5px 5px',
-                            backdropFilter: 'blur(25px)',
-                            WebkitBackdropFilter: 'blur(25px)',
-                        }}
-                    />
-
-                    {/* Gradients like HeroCarousel & Globals.css */}
-                    {/* Deep Bottom Fade (Requested: connect to below seamlessly) */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent z-[2]" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40 z-[1]" />
+                    {/* Shadow overlay for top navbar visibility if needed */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent h-16" />
                 </div>
-                {/* Top/Bottom Edge Smoothing */}
-                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
-                <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-background to-transparent z-[3]" />
 
-                {/* Profile Info Content Overlay (Requested: two-column design style) */}
-                <div className="relative z-10 h-full flex flex-col justify-center md:justify-end pb-8 md:pb-12 pt-[80px] md:pt-0">
-                    <div className="w-full px-4">
-                        <div className="w-full max-w-[896px] h-auto md:h-[142px] mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
-
-                            <div className="flex flex-row items-center gap-5 md:contents w-full justify-center md:w-auto">
-                                {/* Left: Avatar with Ring */}
-                                <div className="relative shrink-0 flex items-center md:min-w-[100px] justify-center md:justify-end md:pr-4">
-                                    <div className="w-[95px] h-[95px] rounded-[50%] p-0 md:p-1 bg-none md:bg-gradient-to-tr md:from-primary md:via-primary/50 md:to-pink-500">
-                                        <div className="w-full h-full rounded-[50%] bg-[#181818] overflow-hidden">
-                                            {userData.avatar ? (
-                                                <img src={userData.avatar} className="w-full h-full object-cover" alt={userData.username} />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center rounded-[50%]">
-                                                    <span className="text-3xl font-black text-white/5 uppercase">{userData.username[0]}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
+                {/* Profile Header Info */}
+                <div className="max-w-[1280px] mx-auto px-4 md:px-6 relative">
+                    {/* Avatar - overlapping banner */}
+                    <div className="absolute -top-[50px] md:-top-[75px] left-4 md:left-6">
+                        <div className="w-[100px] h-[100px] md:w-[150px] md:h-[150px] rounded-full border-[4px] border-background bg-sidebar overflow-hidden shadow-xl">
+                            {userData.avatar ? (
+                                <img src={userData.avatar} className="w-full h-full object-cover" alt={userData.username} />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+                                    <span className="text-4xl font-black text-white/10 uppercase">{userData.username[0]}</span>
                                 </div>
+                            )}
+                        </div>
+                    </div>
 
-                                {/* Center: Info Column */}
-                                <div className="flex flex-col items-start justify-center space-y-1.5 md:space-y-4 w-auto md:w-[200px]">
-                                    <div className="flex items-center gap-1">
-                                        {(() => {
-                                            const rankIcon = getRankIconByXP(totalXP);
-                                            return rankIcon ? (
-                                                <img
-                                                    src={rankIcon}
-                                                    width={25}
-                                                    height={25}
-                                                    alt="rank icon"
-                                                    className="object-contain shrink-0"
-                                                />
-                                            ) : null;
-                                        })()}
-                                        <h1 className={`text-[20px] md:text-xl font-black text-left transition-colors ${
-                                            userData!.role?.toLowerCase() === 'admin' ? 'text-[#EF4444]' : 
-                                            userData!.role?.toLowerCase() === 'owner' ? 'text-[#FFB941]' : 'text-white'
-                                        }`}>
-                                            {userData!.username}
-                                        </h1>
-                                    </div>
+                    {/* Action Buttons - moved back to right as requested */}
+                    <div className="flex justify-end pt-3 pb-2 md:py-4 h-[70px] md:h-[80px]">
+                        {isOwnProfile ? (
+                            <Link 
+                                href="/profile" 
+                                className="px-5 py-2 h-fit rounded-full border border-white/20 font-bold text-[13px] md:text-[14px] hover:bg-white/5 transition-all"
+                            >
+                                Edit profile
+                            </Link>
+                        ) : (
+                            <button 
+                                className="px-5 py-2 h-fit rounded-full bg-white text-black font-bold text-[13px] md:text-[14px] hover:opacity-90 transition-all"
+                            >
+                                Follow
+                            </button>
+                        )}
+                    </div>
 
-                                    <div className="flex flex-col items-start gap-1.5 md:gap-3">
-                                        {/* Styled Role Badge */}
-                                        <div className={`inline-block px-1.5 py-[1.5px] rounded-[3px] text-[10px] md:text-[8px] font-bold uppercase tracking-wider leading-none border ${
-                                            userData!.role?.toLowerCase() === 'owner'
-                                                ? 'text-[#FFB941] bg-[#FFB941]/10 border-[#FFB941]/30'
-                                                : userData!.role?.toLowerCase() === 'admin'
-                                                ? 'text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/30'
-                                                : userData!.role?.toLowerCase() === 'moderator'
-                                                ? 'text-primary bg-primary/10 border-primary/30'
-                                                : 'text-white/50 bg-white/5 border-white/10'
-                                        }`}>
-                                            {userData!.role?.toLowerCase() === 'user' || !userData!.role ? 'MEMBER' : userData!.role.toUpperCase()}
-                                        </div>
-
-                                        <div className="text-[12px] font-bold text-[#717282] tracking-tight text-left">
-                                            Joined: {new Date(userData!.createdAt).toISOString().split('T')[0]}
-                                        </div>
-                                    </div>
-                                </div>
+                    {/* Basic Info */}
+                    <div className="mt-2 md:mt-4 space-y-3 pb-6 border-b border-white/5">
+                        <div className="space-y-0.5">
+                            <div className="flex items-center gap-2">
+                                <h1 className={`text-xl md:text-2xl font-black tracking-tight ${
+                                    userData!.role?.toLowerCase() === 'admin' ? 'text-[#EF4444]' : 
+                                    userData!.role?.toLowerCase() === 'owner' ? 'text-[#FFB941]' : 'text-white'
+                                }`}>
+                                    {userData.username}
+                                </h1>
+                                {(() => {
+                                    const rankIcon = getRankIconByXP(totalXP);
+                                    return rankIcon ? (
+                                        <img src={rankIcon} width={22} height={22} alt="rank icon" className="object-contain" />
+                                    ) : null;
+                                })()}
                             </div>
+                            <p className="text-white/40 text-[14px] md:text-[15px]">@{userData.username.toLowerCase()}</p>
+                        </div>
 
-                            {/* Right: Stats Column */}
-                            <div className="shrink-0 w-full md:w-[240px] flex flex-col items-center md:items-start justify-center space-y-4 md:space-y-5 pt-4 md:pt-0">
-                                {/* Power Display */}
-                                <div className="flex items-center justify-center md:justify-start gap-3">
-                                    <span className="text-sm md:text-base font-bold uppercase tracking-tight text-white/90">Power:</span>
-                                    <div 
-                                        className="flex items-center gap-2"
-                                        onMouseEnter={() => setShowExactPower(true)}
-                                        onMouseLeave={() => setShowExactPower(false)}
-                                    >
-                                        <div 
-                                            className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-black text-primary cursor-pointer hover:bg-white/20 transition-all select-none"
-                                            onClick={() => setShowExactPower(!showExactPower)}
-                                            title="Exact XP"
-                                        >
-                                            Z
-                                        </div>
-                                        <span 
-                                            className="text-xl font-black text-white tracking-tighter cursor-pointer select-none"
-                                            onClick={() => setShowExactPower(!showExactPower)}
-                                        >
-                                            {showExactPower 
-                                                ? userData.power.toLocaleString() 
-                                                : (userData.power >= 1000 ? `${(userData.power / 1000).toFixed(0)}K` : userData.power)
-                                            }
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Sub-Stats / Earning link */}
-                                <div className="space-y-3 flex flex-col items-center md:items-start">
-                                    <div className="flex items-center justify-center md:justify-start gap-3">
-                                        <div className="h-[5px] w-[120px] bg-white/5 rounded-full overflow-hidden">
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${progressToNext}%` }}
-                                                className="h-full bg-white opacity-90 rounded-full"
-                                            />
-                                        </div>
-                                        <span className="text-[11px] font-black text-white/70 min-w-[40px] text-right md:text-left">{progressToNext.toFixed(2)}%</span>
-                                    </div>
-                                    <button className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40 hover:text-primary transition-colors block text-center md:text-left w-full md:w-auto mt-1 md:mt-0">
-                                        Earning History
-                                    </button>
-                                </div>
+                        {/* Joined & Location & Role */}
+                        <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-white/50 text-[13px] md:text-[14px]">
+                            <div className="flex items-center gap-1">
+                                <Calendar size={16} />
+                                <span>Joined {new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
                             </div>
+                            
+                            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] text-[10px] font-bold uppercase tracking-wider border ${
+                                userData!.role?.toLowerCase() === 'owner'
+                                    ? 'text-[#FFB941] bg-[#FFB941]/10 border-[#FFB941]/30'
+                                    : userData!.role?.toLowerCase() === 'admin'
+                                    ? 'text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/30'
+                                    : userData!.role?.toLowerCase() === 'moderator'
+                                    ? 'text-primary bg-primary/10 border-primary/30'
+                                    : 'text-white/50 bg-white/5 border-white/10'
+                            }`}>
+                                {userData!.role?.toLowerCase() === 'user' || !userData!.role ? 'MEMBER' : userData!.role.toUpperCase()}
+                            </div>
+                        </div>
 
+                        {/* Somino Stats (Level/Power) */}
+                        <div className="flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
+                            <div className="flex gap-1.5 items-center">
+                                <span className="text-white/50">Power:</span>
+                                <span className="font-bold text-primary">{userData.power.toLocaleString()}</span>
+                            </div>
+                            <div className="flex gap-1.5 items-center border-l border-white/10 pl-5">
+                                <span className="text-white/50">Level:</span>
+                                <span className="font-bold text-white">{userData.level || 1}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* 2. Content Sections */}
-            <div className="max-w-[1280px] mx-auto w-full px-0 md:px-6 pt-0 pb-6 md:py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
+            <div className="max-w-[1280px] mx-auto w-full px-0 md:px-6 pt-6 pb-6 md:py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
                 {/* Left Side: Rank System & Watchlist */}
                 <div className="lg:col-span-8 flex flex-col gap-8 md:gap-0 md:space-y-8">
