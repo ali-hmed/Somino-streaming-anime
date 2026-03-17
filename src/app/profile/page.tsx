@@ -107,7 +107,12 @@ export default function ProfilePage() {
         formData.append('file', file);
         formData.append('type', type);
 
-        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
+        const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app';
+        // Force localhost if the dev server didn't catch the .env.local update
+        const ACTUAL_API = envUrl.includes('railway') && window.location.hostname === 'localhost' 
+            ? 'http://localhost:3030' 
+            : envUrl;
+        const BASE_URL = ACTUAL_API + '/api/v1';
         const res = await fetch(`${BASE_URL}/upload`, {
             method: 'POST',
             headers: {
@@ -120,7 +125,7 @@ export default function ProfilePage() {
         if (!data.success) throw new Error(data.message || `Failed to upload ${type}`);
 
         // Return full URL
-        const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app');
+        const API_BASE = ACTUAL_API;
         return `${API_BASE}${data.data.url}`;
     };
 
@@ -131,7 +136,12 @@ export default function ProfilePage() {
         setSuccess("");
 
         try {
-            const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
+            const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app';
+            // Force localhost if the dev server didn't catch the .env.local update
+            const ACTUAL_API = envUrl.includes('railway') && window.location.hostname === 'localhost' 
+                ? 'http://localhost:3030' 
+                : envUrl;
+            const BASE_URL = ACTUAL_API + '/api/v1';
 
             let currentAvatar = formData.avatar;
             let currentBanner = formData.banner;
