@@ -18,18 +18,12 @@ export default function ProfilePage() {
     });
 
     const [isLoading, setIsLoading] = useState(false);
-    const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [joinedAt, setJoinedAt] = useState(user?.createdAt || "");
 
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
-    const [bannerFile, setBannerFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState(user?.avatar || "");
     const [bannerPreview, setBannerPreview] = useState(user?.banner || "");
-
-    const avatarInputRef = React.useRef<HTMLInputElement>(null);
-    const bannerInputRef = React.useRef<HTMLInputElement>(null);
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [imageModalTab, setImageModalTab] = useState<'avatar' | 'banner'>('avatar');
@@ -39,26 +33,14 @@ export default function ProfilePage() {
         if (type === 'avatar') {
             setAvatarPreview(url);
             setFormData(prev => ({ ...prev, avatar: url }));
-            setAvatarFile(null);
         } else {
             setBannerPreview(url);
             setFormData(prev => ({ ...prev, banner: url }));
-            setBannerFile(null);
         }
     };
 
     // Use a ref to track if the user has manually changed something to avoid overwriting edits
     const isEdited = React.useRef(false);
-
-    useEffect(() => {
-        const handleTriggerUpload = (e: any) => {
-            const { type } = e.detail;
-            if (type === 'avatar') avatarInputRef.current?.click();
-            else bannerInputRef.current?.click();
-        };
-        window.addEventListener('trigger-file-upload', handleTriggerUpload);
-        return () => window.removeEventListener('trigger-file-upload', handleTriggerUpload);
-    }, []);
 
     useEffect(() => {
         if (!isAuthenticated || !user) {
@@ -121,60 +103,6 @@ export default function ProfilePage() {
         if (e.target.name === 'banner') setBannerPreview(e.target.value);
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'banner') => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        isEdited.current = true;
-        // Validation
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-            setError("Invalid file type. Only JPG, PNG, and WEBP are allowed.");
-            return;
-        }
-
-
-        // Preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            if (type === 'avatar') {
-                setAvatarFile(file);
-                setAvatarPreview(reader.result as string);
-                setFormData(prev => ({ ...prev, avatar: '' })); // URL is empty when using a file
-            } else {
-                setBannerFile(file);
-                setBannerPreview(reader.result as string);
-                setFormData(prev => ({ ...prev, banner: '' })); // URL is empty when using a file
-            }
-        };
-        reader.readAsDataURL(file);
-    };
-
-    const uploadFile = async (file: File, type: 'avatar' | 'banner') => {
-        const uploadFormData = new FormData();
-        uploadFormData.append('file', file);
-        uploadFormData.append('type', type);
-
-        const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app';
-        const ACTUAL_API = envUrl.includes('railway') && typeof window !== 'undefined' && window.location.hostname === 'localhost'
-            ? 'http://localhost:3030'
-            : envUrl;
-        const BASE_URL = ACTUAL_API + '/api/v1';
-        
-        const res = await fetch(`${BASE_URL}/upload`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${user?.token}`
-            },
-            body: uploadFormData
-        });
-
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message || `Failed to upload ${type}`);
-
-        // Return full URL
-        return `${ACTUAL_API}${data.data.url}`;
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -190,21 +118,6 @@ export default function ProfilePage() {
                 : envUrl;
             const BASE_URL = ACTUAL_API + '/api/v1';
 
-            let currentAvatar = formData.avatar;
-            let currentBanner = formData.banner;
-
-            // Upload files first if any
-            if (avatarFile || bannerFile) {
-                setIsUploading(true);
-                if (avatarFile) {
-                    currentAvatar = await uploadFile(avatarFile, 'avatar');
-                }
-                if (bannerFile) {
-                    currentBanner = await uploadFile(bannerFile, 'banner');
-                }
-                setIsUploading(false);
-            }
-
             const res = await fetch(`${BASE_URL}/auth/me`, {
                 method: 'PUT',
                 headers: {
@@ -214,8 +127,8 @@ export default function ProfilePage() {
                 body: JSON.stringify({
                     username: formData.username,
                     email: formData.email,
-                    avatar: currentAvatar,
-                    banner: currentBanner
+                    avatar: formData.avatar,
+                    banner: formData.banner
                 })
             });
 
@@ -353,21 +266,14 @@ export default function ProfilePage() {
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center text-white/20 gap-2">
                                                 <ImageIcon size={24} />
-                                                <span className="text-[11px] font-bold">Upload Banner</span>
+                                                <span className="text-[11px] font-bold">Select Banner</span>
                                             </div>
                                         )}
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <Upload size={16} className="text-white" />
+                                            <ImageIcon size={16} className="text-white" />
                                             <span className="text-[12px] font-bold text-white uppercase tracking-wider">Change Banner</span>
                                         </div>
                                     </div>
-                                    <input
-                                        type="file"
-                                        ref={bannerInputRef}
-                                        className="hidden"
-                                        accept="image/jpeg,image/png,image/webp"
-                                        onChange={(e) => handleFileChange(e, 'banner')}
-                                    />
                                     <div className="pt-2">
                                         <label className="text-[9px] font-bold text-white/20 uppercase tracking-[0.1em] block mb-1">Or provide URL</label>
                                         <input
@@ -393,12 +299,12 @@ export default function ProfilePage() {
                                 <div className="pt-2">
                                     <button
                                         type="submit"
-                                        disabled={isLoading || isUploading}
+                                        disabled={isLoading}
                                         className="w-full font-bold text-[13px] py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                                         style={{ background: "var(--primary)", color: "#0f1012" }}
                                     >
-                                        {isLoading || isUploading
-                                            ? <><Loader2 className="animate-spin" size={16} /> {isUploading ? 'Uploading...' : 'Saving...'}</>
+                                        {isLoading
+                                            ? <><Loader2 className="animate-spin" size={16} /> Saving...</>
                                             : "Save Changes"
                                         }
                                     </button>
@@ -419,16 +325,9 @@ export default function ProfilePage() {
                                         <span className="uppercase text-primary/20">{user.username?.[0]}</span>
                                     )}
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <Upload size={20} className="text-white" />
+                                        <ImageIcon size={20} className="text-white" />
                                     </div>
                                 </div>
-                                <input
-                                    type="file"
-                                    ref={avatarInputRef}
-                                    className="hidden"
-                                    accept="image/jpeg,image/png,image/webp"
-                                    onChange={(e) => handleFileChange(e, 'avatar')}
-                                />
                                 <button
                                     type="button"
                                     className="absolute bottom-1 right-1 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-xl"

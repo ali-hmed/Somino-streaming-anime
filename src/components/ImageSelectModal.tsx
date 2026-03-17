@@ -60,7 +60,7 @@ export default function ImageSelectModal({
                             <h2 className="text-[22px] font-bold text-white text-center tracking-tight mb-5">Select Image</h2>
                             
                             {/* Tabs */}
-                            <div className="flex bg-[#1a1b20] p-1 rounded-xl relative z-10 gap-1">
+                            <div className="flex bg-[#1a1b20] p-1 rounded-xl relative z-10">
                                 <button
                                     onClick={() => setTab('avatar')}
                                     className={`flex-1 py-2.5 text-[14px] font-bold rounded-lg transition-all ${
@@ -80,51 +80,6 @@ export default function ImageSelectModal({
                                     }`}
                                 >
                                     Banner
-                                </button>
-                            </div>
-
-                            {/* Upload from Device Option */}
-                            <div className="mt-4">
-                                <button
-                                    onClick={() => {
-                                        const input = document.createElement('input');
-                                        input.type = 'file';
-                                        input.accept = 'image/*';
-                                        input.onchange = (e) => {
-                                            const file = (e.target as HTMLInputElement).files?.[0];
-                                            if (file) {
-                                                // Create a fake event for the handleFileChange in the parent
-                                                // Or just handle it here if we pass the setter.
-                                                // Better: Pass an onUpload prop.
-                                                onClose();
-                                                const event = { target: { files: [file] } } as any;
-                                                // This is tricky without direct access.
-                                                // I'll add an onUpload callback prop.
-                                            }
-                                        };
-                                        // input.click();
-                                    }}
-                                    className="hidden"
-                                >
-                                </button>
-                                
-                                <p className="text-[11px] text-white/20 font-medium uppercase tracking-[0.05em] mb-2 px-1">Or use your own</p>
-                                <button 
-                                    onClick={() => {
-                                        // We'll trigger the hidden file input in the parent Profile page
-                                        // by looking for it in the DOM or using a shared state.
-                                        // Simplest: use a custom event or just close and let user click the other button.
-                                        // Actually, let's just make the "Upload" button work in the parent.
-                                        onClose();
-                                        const event = new CustomEvent('trigger-file-upload', { detail: { type: tab } });
-                                        window.dispatchEvent(event);
-                                    }}
-                                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-dashed border-white/10 hover:border-primary/50 hover:bg-primary/5 transition-all group"
-                                >
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/40 group-hover:text-primary transition-colors">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                                    </svg>
-                                    <span className="text-[13px] font-bold text-white/60 group-hover:text-white">Upload from Device</span>
                                 </button>
                             </div>
                         </div>
