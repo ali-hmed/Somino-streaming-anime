@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { Loader2, UserCheck, Key, Pencil, Calendar, Image as ImageIcon, Upload } from "lucide-react";
+import { Loader2, UserCheck, Key, Pencil, Calendar, Image as ImageIcon, X, ArrowRight } from "lucide-react";
 import ImageSelectModal from "@/components/ImageSelectModal";
 
 export default function ProfilePage() {
@@ -27,6 +27,16 @@ export default function ProfilePage() {
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [imageModalTab, setImageModalTab] = useState<'avatar' | 'banner'>('avatar');
+
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
+    const [pwLoading, setPwLoading] = useState(false);
+    const [pwError, setPwError] = useState("");
+    const [pwSuccess, setPwSuccess] = useState("");
 
     const handlePresetSelect = (url: string, type: 'avatar' | 'banner') => {
         isEdited.current = true;
@@ -104,6 +114,51 @@ export default function ProfilePage() {
     };
 
 
+    const handlePasswordChange = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setPwError("New passwords do not match");
+            return;
+        }
+
+        setPwLoading(true);
+        setPwError("");
+        setPwSuccess("");
+
+        try {
+            const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app';
+            const ACTUAL_API = envUrl.includes('railway') && window.location.hostname === 'localhost'
+                ? 'http://localhost:3030'
+                : envUrl;
+            const BASE_URL = ACTUAL_API + '/api/v1';
+
+            const res = await fetch(`${BASE_URL}/auth/password`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
+                },
+                body: JSON.stringify({
+                    currentPassword: passwordData.currentPassword,
+                    newPassword: passwordData.newPassword
+                })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                setPwSuccess("Password updated successfully!");
+                setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+                setTimeout(() => setIsPasswordModalOpen(false), 2000);
+            } else {
+                setPwError(data.message || "Failed to update password");
+            }
+        } catch (err: any) {
+            setPwError("Connection error. Please try again.");
+        } finally {
+            setPwLoading(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -162,18 +217,20 @@ export default function ProfilePage() {
     return (
         <>
             {/* Alerts */}
-            {error && (
-                <div className="mb-6 p-4 rounded-xl text-[13px] font-semibold"
-                    style={{ background: "rgba(255,80,80,0.08)", color: "#f87171" }}>
-                    {error}
-                </div>
-            )}
-            {success && (
-                <div className="mb-6 p-4 rounded-xl text-[13px] font-semibold"
-                    style={{ background: "rgba(83,204,184,0.08)", color: "var(--primary)" }}>
-                    {success}
-                </div>
-            )}
+            <div className="max-w-[720px] mx-auto mb-6 space-y-4">
+                {error && (
+                    <div className="p-4 rounded-xl text-[13px] font-semibold"
+                        style={{ background: "rgba(255,80,80,0.08)", color: "#f87171" }}>
+                        {error}
+                    </div>
+                )}
+                {success && (
+                    <div className="p-4 rounded-xl text-[13px] font-semibold"
+                        style={{ background: "rgba(83,204,184,0.08)", color: "var(--primary)" }}>
+                        {success}
+                    </div>
+                )}
+            </div>
 
             {/* Edit Profile Box */}
             <div className="max-w-[720px] mx-auto">
@@ -250,19 +307,32 @@ export default function ProfilePage() {
                                     <div className="relative group">
                                         <input
                                             type="email"
-                                            disabled
+                                            name="email"
+                                            disabled={user.emailChanged}
                                             value={formData.email}
-                                            className="w-full rounded-xl py-3.5 px-5 text-[14px] font-medium outline-none cursor-not-allowed border border-white/[0.03]"
-                                            style={{ background: "#1a1b20", color: "var(--text-muted)" }}
+                                            onChange={handleChange}
+                                            className={`w-full rounded-xl py-3.5 px-5 text-[14px] font-medium outline-none border border-white/[0.03] transition-all ${user.emailChanged ? "cursor-not-allowed text-white/40" : "bg-[#1a1b20] focus:border-primary/30"}`}
+                                            style={{ background: user.emailChanged ? "#1a1b20" : "" }}
                                         />
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-primary/10"
-                                                style={{ color: "var(--primary)" }}>
-                                                <UserCheck size={12} strokeWidth={2.5} />
-                                                <span>Verified</span>
-                                            </div>
+                                            {user.emailChanged ? (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-white/5 opacity-50 text-white/60 border border-white/5">
+                                                    <span>Immutable</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-primary/10"
+                                                    style={{ color: "var(--primary)" }}>
+                                                    <UserCheck size={12} strokeWidth={2.5} />
+                                                    <span>Verified</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
+                                    {!user.emailChanged && (
+                                        <p className="text-[10px] text-orange-400/60 font-medium ml-1">
+                                            Warning: You can only change your email once.
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -294,10 +364,20 @@ export default function ProfilePage() {
                                 </div>
 
                                 <div className="flex items-end">
-                                    <button type="button" className="flex items-center gap-2 group text-[13px] font-bold px-5 py-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all w-full"
-                                        style={{ color: "var(--text-muted)" }}>
-                                        <Key size={15} className="group-hover:rotate-12 transition-transform opacity-40 group-hover:opacity-100" />
-                                        <span className="group-hover:text-white transition-colors">Security & Password</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPasswordModalOpen(true)}
+                                        className="flex items-center justify-between group px-6 py-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all w-full"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-colors">
+                                                <Key size={18} strokeWidth={2.5} />
+                                            </div>
+                                            <span className="text-[14px] font-bold text-white/50 group-hover:text-white transition-colors">Security & Password</span>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                                            <ArrowRight size={14} className="text-white" />
+                                        </div>
                                     </button>
                                 </div>
                             </div>
@@ -333,6 +413,84 @@ export default function ProfilePage() {
                 onClose={() => setIsImageModalOpen(false)}
                 onSelect={handlePresetSelect}
             />
+
+            {/* Password Modal */}
+            {isPasswordModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsPasswordModalOpen(false)} />
+                    <div className="relative w-full max-w-[440px] bg-[#1e1f25] rounded-[32px] border border-white/[0.08] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+                        <div className="p-8">
+                            <h3 className="text-2xl font-black text-white mb-2">Update Password</h3>
+                            <p className="text-white/40 text-[13px] mb-8 font-medium">Reset your account security credentials.</p>
+
+                            {pwError && (
+                                <div className="mb-6 p-3 rounded-xl bg-red-400/5 border border-red-400/10 text-red-400 text-[12px] font-bold">
+                                    {pwError}
+                                </div>
+                            )}
+                            {pwSuccess && (
+                                <div className="mb-6 p-3 rounded-xl bg-primary/5 border border-primary/10 text-primary text-[12px] font-bold">
+                                    {pwSuccess}
+                                </div>
+                            )}
+
+                            <form onSubmit={handlePasswordChange} className="space-y-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Current Password</label>
+                                    <input
+                                        type="password"
+                                        required
+                                        value={passwordData.currentPassword}
+                                        onChange={(e) => setPasswordData(p => ({ ...p, currentPassword: e.target.value }))}
+                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-2xl py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">New Password</label>
+                                    <input
+                                        type="password"
+                                        required
+                                        value={passwordData.newPassword}
+                                        onChange={(e) => setPasswordData(p => ({ ...p, newPassword: e.target.value }))}
+                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-2xl py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
+                                        placeholder="Min 6 characters"
+                                        minLength={6}
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        required
+                                        value={passwordData.confirmPassword}
+                                        onChange={(e) => setPasswordData(p => ({ ...p, confirmPassword: e.target.value }))}
+                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-2xl py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
+                                        placeholder="Must match"
+                                    />
+                                </div>
+
+                                <div className="pt-4 flex gap-3">
+                                    <button
+                                        type="submit"
+                                        disabled={pwLoading}
+                                        className="flex-1 bg-primary text-black h-14 rounded-2xl font-black text-[14px] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        {pwLoading ? <Loader2 className="animate-spin" size={18} /> : "Update Security"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPasswordModalOpen(false)}
+                                        className="px-6 h-14 rounded-2xl font-bold text-white/40 hover:text-white hover:bg-white/5 transition-all text-[14px]"
+                                    >
+                                        Back
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
