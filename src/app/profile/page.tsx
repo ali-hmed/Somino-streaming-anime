@@ -219,13 +219,13 @@ export default function ProfilePage() {
             {/* Alerts */}
             <div className="max-w-[720px] mx-auto mb-6 space-y-4">
                 {error && (
-                    <div className="p-4 rounded-xl text-[13px] font-semibold"
+                    <div className="p-4 rounded-lg text-[13px] font-semibold"
                         style={{ background: "rgba(255,80,80,0.08)", color: "#f87171" }}>
                         {error}
                     </div>
                 )}
                 {success && (
-                    <div className="p-4 rounded-xl text-[13px] font-semibold"
+                    <div className="p-4 rounded-lg text-[13px] font-semibold"
                         style={{ background: "rgba(83,204,184,0.08)", color: "var(--primary)" }}>
                         {success}
                     </div>
@@ -239,7 +239,7 @@ export default function ProfilePage() {
                     <h2 className="text-[18px] md:text-[22px] font-black text-white tracking-tight">Edit Profile</h2>
                 </div>
 
-                <div className="rounded-[24px] overflow-hidden border border-white/[0.05] shadow-2xl" style={{ background: "var(--surface)" }}>
+                <div className="rounded-xl overflow-hidden border border-white/[0.05] shadow-2xl" style={{ background: "var(--surface)" }}>
                     {/* Header: Banner + Avatar Overlap */}
                     <div className="relative">
                         {/* Banner */}
@@ -311,16 +311,16 @@ export default function ProfilePage() {
                                             disabled={user.emailChanged}
                                             value={formData.email}
                                             onChange={handleChange}
-                                            className={`w-full rounded-xl py-3.5 px-5 text-[14px] font-medium outline-none border border-white/[0.03] transition-all ${user.emailChanged ? "cursor-not-allowed text-white/40" : "bg-[#1a1b20] focus:border-primary/30"}`}
+                                            className={`w-full rounded-lg py-3.5 px-5 text-[14px] font-medium outline-none border border-white/[0.03] transition-all ${user.emailChanged ? "cursor-not-allowed text-white/40" : "bg-[#1a1b20] focus:border-primary/30"}`}
                                             style={{ background: user.emailChanged ? "#1a1b20" : "" }}
                                         />
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2">
                                             {user.emailChanged ? (
-                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-white/5 opacity-50 text-white/60 border border-white/5">
+                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-white/5 opacity-50 text-white/60 border border-white/5">
                                                     <span>Immutable</span>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-primary/10"
+                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-primary/10"
                                                     style={{ color: "var(--primary)" }}>
                                                     <UserCheck size={12} strokeWidth={2.5} />
                                                     <span>Verified</span>
@@ -345,7 +345,7 @@ export default function ProfilePage() {
                                         required
                                         value={formData.username}
                                         onChange={handleChange}
-                                        className="w-full rounded-xl py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/[0.03] focus:border-primary/30 transition-all"
+                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/[0.03] focus:border-primary/30 transition-all"
                                         style={{ background: "#1a1b20" }}
                                     />
                                 </div>
@@ -354,7 +354,7 @@ export default function ProfilePage() {
                                     <label className="text-[11px] font-bold uppercase tracking-[0.15em] ml-1" style={{ color: "var(--text-muted)" }}>
                                         Member Since
                                     </label>
-                                    <div className="flex items-center gap-3 rounded-xl py-3.5 px-5 border border-white/[0.03]"
+                                    <div className="flex items-center gap-3 rounded-lg py-3.5 px-5 border border-white/[0.03]"
                                         style={{ background: "#1a1b20" }}>
                                         <Calendar size={16} className="text-primary/40" />
                                         <span className="text-[14px] font-semibold text-white/80">
@@ -367,15 +367,15 @@ export default function ProfilePage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsPasswordModalOpen(true)}
-                                        className="flex items-center justify-between group px-6 py-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all w-full"
+                                        className="flex items-center justify-between group px-6 py-4 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all w-full"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-colors">
+                                            <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-colors">
                                                 <Key size={18} strokeWidth={2.5} />
                                             </div>
                                             <span className="text-[14px] font-bold text-white/50 group-hover:text-white transition-colors">Security & Password</span>
                                         </div>
-                                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
                                             <ArrowRight size={14} className="text-white" />
                                         </div>
                                     </button>
@@ -386,7 +386,7 @@ export default function ProfilePage() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="flex-1 font-black text-[14px] py-4 rounded-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:brightness-110 active:scale-[0.98] shadow-lg shadow-primary/10"
+                                    className="flex-1 font-black text-[14px] py-4 rounded-lg transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:brightness-110 active:scale-[0.98] shadow-lg shadow-primary/10"
                                     style={{ background: "var(--primary)", color: "#000" }}
                                 >
                                     {isLoading
@@ -397,7 +397,7 @@ export default function ProfilePage() {
                                 <button
                                     type="button"
                                     onClick={() => router.back()}
-                                    className="px-8 font-bold text-[14px] py-4 rounded-xl transition-all flex items-center justify-center gap-2 hover:bg-white/5 border border-white/5 text-white/60 hover:text-white"
+                                    className="px-8 font-bold text-[14px] py-4 rounded-lg transition-all flex items-center justify-center gap-2 hover:bg-white/5 border border-white/5 text-white/60 hover:text-white"
                                 >
                                     Cancel
                                 </button>
@@ -418,7 +418,7 @@ export default function ProfilePage() {
             {isPasswordModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsPasswordModalOpen(false)} />
-                    <div className="relative w-full max-w-[440px] bg-[#1e1f25] rounded-[32px] border border-white/[0.08] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+                    <div className="relative w-full max-w-[440px] bg-[#1e1f25] rounded-xl border border-white/[0.08] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
                         <div className="p-8">
                             <h3 className="text-2xl font-black text-white mb-2">Update Password</h3>
                             <p className="text-white/40 text-[13px] mb-8 font-medium">Reset your account security credentials.</p>
@@ -442,7 +442,7 @@ export default function ProfilePage() {
                                         required
                                         value={passwordData.currentPassword}
                                         onChange={(e) => setPasswordData(p => ({ ...p, currentPassword: e.target.value }))}
-                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-2xl py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
+                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-lg py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
                                         placeholder="••••••••"
                                     />
                                 </div>
@@ -453,7 +453,7 @@ export default function ProfilePage() {
                                         required
                                         value={passwordData.newPassword}
                                         onChange={(e) => setPasswordData(p => ({ ...p, newPassword: e.target.value }))}
-                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-2xl py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
+                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-lg py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
                                         placeholder="Min 6 characters"
                                         minLength={6}
                                     />
@@ -465,7 +465,7 @@ export default function ProfilePage() {
                                         required
                                         value={passwordData.confirmPassword}
                                         onChange={(e) => setPasswordData(p => ({ ...p, confirmPassword: e.target.value }))}
-                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-2xl py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
+                                        className="w-full bg-[#15161a] border border-white/[0.05] rounded-lg py-3.5 px-5 text-white text-[14px] outline-none focus:border-primary/40 transition-all font-bold"
                                         placeholder="Must match"
                                     />
                                 </div>
@@ -474,14 +474,14 @@ export default function ProfilePage() {
                                     <button
                                         type="submit"
                                         disabled={pwLoading}
-                                        className="flex-1 bg-primary text-black h-14 rounded-2xl font-black text-[14px] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                        className="flex-1 bg-primary text-black h-14 rounded-lg font-black text-[14px] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                                     >
                                         {pwLoading ? <Loader2 className="animate-spin" size={18} /> : "Update Security"}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setIsPasswordModalOpen(false)}
-                                        className="px-6 h-14 rounded-2xl font-bold text-white/40 hover:text-white hover:bg-white/5 transition-all text-[14px]"
+                                        className="px-6 h-14 rounded-lg font-bold text-white/40 hover:text-white hover:bg-white/5 transition-all text-[14px]"
                                     >
                                         Back
                                     </button>
