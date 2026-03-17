@@ -148,6 +148,7 @@ export default function ImageSelectModal({
                                                                 alt={`${category.anime} ${tab} ${idx}`} 
                                                                 className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
                                                                 loading="lazy"
+                                                                referrerPolicy="no-referrer"
                                                             />
                                                         </motion.button>
                                                     ))}

@@ -275,7 +275,7 @@ const Navbar = ({ className }: NavbarProps) => {
                                     className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden transition-all focus:outline-none"
                                 >
                                     {user?.avatar ? (
-                                        <img src={user.avatar} alt={user?.username} className="w-full h-full object-cover" />
+                                        <img src={user.avatar} alt={user?.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                     ) : (
                                         <span className="text-[13px] font-black uppercase">{user?.username?.[0]}</span>
                                     )}

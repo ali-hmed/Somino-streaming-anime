@@ -245,7 +245,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
                 {/* Avatar */}
                 <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-card overflow-hidden ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
                     {item.avatar ? (
-                        <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" />
+                        <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center">
                             <User className="w-1/2 h-1/2 text-white/5" />
@@ -413,7 +413,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
                     <div className="flex gap-4">
                         <div className="w-12 h-12 rounded-full bg-card flex items-center justify-center shrink-0 overflow-hidden">
                             {mounted && user?.avatar ? (
-                                <img src={user.avatar} className="w-full h-full object-cover" />
+                                <img src={user.avatar} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                             ) : (
                                 <User className="w-6 h-6 text-white/5" />
                             )}

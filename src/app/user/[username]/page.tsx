@@ -297,6 +297,7 @@ const PublicProfilePage = () => {
                         src={userData.banner || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop'} 
                         className="w-full h-full object-cover" 
                         alt="Profile Banner"
+                        referrerPolicy="no-referrer"
                     />
                     {/* Shadow overlay for top navbar visibility if needed */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent h-16" />
@@ -308,7 +309,7 @@ const PublicProfilePage = () => {
                     <div className="absolute -top-[50px] md:-top-[75px] left-4 md:left-6">
                         <div className="w-[100px] h-[100px] md:w-[150px] md:h-[150px] rounded-full border-[4px] border-background bg-sidebar overflow-hidden shadow-xl">
                             {userData.avatar ? (
-                                <img src={userData.avatar} className="w-full h-full object-cover" alt={userData.username} />
+                                <img src={userData.avatar} className="w-full h-full object-cover" alt={userData.username} referrerPolicy="no-referrer" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-zinc-800">
                                     <span className="text-4xl font-black text-white/10 uppercase">{userData.username[0]}</span>

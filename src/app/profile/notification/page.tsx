@@ -212,7 +212,7 @@ export default function NotificationsPage() {
                                         <div className="relative shrink-0">
                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5">
                                                 {n.fromUserId?.avatar ? (
-                                                    <img src={n.fromUserId.avatar} className="w-full h-full object-cover" />
+                                                    <img src={n.fromUserId.avatar} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center">
                                                         <User className="w-1/2 h-1/2 text-white/10" />

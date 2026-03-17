@@ -317,7 +317,7 @@ export default function ProfilePage() {
                                     <div className="relative group overflow-hidden rounded-lg aspect-[3/1] bg-surface-raised border border-white/5 cursor-pointer"
                                          onClick={() => { setImageModalTab('banner'); setIsImageModalOpen(true); }}>
                                         {bannerPreview ? (
-                                            <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                            <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center text-white/20 gap-2">
                                                 <ImageIcon size={24} />
@@ -382,7 +382,7 @@ export default function ProfilePage() {
                                     onClick={() => { setImageModalTab('avatar'); setIsImageModalOpen(true); }}
                                 >
                                     {avatarPreview ? (
-                                        <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                        <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
                                     ) : (
                                         <span className="uppercase text-primary/20">{user.username?.[0]}</span>
                                     )}
