@@ -80,7 +80,7 @@ export default function ProfilePage() {
                     // Only update store if data is actually different to avoid unnecessary re-renders
                     if (fresh.username !== user.username || fresh.avatar !== user.avatar || fresh.banner !== user.banner) {
                         login({ ...fresh, token: user.token });
-                        
+
                         setFormData({
                             username: fresh.username || "",
                             email: fresh.email || "",
@@ -176,41 +176,98 @@ export default function ProfilePage() {
             )}
 
             {/* Edit Profile Box */}
-            <div className="max-w-[680px]">
-                <div className="flex items-center gap-2 mb-4 md:mb-5">
-                    <div className="w-1 h-4 md:h-5 rounded-full" style={{ background: "var(--primary)" }} />
-                    <h2 className="text-[14px] md:text-[17px] font-bold text-white">Edit Profile</h2>
+            <div className="max-w-[720px] mx-auto">
+                <div className="flex items-center gap-2 mb-6">
+                    <div className="w-1.5 h-5 rounded-full" style={{ background: "var(--primary)" }} />
+                    <h2 className="text-[18px] md:text-[22px] font-black text-white tracking-tight">Edit Profile</h2>
                 </div>
 
-                <div className="rounded-xl md:rounded-2xl p-5 md:p-8" style={{ background: "var(--surface)" }}>
-                    <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-10">
+                <div className="rounded-[24px] overflow-hidden border border-white/[0.05] shadow-2xl" style={{ background: "var(--surface)" }}>
+                    {/* Header: Banner + Avatar Overlap */}
+                    <div className="relative">
+                        {/* Banner */}
+                        <div
+                            className="w-full aspect-[3/1] md:aspect-[3.5/1] relative cursor-pointer bg-[#15161a] overflow-hidden group/header"
+                            onClick={() => { setImageModalTab('banner'); setIsImageModalOpen(true); }}
+                        >
+                            {bannerPreview ? (
+                                <img
+                                    src={bannerPreview}
+                                    alt="Banner"
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover/header:scale-105"
+                                    referrerPolicy="no-referrer"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center text-white/10 gap-2">
+                                    <ImageIcon size={32} strokeWidth={1.5} />
+                                    <span className="text-[11px] font-bold uppercase tracking-widest">Select Banner</span>
+                                </div>
+                            )}
+                            <div className="absolute inset-0 bg-black/0 group-hover/header:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover/header:opacity-100">
+                                <div className="flex items-center gap-2 bg-black/60 px-5 py-2.5 rounded-full border border-white/10 backdrop-blur-md translate-y-2 group-hover/header:translate-y-0 transition-transform">
+                                    <Pencil size={14} className="text-white" />
+                                    <span className="text-[11px] font-bold text-white uppercase tracking-wider">Change Header</span>
+                                </div>
+                            </div>
+                        </div>
 
-                        {/* Left: Form */}
-                        <div className="flex-1">
-                            <form onSubmit={handleSubmit} className="space-y-5">
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                                        EMAIL ADDRESS
+                        {/* Avatar Overlap */}
+                        <div className="absolute -bottom-14 left-6 md:left-10 md:-bottom-16">
+                            <div
+                                className="relative group/avatar w-[100px] h-[100px] md:w-[140px] md:h-[140px] rounded-full p-1.5 overflow-hidden transition-transform hover:scale-[1.02]"
+                                style={{ background: "var(--surface)" }}
+                                onClick={() => { setImageModalTab('avatar'); setIsImageModalOpen(true); }}
+                            >
+                                <div className="w-full h-full rounded-full overflow-hidden relative bg-[#1c1d22]">
+                                    {avatarPreview ? (
+                                        <img
+                                            src={avatarPreview}
+                                            alt="Avatar"
+                                            className="w-full h-full object-cover transition-transform group-hover/avatar:scale-110"
+                                            referrerPolicy="no-referrer"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-4xl font-black text-primary/20 bg-primary/5 uppercase">
+                                            {user.username?.[0]}
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center">
+                                        <Pencil size={24} className="text-white" strokeWidth={2.5} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content: Form */}
+                    <div className="p-6 md:p-10 pt-20 md:pt-24">
+                        <form onSubmit={handleSubmit} className="space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-bold uppercase tracking-[0.15em] ml-1" style={{ color: "var(--text-muted)" }}>
+                                        Email Address
                                     </label>
-                                    <input
-                                        type="email"
-                                        disabled
-                                        value={formData.email}
-                                        className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium outline-none cursor-not-allowed"
-                                        style={{ background: "var(--surface-raised)", color: "var(--text-muted)" }}
-                                    />
-                                    <div className="inline-flex mt-1.5">
-                                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-primary/10"
-                                            style={{ color: "var(--primary)" }}>
-                                            <UserCheck size={11} strokeWidth={2.5} />
-                                            <span>Verified</span>
+                                    <div className="relative group">
+                                        <input
+                                            type="email"
+                                            disabled
+                                            value={formData.email}
+                                            className="w-full rounded-xl py-3.5 px-5 text-[14px] font-medium outline-none cursor-not-allowed border border-white/[0.03]"
+                                            style={{ background: "#1a1b20", color: "var(--text-muted)" }}
+                                        />
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-primary/10"
+                                                style={{ color: "var(--primary)" }}>
+                                                <UserCheck size={12} strokeWidth={2.5} />
+                                                <span>Verified</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                                        YOUR NAME
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-bold uppercase tracking-[0.15em] ml-1" style={{ color: "var(--text-muted)" }}>
+                                        Account Name
                                     </label>
                                     <input
                                         type="text"
@@ -218,126 +275,54 @@ export default function ProfilePage() {
                                         required
                                         value={formData.username}
                                         onChange={handleChange}
-                                        className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium text-white outline-none transition-all"
-                                        style={{ background: "var(--surface-raised)" }}
-                                        onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
-                                        onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
+                                        className="w-full rounded-xl py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/[0.03] focus:border-primary/30 transition-all"
+                                        style={{ background: "#1a1b20" }}
                                     />
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                                        JOINED
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-bold uppercase tracking-[0.15em] ml-1" style={{ color: "var(--text-muted)" }}>
+                                        Member Since
                                     </label>
-                                    <div className="flex items-center gap-2 rounded-lg py-2.5 px-4"
-                                        style={{ background: "var(--surface-raised)" }}>
-                                        <Calendar size={14} style={{ color: "var(--text-muted)" }} />
-                                        <span className="text-[13px] font-medium" style={{ color: "var(--text-muted)" }}>
+                                    <div className="flex items-center gap-3 rounded-xl py-3.5 px-5 border border-white/[0.03]"
+                                        style={{ background: "#1a1b20" }}>
+                                        <Calendar size={16} className="text-primary/40" />
+                                        <span className="text-[14px] font-semibold text-white/80">
                                             {formatJoinDate(joinedAt)}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                                        AVATAR URL
-                                    </label>
-                                    <input
-                                        type="url"
-                                        name="avatar"
-                                        value={formData.avatar}
-                                        onChange={handleChange}
-                                        className="w-full rounded-lg py-2.5 px-4 text-[13px] font-medium text-white outline-none transition-all"
-                                        style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}
-                                        placeholder="https://example.com/avatar.jpg"
-                                        onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
-                                        onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
-                                    />
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                                        BANNER
-                                    </label>
-                                    <div className="relative group overflow-hidden rounded-lg aspect-[3/1] bg-surface-raised border border-white/5 cursor-pointer"
-                                        onClick={() => { setImageModalTab('banner'); setIsImageModalOpen(true); }}>
-                                        {bannerPreview ? (
-                                            <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
-                                        ) : (
-                                            <div className="w-full h-full flex flex-col items-center justify-center text-white/20 gap-2">
-                                                <ImageIcon size={24} />
-                                                <span className="text-[11px] font-bold">Select Banner</span>
-                                            </div>
-                                        )}
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <ImageIcon size={16} className="text-white" />
-                                            <span className="text-[12px] font-bold text-white uppercase tracking-wider">Change Banner</span>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <label className="text-[9px] font-bold text-white/20 uppercase tracking-[0.1em] block mb-1">Or provide URL</label>
-                                        <input
-                                            type="url"
-                                            name="banner"
-                                            value={formData.banner}
-                                            onChange={handleChange}
-                                            className="w-full rounded-lg py-2 px-3 text-[12px] font-medium text-white outline-none transition-all placeholder:text-white/10"
-                                            style={{ background: "var(--surface-raised)", border: "1px solid var(--border)" }}
-                                            placeholder="https://example.com/banner.jpg"
-                                            onFocus={e => e.currentTarget.style.borderColor = "var(--primary)"}
-                                            onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
-                                        />
-                                    </div>
-                                </div>
-
-                                <button type="button" className="flex items-center gap-2 text-[11px] md:text-[12px] font-medium transition-colors hover:opacity-100 opacity-60 hover:text-white pt-1"
-                                    style={{ color: "var(--text-muted)" }}>
-                                    <Key size={12} className="md:w-[13px] md:h-[13px]" />
-                                    Change password
-                                </button>
-
-                                <div className="pt-2">
-                                    <button
-                                        type="submit"
-                                        disabled={isLoading}
-                                        className="w-full font-bold text-[13px] py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                                        style={{ background: "var(--primary)", color: "#0f1012" }}
-                                    >
-                                        {isLoading
-                                            ? <><Loader2 className="animate-spin" size={16} /> Saving...</>
-                                            : "Save Changes"
-                                        }
+                                <div className="flex items-end">
+                                    <button type="button" className="flex items-center gap-2 group text-[13px] font-bold px-5 py-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all w-full"
+                                        style={{ color: "var(--text-muted)" }}>
+                                        <Key size={15} className="group-hover:rotate-12 transition-transform opacity-40 group-hover:opacity-100" />
+                                        <span className="group-hover:text-white transition-colors">Security & Password</span>
                                     </button>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
 
-                        {/* Right: Avatar */}
-                        <div className="flex-shrink-0 flex md:block justify-center">
-                            <div className="relative group">
-                                <div
-                                    className="w-[100px] h-[100px] md:w-[130px] md:h-[130px] rounded-full overflow-hidden flex items-center justify-center text-4xl md:text-5xl font-black cursor-pointer bg-surface-raised border-2 border-white/5"
-                                    onClick={() => { setImageModalTab('avatar'); setIsImageModalOpen(true); }}
+                            <div className="pt-4 flex flex-col md:flex-row gap-4">
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="flex-1 font-black text-[14px] py-4 rounded-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:brightness-110 active:scale-[0.98] shadow-lg shadow-primary/10"
+                                    style={{ background: "var(--primary)", color: "#000" }}
                                 >
-                                    {avatarPreview ? (
-                                        <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
-                                    ) : (
-                                        <span className="uppercase text-primary/20">{user.username?.[0]}</span>
-                                    )}
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <ImageIcon size={20} className="text-white" />
-                                    </div>
-                                </div>
+                                    {isLoading
+                                        ? <><Loader2 className="animate-spin" size={18} /> Processing...</>
+                                        : "Save Profile Changes"
+                                    }
+                                </button>
                                 <button
                                     type="button"
-                                    className="absolute bottom-1 right-1 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-xl"
-                                    style={{ background: "var(--primary)", color: "#0f1012" }}
-                                    onClick={() => { setImageModalTab('avatar'); setIsImageModalOpen(true); }}
+                                    onClick={() => router.back()}
+                                    className="px-8 font-bold text-[14px] py-4 rounded-xl transition-all flex items-center justify-center gap-2 hover:bg-white/5 border border-white/5 text-white/60 hover:text-white"
                                 >
-                                    <Pencil size={14} strokeWidth={2.5} className="md:w-[16px] md:h-[16px]" />
+                                    Cancel
                                 </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
