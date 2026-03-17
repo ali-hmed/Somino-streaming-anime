@@ -4,6 +4,8 @@ import { persist } from 'zustand/middleware';
 interface User {
     _id: string;
     username: string;
+    displayName?: string;
+    aboutMe?: string;
     email: string;
     avatar?: string;
     banner?: string;
@@ -15,6 +17,7 @@ interface User {
     watchHistory?: any[];
     createdAt?: string;
     isWatchlistPublic?: boolean;
+    emailChanged?: boolean;
     token: string;
 }
 

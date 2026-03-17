@@ -12,6 +12,8 @@ export default function ProfilePage() {
 
     const [formData, setFormData] = useState({
         username: user?.username || "",
+        displayName: user?.displayName || "",
+        aboutMe: user?.aboutMe || "",
         email: user?.email || "",
         avatar: user?.avatar || "",
         banner: user?.banner || "",
@@ -63,6 +65,8 @@ export default function ProfilePage() {
         if (!isEdited.current) {
             setFormData({
                 username: user.username || "",
+                displayName: user.displayName || "",
+                aboutMe: user.aboutMe || "",
                 email: user.email || "",
                 avatar: user.avatar || "",
                 banner: user.banner || "",
@@ -88,11 +92,13 @@ export default function ProfilePage() {
                 if (data.success && data.data && !isEdited.current) {
                     const fresh = data.data;
                     // Only update store if data is actually different to avoid unnecessary re-renders
-                    if (fresh.username !== user.username || fresh.avatar !== user.avatar || fresh.banner !== user.banner) {
+                    if (fresh.username !== user.username || fresh.avatar !== user.avatar || fresh.banner !== user.banner || fresh.displayName !== user.displayName || fresh.aboutMe !== user.aboutMe) {
                         login({ ...fresh, token: user.token });
 
                         setFormData({
                             username: fresh.username || "",
+                            displayName: fresh.displayName || "",
+                            aboutMe: fresh.aboutMe || "",
                             email: fresh.email || "",
                             avatar: fresh.avatar || "",
                             banner: fresh.banner || "",
@@ -106,7 +112,7 @@ export default function ProfilePage() {
             .catch(() => { });
     }, [isAuthenticated, user?._id]); // Only re-run if auth status or user ID changes
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         isEdited.current = true;
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (e.target.name === 'avatar') setAvatarPreview(e.target.value);
@@ -181,6 +187,8 @@ export default function ProfilePage() {
                 },
                 body: JSON.stringify({
                     username: formData.username,
+                    displayName: formData.displayName,
+                    aboutMe: formData.aboutMe,
                     email: formData.email,
                     avatar: formData.avatar,
                     banner: formData.banner
@@ -217,7 +225,7 @@ export default function ProfilePage() {
     return (
         <>
             {/* Alerts */}
-            <div className="max-w-[720px] mx-auto mb-6 space-y-4">
+            <div className="max-w-[640px] mx-auto mb-6 space-y-4">
                 {error && (
                     <div className="p-4 rounded-lg text-[13px] font-semibold"
                         style={{ background: "rgba(255,80,80,0.08)", color: "#f87171" }}>
@@ -233,7 +241,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Edit Profile Box */}
-            <div className="max-w-[720px] mx-auto">
+            <div className="max-w-[640px] mx-auto">
                 <div className="flex items-center gap-2 mb-6">
                     <div className="w-1.5 h-5 rounded-full" style={{ background: "var(--primary)" }} />
                     <h2 className="text-[18px] md:text-[22px] font-black text-white tracking-tight">Edit Profile</h2>
@@ -297,47 +305,27 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Content: Form */}
-                    <div className="p-6 md:p-10 pt-20 md:pt-24">
-                        <form onSubmit={handleSubmit} className="space-y-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-6 md:p-10 pt-16 md:pt-20">
+                        <form onSubmit={handleSubmit} className="space-y-10">
+                            {/* Personal Info */}
+                            <div className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-[11px] font-bold uppercase tracking-[0.15em] ml-1" style={{ color: "var(--text-muted)" }}>
-                                        Email Address
+                                    <label className="text-[14px] font-bold text-white ml-1">
+                                        Display Name
                                     </label>
-                                    <div className="relative group">
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            disabled={user.emailChanged}
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className={`w-full rounded-lg py-3.5 px-5 text-[14px] font-medium outline-none border border-white/[0.03] transition-all ${user.emailChanged ? "cursor-not-allowed text-white/40" : "bg-[#1a1b20] focus:border-primary/30"}`}
-                                            style={{ background: user.emailChanged ? "#1a1b20" : "" }}
-                                        />
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                            {user.emailChanged ? (
-                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-white/5 opacity-50 text-white/60 border border-white/5">
-                                                    <span>Immutable</span>
-                                                </div>
-                                            ) : (
-                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-primary/10"
-                                                    style={{ color: "var(--primary)" }}>
-                                                    <UserCheck size={12} strokeWidth={2.5} />
-                                                    <span>Verified</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {!user.emailChanged && (
-                                        <p className="text-[10px] text-orange-400/60 font-medium ml-1">
-                                            Warning: You can only change your email once.
-                                        </p>
-                                    )}
+                                    <input
+                                        type="text"
+                                        name="displayName"
+                                        placeholder="Add your display name"
+                                        value={formData.displayName}
+                                        onChange={handleChange}
+                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all placeholder:text-white/20"
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[11px] font-bold uppercase tracking-[0.15em] ml-1" style={{ color: "var(--text-muted)" }}>
-                                        Account Name
+                                    <label className="text-[14px] font-bold text-white ml-1">
+                                        Username
                                     </label>
                                     <input
                                         type="text"
@@ -345,44 +333,101 @@ export default function ProfilePage() {
                                         required
                                         value={formData.username}
                                         onChange={handleChange}
-                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/[0.03] focus:border-primary/30 transition-all"
-                                        style={{ background: "#1a1b20" }}
+                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[11px] font-bold uppercase tracking-[0.15em] ml-1" style={{ color: "var(--text-muted)" }}>
-                                        Member Since
+                                    <label className="text-[14px] font-bold text-white ml-1">
+                                        About Me
                                     </label>
-                                    <div className="flex items-center gap-3 rounded-lg py-3.5 px-5 border border-white/[0.03]"
-                                        style={{ background: "#1a1b20" }}>
-                                        <Calendar size={16} className="text-primary/40" />
-                                        <span className="text-[14px] font-semibold text-white/80">
-                                            {formatJoinDate(joinedAt)}
-                                        </span>
-                                    </div>
+                                    <textarea
+                                        name="aboutMe"
+                                        rows={4}
+                                        placeholder="Tell us about yourself..."
+                                        value={formData.aboutMe}
+                                        onChange={handleChange}
+                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all resize-none placeholder:text-white/20"
+                                    />
                                 </div>
 
-                                <div className="flex items-end">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsPasswordModalOpen(true)}
-                                        className="flex items-center justify-between group px-6 py-4 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all w-full"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-colors">
-                                                <Key size={18} strokeWidth={2.5} />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
+                                    <div className="space-y-2">
+                                        <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 ml-1">
+                                            Email Address
+                                        </label>
+                                        <div className="relative group">
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                disabled={user.emailChanged}
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                className={`w-full rounded-lg py-3.5 px-5 text-[14px] font-medium outline-none border border-white/5 transition-all ${user.emailChanged ? "cursor-not-allowed text-white/20" : "bg-[#121212] focus:border-white/20"}`}
+                                                style={{ background: user.emailChanged ? "#0a0a0a" : "" }}
+                                            />
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                                {user.emailChanged ? (
+                                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-white/5 text-white/40 border border-white/5">
+                                                        <span>Immutable</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-primary/10 text-primary">
+                                                        <UserCheck size={12} strokeWidth={2.5} />
+                                                        <span>Verified</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <span className="text-[14px] font-bold text-white/50 group-hover:text-white transition-colors">Security & Password</span>
                                         </div>
-                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                                            <ArrowRight size={14} className="text-white" />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 ml-1">
+                                            Member Since
+                                        </label>
+                                        <div className="flex items-center gap-3 rounded-lg py-3.5 px-5 border border-white/5 bg-[#121212]">
+                                            <Calendar size={16} className="text-white/20" />
+                                            <span className="text-[14px] font-semibold text-white/60">
+                                                {formatJoinDate(joinedAt)}
+                                            </span>
                                         </div>
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="pt-4 flex flex-col md:flex-row gap-4">
+                            {/* Password Section */}
+                            <div className="space-y-6 pt-6 border-t border-white/5">
+                                <div className="space-y-1">
+                                    <h3 className="text-[16px] font-bold text-white">Password</h3>
+                                    <p className="text-[13px] text-white/40 font-medium">Changing your password will sign you out from all other known devices.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsPasswordModalOpen(true)}
+                                    className="px-6 py-2.5 rounded-lg bg-white text-black text-[14px] font-bold hover:bg-white/90 transition-all active:scale-95"
+                                >
+                                    Change Password
+                                </button>
+                            </div>
+
+                            {/* Account Removal */}
+                            <div className="space-y-6 pt-6 border-t border-white/5">
+                                <div className="space-y-1">
+                                    <h3 className="text-[16px] font-bold text-white">Account Removal</h3>
+                                    <p className="text-[13px] text-white/40 font-medium">
+                                        Your account will be permanently deleted 7 days after requesting removal. 
+                                        If you sign in again before the 7 days are up, the deletion will be cancelled.
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="px-6 py-2.5 rounded-lg bg-[#1a1a1a] border border-red-500/10 text-red-500/80 text-[14px] font-bold hover:bg-red-500/[0.05] transition-all active:scale-95"
+                                >
+                                    Delete Account
+                                </button>
+                            </div>
+
+                            <div className="pt-8 flex flex-col md:flex-row gap-4 border-t border-white/5">
                                 <button
                                     type="submit"
                                     disabled={isLoading}
