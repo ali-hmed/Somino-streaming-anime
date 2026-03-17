@@ -35,6 +35,7 @@ export default function ProfilePage() {
     const [imageModalTab, setImageModalTab] = useState<'avatar' | 'banner'>('avatar');
 
     const handlePresetSelect = (url: string, type: 'avatar' | 'banner') => {
+        isEdited.current = true;
         if (type === 'avatar') {
             setAvatarPreview(url);
             setFormData(prev => ({ ...prev, avatar: url }));
@@ -46,47 +47,75 @@ export default function ProfilePage() {
         }
     };
 
+    // Use a ref to track if the user has manually changed something to avoid overwriting edits
+    const isEdited = React.useRef(false);
+
+    useEffect(() => {
+        const handleTriggerUpload = (e: any) => {
+            const { type } = e.detail;
+            if (type === 'avatar') avatarInputRef.current?.click();
+            else bannerInputRef.current?.click();
+        };
+        window.addEventListener('trigger-file-upload', handleTriggerUpload);
+        return () => window.removeEventListener('trigger-file-upload', handleTriggerUpload);
+    }, []);
+
     useEffect(() => {
         if (!isAuthenticated || !user) {
             router.push("/");
             return;
         }
 
-        setFormData({
-            username: user.username || "",
-            email: user.email || "",
-            avatar: user.avatar || "",
-            banner: user.banner || "",
-        });
-        setJoinedAt(user.createdAt || "");
-        setAvatarPreview(user.avatar || "");
-        setBannerPreview(user.banner || "");
+        // Only initialize fields if it's the first load or user ID changed
+        // and NOT if the user is currently editing
+        if (!isEdited.current) {
+            setFormData({
+                username: user.username || "",
+                email: user.email || "",
+                avatar: user.avatar || "",
+                banner: user.banner || "",
+            });
+            setJoinedAt(user.createdAt || "");
+            setAvatarPreview(user.avatar || "");
+            setBannerPreview(user.banner || "");
+        }
 
         if (!user.token) return;
-        const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
+
+        const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app';
+        const ACTUAL_API = envUrl.includes('railway') && typeof window !== 'undefined' && window.location.hostname === 'localhost'
+            ? 'http://localhost:3030'
+            : envUrl;
+        const BASE_URL = ACTUAL_API + '/api/v1';
+
         fetch(`${BASE_URL}/auth/me`, {
             headers: { 'Authorization': `Bearer ${user.token}` }
         })
             .then(r => r.json())
             .then(data => {
-                if (data.success && data.data) {
+                if (data.success && data.data && !isEdited.current) {
                     const fresh = data.data;
-                    login({ ...fresh, token: user.token });
-                    setFormData({
-                        username: fresh.username || user.username || "",
-                        email: fresh.email || user.email || "",
-                        avatar: fresh.avatar || user.avatar || "",
-                        banner: fresh.banner || user.banner || "",
-                    });
-                    setJoinedAt(fresh.createdAt || user.createdAt || "");
-                    setAvatarPreview(fresh.avatar || user.avatar || "");
-                    setBannerPreview(fresh.banner || user.banner || "");
+                    // Only update store if data is actually different to avoid unnecessary re-renders
+                    if (fresh.username !== user.username || fresh.avatar !== user.avatar || fresh.banner !== user.banner) {
+                        login({ ...fresh, token: user.token });
+                        
+                        setFormData({
+                            username: fresh.username || "",
+                            email: fresh.email || "",
+                            avatar: fresh.avatar || "",
+                            banner: fresh.banner || "",
+                        });
+                        setJoinedAt(fresh.createdAt || "");
+                        setAvatarPreview(fresh.avatar || "");
+                        setBannerPreview(fresh.banner || "");
+                    }
                 }
             })
             .catch(() => { });
-    }, [isAuthenticated, user, login, router]);
+    }, [isAuthenticated, user?._id]); // Only re-run if auth status or user ID changes
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        isEdited.current = true;
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (e.target.name === 'avatar') setAvatarPreview(e.target.value);
         if (e.target.name === 'banner') setBannerPreview(e.target.value);
@@ -96,6 +125,7 @@ export default function ProfilePage() {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        isEdited.current = true;
         // Validation
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
@@ -110,39 +140,40 @@ export default function ProfilePage() {
             if (type === 'avatar') {
                 setAvatarFile(file);
                 setAvatarPreview(reader.result as string);
+                setFormData(prev => ({ ...prev, avatar: '' })); // URL is empty when using a file
             } else {
                 setBannerFile(file);
                 setBannerPreview(reader.result as string);
+                setFormData(prev => ({ ...prev, banner: '' })); // URL is empty when using a file
             }
         };
         reader.readAsDataURL(file);
     };
 
     const uploadFile = async (file: File, type: 'avatar' | 'banner') => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('type', type);
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
+        uploadFormData.append('type', type);
 
         const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app';
-        // Force localhost if the dev server didn't catch the .env.local update
-        const ACTUAL_API = envUrl.includes('railway') && window.location.hostname === 'localhost' 
-            ? 'http://localhost:3030' 
+        const ACTUAL_API = envUrl.includes('railway') && typeof window !== 'undefined' && window.location.hostname === 'localhost'
+            ? 'http://localhost:3030'
             : envUrl;
         const BASE_URL = ACTUAL_API + '/api/v1';
+        
         const res = await fetch(`${BASE_URL}/upload`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${user?.token}`
             },
-            body: formData
+            body: uploadFormData
         });
 
         const data = await res.json();
         if (!data.success) throw new Error(data.message || `Failed to upload ${type}`);
 
         // Return full URL
-        const API_BASE = ACTUAL_API;
-        return `${API_BASE}${data.data.url}`;
+        return `${ACTUAL_API}${data.data.url}`;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -154,8 +185,8 @@ export default function ProfilePage() {
         try {
             const envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app';
             // Force localhost if the dev server didn't catch the .env.local update
-            const ACTUAL_API = envUrl.includes('railway') && window.location.hostname === 'localhost' 
-                ? 'http://localhost:3030' 
+            const ACTUAL_API = envUrl.includes('railway') && window.location.hostname === 'localhost'
+                ? 'http://localhost:3030'
                 : envUrl;
             const BASE_URL = ACTUAL_API + '/api/v1';
 
@@ -196,6 +227,7 @@ export default function ProfilePage() {
                     ...data.data,
                     token: user?.token || "",
                 });
+                isEdited.current = false;
             } else {
                 setError(data.message || "Failed to update profile");
             }
@@ -315,7 +347,7 @@ export default function ProfilePage() {
                                         BANNER
                                     </label>
                                     <div className="relative group overflow-hidden rounded-lg aspect-[3/1] bg-surface-raised border border-white/5 cursor-pointer"
-                                         onClick={() => { setImageModalTab('banner'); setIsImageModalOpen(true); }}>
+                                        onClick={() => { setImageModalTab('banner'); setIsImageModalOpen(true); }}>
                                         {bannerPreview ? (
                                             <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
                                         ) : (
@@ -411,15 +443,11 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            <ImageSelectModal 
+            <ImageSelectModal
                 isOpen={isImageModalOpen}
                 initialTab={imageModalTab}
                 onClose={() => setIsImageModalOpen(false)}
                 onSelect={handlePresetSelect}
-                onCustomUploadClick={(type) => {
-                    if (type === 'avatar') avatarInputRef.current?.click();
-                    else bannerInputRef.current?.click();
-                }}
             />
         </>
     );
