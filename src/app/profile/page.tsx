@@ -305,10 +305,10 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Content: Form */}
-                    <div className="p-6 md:p-10 pt-16 md:pt-20">
-                        <form onSubmit={handleSubmit} className="space-y-10">
+                    <div className="p-6 md:p-8 pt-12 md:pt-16">
+                        <form onSubmit={handleSubmit} className="space-y-8">
                             {/* Personal Info */}
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-[14px] font-bold text-white ml-1">
                                         Display Name
@@ -319,7 +319,7 @@ export default function ProfilePage() {
                                         placeholder="Add your display name"
                                         value={formData.displayName}
                                         onChange={handleChange}
-                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all placeholder:text-white/20"
+                                        className="w-full rounded-lg py-2.5 px-4 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all placeholder:text-white/20"
                                     />
                                 </div>
 
@@ -333,7 +333,7 @@ export default function ProfilePage() {
                                         required
                                         value={formData.username}
                                         onChange={handleChange}
-                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all"
+                                        className="w-full rounded-lg py-2.5 px-4 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all"
                                     />
                                 </div>
 
@@ -347,7 +347,7 @@ export default function ProfilePage() {
                                         placeholder="Tell us about yourself..."
                                         value={formData.aboutMe}
                                         onChange={handleChange}
-                                        className="w-full rounded-lg py-3.5 px-5 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all resize-none placeholder:text-white/20"
+                                        className="w-full rounded-lg py-2.5 px-4 text-[14px] font-medium text-white outline-none border border-white/5 bg-[#121212] focus:border-white/20 transition-all resize-none placeholder:text-white/20"
                                     />
                                 </div>
 
@@ -363,7 +363,7 @@ export default function ProfilePage() {
                                                 disabled={user.emailChanged}
                                                 value={formData.email}
                                                 onChange={handleChange}
-                                                className={`w-full rounded-lg py-3.5 px-5 text-[14px] font-medium outline-none border border-white/5 transition-all ${user.emailChanged ? "cursor-not-allowed text-white/20" : "bg-[#121212] focus:border-white/20"}`}
+                                                className={`w-full rounded-lg py-2.5 px-4 text-[14px] font-medium outline-none border border-white/5 transition-all ${user.emailChanged ? "cursor-not-allowed text-white/20" : "bg-[#121212] focus:border-white/20"}`}
                                                 style={{ background: user.emailChanged ? "#0a0a0a" : "" }}
                                             />
                                             <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -385,7 +385,7 @@ export default function ProfilePage() {
                                         <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 ml-1">
                                             Member Since
                                         </label>
-                                        <div className="flex items-center gap-3 rounded-lg py-3.5 px-5 border border-white/5 bg-[#121212]">
+                                        <div className="flex items-center gap-3 rounded-lg py-2.5 px-4 border border-white/5 bg-[#121212]">
                                             <Calendar size={16} className="text-white/20" />
                                             <span className="text-[14px] font-semibold text-white/60">
                                                 {formatJoinDate(joinedAt)}
@@ -427,22 +427,22 @@ export default function ProfilePage() {
                                 </button>
                             </div>
 
-                            <div className="pt-8 flex flex-col md:flex-row gap-4 border-t border-white/5">
+                            <div className="pt-6 flex flex-col md:flex-row gap-4 border-t border-white/5">
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="flex-1 font-black text-[14px] py-4 rounded-lg transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:brightness-110 active:scale-[0.98] shadow-lg shadow-primary/10"
+                                    className="flex-1 font-black text-[14px] py-2.5 rounded-lg transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:brightness-110 active:scale-[0.98] shadow-lg shadow-primary/10"
                                     style={{ background: "var(--primary)", color: "#000" }}
                                 >
                                     {isLoading
                                         ? <><Loader2 className="animate-spin" size={18} /> Processing...</>
-                                        : "Save Profile Changes"
+                                        : "Save Changes"
                                     }
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => router.back()}
-                                    className="px-8 font-bold text-[14px] py-4 rounded-lg transition-all flex items-center justify-center gap-2 hover:bg-white/5 border border-white/5 text-white/60 hover:text-white"
+                                    className="px-8 font-bold text-[14px] py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 hover:bg-white/5 border border-white/5 text-white/60 hover:text-white"
                                 >
                                     Cancel
                                 </button>
