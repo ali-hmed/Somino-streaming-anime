@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { Loader2, UserCheck, Key, Pencil, Calendar, Image as ImageIcon, Upload } from "lucide-react";
+import ImageSelectModal from "@/components/ImageSelectModal";
 
 export default function ProfilePage() {
     const { user, isAuthenticated, login } = useAuthStore();
@@ -29,6 +30,21 @@ export default function ProfilePage() {
 
     const avatarInputRef = React.useRef<HTMLInputElement>(null);
     const bannerInputRef = React.useRef<HTMLInputElement>(null);
+
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const [imageModalTab, setImageModalTab] = useState<'avatar' | 'banner'>('avatar');
+
+    const handlePresetSelect = (url: string, type: 'avatar' | 'banner') => {
+        if (type === 'avatar') {
+            setAvatarPreview(url);
+            setFormData(prev => ({ ...prev, avatar: url }));
+            setAvatarFile(null);
+        } else {
+            setBannerPreview(url);
+            setFormData(prev => ({ ...prev, banner: url }));
+            setBannerFile(null);
+        }
+    };
 
     useEffect(() => {
         if (!isAuthenticated || !user) {
@@ -299,7 +315,7 @@ export default function ProfilePage() {
                                         BANNER
                                     </label>
                                     <div className="relative group overflow-hidden rounded-lg aspect-[3/1] bg-surface-raised border border-white/5 cursor-pointer"
-                                         onClick={() => bannerInputRef.current?.click()}>
+                                         onClick={() => { setImageModalTab('banner'); setIsImageModalOpen(true); }}>
                                         {bannerPreview ? (
                                             <img src={bannerPreview} alt="Banner" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                                         ) : (
@@ -363,7 +379,7 @@ export default function ProfilePage() {
                             <div className="relative group">
                                 <div
                                     className="w-[100px] h-[100px] md:w-[130px] md:h-[130px] rounded-full overflow-hidden flex items-center justify-center text-4xl md:text-5xl font-black cursor-pointer bg-surface-raised border-2 border-white/5"
-                                    onClick={() => avatarInputRef.current?.click()}
+                                    onClick={() => { setImageModalTab('avatar'); setIsImageModalOpen(true); }}
                                 >
                                     {avatarPreview ? (
                                         <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
@@ -385,7 +401,7 @@ export default function ProfilePage() {
                                     type="button"
                                     className="absolute bottom-1 right-1 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-xl"
                                     style={{ background: "var(--primary)", color: "#0f1012" }}
-                                    onClick={() => avatarInputRef.current?.click()}
+                                    onClick={() => { setImageModalTab('avatar'); setIsImageModalOpen(true); }}
                                 >
                                     <Pencil size={14} strokeWidth={2.5} className="md:w-[16px] md:h-[16px]" />
                                 </button>
@@ -394,6 +410,17 @@ export default function ProfilePage() {
                     </div>
                 </div>
             </div>
+
+            <ImageSelectModal 
+                isOpen={isImageModalOpen}
+                initialTab={imageModalTab}
+                onClose={() => setIsImageModalOpen(false)}
+                onSelect={handlePresetSelect}
+                onCustomUploadClick={(type) => {
+                    if (type === 'avatar') avatarInputRef.current?.click();
+                    else bannerInputRef.current?.click();
+                }}
+            />
         </>
     );
 }
