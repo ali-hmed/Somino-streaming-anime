@@ -382,12 +382,12 @@ export default function ProfilePage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 ml-1">
+                                        <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-white/40 ml-1">
                                             Member Since
                                         </label>
                                         <div className="flex items-center gap-3 rounded-lg py-2.5 px-4 border border-white/5 bg-[#121212]">
                                             <Calendar size={16} className="text-white/20" />
-                                            <span className="text-[14px] font-semibold text-white/60">
+                                            <span className="text-[12px] font-semibold text-white/60">
                                                 {formatJoinDate(joinedAt)}
                                             </span>
                                         </div>
