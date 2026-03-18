@@ -306,7 +306,9 @@ const PublicProfilePage = () => {
                                 <Calendar size={16} />
                                 <span>Joined {new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
                             </div>
-                            <div className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-bold uppercase border border-white/10">{userData.role || 'MEMBER'}</div>
+                            <div className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-bold uppercase border border-white/10">
+                                {userData.role === 'user' || !userData.role ? 'MEMBER' : userData.role.toUpperCase()}
+                            </div>
                         </div>
 
                         <div className="flex gap-5 text-sm">
