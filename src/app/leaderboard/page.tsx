@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { 
-    Search, 
-    Trophy, 
-    Medal, 
-    Crown, 
-    Loader2, 
-    ChevronLeft, 
-    ChevronRight, 
-    TrendingUp, 
+import {
+    Search,
+    Trophy,
+    Medal,
+    Crown,
+    Loader2,
+    ChevronLeft,
+    ChevronRight,
+    TrendingUp,
     Zap,
     Users
 } from 'lucide-react';
@@ -96,7 +96,7 @@ const LeaderboardPage = () => {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div className="space-y-2">
                         <div className="flex items-center gap-3 text-primary mb-1">
-                            <Trophy size={20} className="text-yellow-500" />
+                            <Trophy size={15} className="text-yellow-500" />
                             <span className="text-[11px] font-black uppercase tracking-[0.2em]">Hall of Fame</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black tracking-tight">Community <span className="text-white/40">Leaderboard</span></h1>
@@ -104,19 +104,19 @@ const LeaderboardPage = () => {
 
                     {/* Search Bar */}
                     <div className="flex flex-col md:flex-row gap-4 items-center">
-                        <form onSubmit={handleSearch} className="relative group w-full md:w-80">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={18} />
-                            <input 
-                                type="text" 
+                        <form onSubmit={handleSearch} className="relative group w-full md:w-60">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={12} />
+                            <input
+                                type="text"
                                 placeholder="Find a user..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-white/[0.03] border border-white/[0.05] rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:border-primary/50 focus:bg-white/[0.05] transition-all text-sm font-medium"
+                                className="w-full bg-white/[0.03] border border-white/[0.05] rounded-2xl py-1 pl-10 pr-4 outline-none focus:border-primary/50 focus:bg-white/[0.05] transition-all text-sm font-medium"
                             />
                         </form>
-                        
+
                         {currentUser && userRank && (
-                            <button 
+                            <button
                                 onClick={async () => {
                                     const targetPage = Math.ceil(userRank.rank / 50);
                                     if (targetPage !== page) {
@@ -132,7 +132,7 @@ const LeaderboardPage = () => {
                                         }
                                     }, 1000);
                                 }}
-                                className="px-6 py-3.5 rounded-2xl bg-primary/10 text-primary font-black text-xs uppercase tracking-widest hover:bg-primary/20 transition-all active:scale-95 border border-primary/20"
+                                className="px-4 py-1.5 rounded-2xl bg-primary/10 text-primary font-black text-xs uppercase tracking-widest hover:bg-primary/20 transition-all active:scale-95 border border-primary/20"
                             >
                                 Jump to My Rank
                             </button>
@@ -145,7 +145,7 @@ const LeaderboardPage = () => {
                     <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 mb-16 items-end">
                         {/* Rank #2 */}
                         {top3[1] && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 }}
@@ -157,7 +157,7 @@ const LeaderboardPage = () => {
 
                         {/* Rank #1 */}
                         {top3[0] && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 className="order-2"
@@ -168,7 +168,7 @@ const LeaderboardPage = () => {
 
                         {/* Rank #3 */}
                         {top3[2] && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
@@ -182,27 +182,27 @@ const LeaderboardPage = () => {
 
                 {/* User's own rank card if logged in */}
                 {currentUser && userRank && !searchQuery && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="mb-10 p-6 rounded-3xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/10 flex flex-col md:flex-row md:items-center justify-between gap-6"
+                        className="mb-10 p-4 rounded-xl bg-[#0d0d0d] border border-white/[0.03] flex flex-row items-center justify-between gap-4"
                     >
-                        <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center font-black text-primary text-xl shadow-lg shadow-primary/10">
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center font-black text-primary text-base shadow-lg shadow-primary/5 shrink-0">
                                 #{userRank.rank}
                             </div>
-                            <div>
-                                <h3 className="text-lg font-black text-white">Your Ranking</h3>
-                                <p className="text-sm text-white/50 font-medium">Ranked #{userRank.rank} out of {userRank.totalUsers.toLocaleString()} users</p>
+                            <div className="min-w-0">
+                                <h3 className="text-sm font-black text-white truncate">Your Ranking</h3>
+                                <p className="text-[11px] text-white/40 font-bold truncate">Ranked #{userRank.rank} of {userRank.totalUsers.toLocaleString()}</p>
                             </div>
                         </div>
 
                         {userRank.nextTarget && (
-                            <div className="flex flex-col items-end">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-primary/50 mb-1">Target: Rank #{userRank.nextTarget.rank}</span>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-xl font-black text-white">{userRank.nextTarget.pointsNeeded.toLocaleString()}</span>
-                                    <span className="text-xs font-bold text-white/30">points to go</span>
+                            <div className="flex flex-col items-end shrink-0">
+                                <span className="text-[9px] font-black uppercase tracking-widest text-primary/40 mb-0.5">TARGET: RANK #{userRank.nextTarget.rank}</span>
+                                <div className="flex items-center gap-1.5">
+                                    <span className="text-base font-black text-white">{userRank.nextTarget.pointsNeeded.toLocaleString()}</span>
+                                    <span className="text-[9px] font-bold text-white/20 whitespace-nowrap">points to go</span>
                                 </div>
                             </div>
                         )}
@@ -233,21 +233,21 @@ const LeaderboardPage = () => {
                                         id={`user-rank-${u.rank}`}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        className="grid grid-cols-12 items-center px-8 py-4 group hover:bg-white/[0.02] transition-all rounded-2xl"
+                                        className="grid grid-cols-12 items-center px-8 py-4 group hover:bg-white/[0.02] transition-all rounded-xl"
                                     >
                                         <div className="col-span-1 font-black text-white/20 group-hover:text-white/60 transition-colors">
                                             #{u.rank}
                                         </div>
                                         <div className="col-span-6 md:col-span-7 flex items-center gap-4">
-                                            <Link href={`/user/${u.username}`} className="relative shrink-0 w-10 h-10 rounded-full overflow-hidden bg-white/5 transition-transform hover:scale-105 active:scale-95">
+                                            <Link href={`/user/${u.username}`} className="relative shrink-0 w-9 h-9 rounded-full overflow-hidden bg-white/5 transition-transform hover:scale-105 active:scale-95">
                                                 {u.avatar ? (
                                                     <img src={u.avatar} className="w-full h-full object-cover" alt={u.username} referrerPolicy="no-referrer" />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-xs">{u.username[0]}</div>
+                                                    <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-[10px]">{u.username[0]}</div>
                                                 )}
                                             </Link>
                                             <div className="min-w-0">
-                                                <Link href={`/user/${u.username}`} className="block font-black text-[15px] hover:text-primary transition-colors truncate">
+                                                <Link href={`/user/${u.username}`} className="block font-black text-[14px] hover:text-primary transition-colors truncate">
                                                     {u.displayName || u.username}
                                                 </Link>
                                                 <div className="flex items-center gap-2">
@@ -259,12 +259,12 @@ const LeaderboardPage = () => {
                                             </div>
                                         </div>
                                         <div className="col-span-2 hidden md:flex items-center justify-center">
-                                            <div className="px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] text-[12px] font-black">
+                                            <div className="px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] text-[11px] font-black text-white/60">
                                                 Lv {u.level}
                                             </div>
                                         </div>
                                         <div className="col-span-3 md:col-span-2 text-right">
-                                            <div className="font-black text-[15px] text-primary">{u.power.toLocaleString()}</div>
+                                            <div className="font-black text-[14px] text-primary">{u.power.toLocaleString()}</div>
                                             <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Total Points</div>
                                         </div>
                                     </motion.div>
@@ -282,22 +282,22 @@ const LeaderboardPage = () => {
                 {/* Pagination */}
                 {!loading && totalPages > 1 && (
                     <div className="mt-12 flex items-center justify-center gap-4">
-                        <button 
+                        <button
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             disabled={page === 1}
-                            className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-white/40 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            className="w-11 h-11 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-white/40 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                         >
-                            <ChevronLeft size={20} />
+                            <ChevronLeft size={18} />
                         </button>
-                        <div className="text-sm font-black tracking-widest text-white/40">
+                        <div className="text-[11px] font-black tracking-widest text-white/40">
                             PAGE <span className="text-white">{page}</span> OF {totalPages}
                         </div>
-                        <button 
+                        <button
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages}
-                            className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-white/40 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            className="w-11 h-11 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-white/40 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                         >
-                            <ChevronRight size={20} />
+                            <ChevronRight size={18} />
                         </button>
                     </div>
                 )}
@@ -308,58 +308,72 @@ const LeaderboardPage = () => {
 
 // Helper Component for Top 3
 const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: LeaderboardUser; rank: number; color: string; isMain?: boolean }) => {
+    // Stepped heights: 1st > 2nd > 3rd (Using min-h to maintain layout without boxes)
+    const heightClasses =
+        rank === 1 ? 'pt-16 pb-12 md:pt-24 md:pb-14 min-h-[210px] md:min-h-[420px] md:z-10' :
+            rank === 2 ? 'pt-12 pb-8 md:pt-18 md:pb-12 min-h-[180px] md:min-h-[340px]' :
+                'pt-9 pb-6 md:pt-14 md:pb-10 min-h-[160px] md:min-h-[300px]';
+
     return (
-        <div className={`relative flex flex-col items-center pt-8 pb-4 md:pt-10 md:pb-8 px-2 md:px-6 rounded-[1.5rem] md:rounded-[2.5rem] bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.05] group transition-all duration-500 hover:border-white/10 ${isMain ? 'md:scale-110 md:z-10 bg-white/[0.05]' : 'scale-100'}`}>
+        <div className={`relative flex flex-col items-center px-2 md:px-5 group transition-all duration-500 ${heightClasses}`}>
             {/* Rank Badge */}
-            <div 
-                className={`absolute -top-4 md:-top-6 w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-2xl flex items-center justify-center font-black text-sm md:text-xl shadow-2xl transition-transform duration-500 group-hover:scale-110`}
+            <div
+                className={`absolute -top-4 md:-top-6 w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center font-black text-xs md:text-2xl shadow-[0_4px_25px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1 z-20`}
                 style={{ backgroundColor: color, color: '#000' }}
             >
-                {rank === 1 ? <Crown className="w-5 h-5 md:w-6 md:h-6" /> : `#${rank}`}
+                {rank === 1 ? <Crown className="w-5 h-5 md:w-8 md:h-8" /> : `#${rank}`}
             </div>
 
-            {/* Avatar */}
-            <Link href={`/user/${user.username}`} className="relative mb-3 md:mb-6">
-                <div className={`w-14 h-14 md:w-28 md:h-28 rounded-full p-1 md:p-1.5 transition-all duration-500 group-hover:scale-105`} style={{ background: `linear-gradient(135deg, ${color}33, transparent)` }}>
-                    <div className="w-full h-full rounded-full overflow-hidden border border-white/10 bg-black">
+            {/* Huge Avatar Focus */}
+            <Link href={`/user/${user.username}`} className="relative mb-5 md:mb-10">
+                <div className={`w-16 h-16 md:w-36 lg:w-44 md:h-36 lg:h-44 rounded-full p-1.5 transition-all duration-700 group-hover:scale-105`} style={{ background: `linear-gradient(135deg, ${color}, transparent)` }}>
+                    <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black">
                         {user.avatar ? (
                             <img src={user.avatar} className="w-full h-full object-cover" alt={user.username} referrerPolicy="no-referrer" />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-lg md:text-3xl">{user.username[0]}</div>
+                            <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-sm md:text-4xl">{user.username[0]}</div>
                         )}
                     </div>
                 </div>
                 {/* Visual Glow */}
-                <div className="absolute inset-0 rounded-full blur-xl md:blur-2xl opacity-20 -z-10 transition-opacity duration-500 group-hover:opacity-40" style={{ backgroundColor: color }} />
+                <div className="absolute inset-0 rounded-full blur-3xl md:blur-[60px] opacity-20 md:opacity-30 -z-10 transition-opacity duration-500 group-hover:opacity-50" style={{ backgroundColor: color }} />
+
+                {rank === 1 && (
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                        className="absolute -inset-3 rounded-full border border-dashed border-primary/20 -z-10"
+                    />
+                )}
             </Link>
 
-            {/* User Info */}
-            <div className="text-center space-y-0.5 md:space-y-1 mb-3 md:mb-6">
-                <Link href={`/user/${user.username}`} className="block text-[11px] md:text-xl font-black hover:text-primary transition-colors truncate max-w-[80px] md:max-w-[180px]">
+            {/* User Info (Smaller to focus on Avatar) */}
+            <div className="text-center space-y-1 mb-5 md:mb-10">
+                <Link href={`/user/${user.username}`} className="block text-[10px] md:text-sm font-black hover:text-primary transition-colors truncate max-w-[80px] md:max-w-[170px] tracking-tight">
                     {user.displayName || user.username}
                 </Link>
-                <p className="hidden md:block text-xs font-bold text-white/30 uppercase tracking-widest">@{user.username}</p>
+                <div className="flex items-center justify-center gap-1.5 grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500">
+                    <p className="hidden md:block text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">@{user.username}</p>
+                    {getRankIconByXP(user.power) && (
+                        <img src={getRankIconByXP(user.power) || ''} className="h-2 md:h-2.5 object-contain" alt="rank icon" />
+                    )}
+                </div>
             </div>
 
-            {/* Stats */}
-            <div className="w-full flex items-center justify-center md:justify-between gap-2 md:gap-4 px-1 md:px-4">
-                <div className="hidden sm:block text-center">
-                    <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-0.5">Level</div>
-                    <div className="text-xs md:text-base font-black text-white">{user.level}</div>
-                </div>
-                <div className="hidden sm:block h-4 md:h-6 w-[1px] bg-white/10" />
+            {/* Stats Focus (Smaller) */}
+            <div className="w-full mt-auto flex flex-col items-center">
                 <div className="text-center">
-                    <div className="hidden md:block text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-0.5">Points</div>
-                    <div className="text-[10px] md:text-base font-black" style={{ color: color }}>{user.power.toLocaleString()}</div>
+                    <div className="text-[7px] font-black text-white/10 uppercase tracking-[0.4em] mb-1">Points</div>
+                    <div className="text-[9px] md:text-base font-black md:tracking-wider opacity-80" style={{ color: color }}>
+                        {user.power.toLocaleString()}
+                    </div>
+                </div>
+
+                <div className="hidden md:flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/[0.02] border border-white/[0.04] mt-3">
+                    <span className="text-[7px] font-black text-white/10 uppercase tracking-widest">Lv</span>
+                    <span className="text-[10px] font-black text-white/40">{user.level}</span>
                 </div>
             </div>
-            
-            {/* Rank Image */}
-            {getRankIconByXP(user.power) && (
-                <div className="mt-2 md:mt-4 opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all">
-                    <img src={getRankIconByXP(user.power) || ''} className="h-4 md:h-8 object-contain" alt="rank" />
-                </div>
-            )}
         </div>
     );
 };
