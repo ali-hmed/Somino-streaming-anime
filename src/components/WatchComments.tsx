@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { MessageSquare, Send, User, X, Reply, Trash2, Loader2, MessageCircle, ThumbsUp, ThumbsDown, MoreHorizontal, Link2, EyeOff, AlertTriangle } from 'lucide-react';
+import { 
+    MessageSquare, Send, User, X, Reply, Trash2, 
+    Loader2, MessageCircle, ThumbsUp, ThumbsDown, 
+    MoreHorizontal, Link2, ChevronDown, ChevronUp, Pencil
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
@@ -46,9 +50,13 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
     const [isPosting, setIsPosting] = useState(false);
     const [replyingTo, setReplyingTo] = useState<{ id: string, username: string, mainId: string } | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const [isInputExpanded, setIsInputExpanded] = useState(false);
+    const [isInputFocused, setIsInputFocused] = useState(false);
+    const [expandedReplies, setExpandedReplies] = useState<Record<string, boolean>>({});
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editValue, setEditValue] = useState("");
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
 
     const { user, isAuthenticated } = useAuthStore();
 
@@ -73,23 +81,6 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
         fetchComments();
     }, [fetchComments]);
 
-    // Auto-scroll to comment from hash
-    useEffect(() => {
-        if (!isLoading && comments.length > 0) {
-            const hash = window.location.hash;
-            if (hash && hash.startsWith('#comment-')) {
-                const element = document.getElementById(hash.substring(1));
-                if (element) {
-                    setTimeout(() => {
-                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        element.classList.add('bg-primary/5');
-                        setTimeout(() => element.classList.remove('bg-primary/5'), 3000);
-                    }, 500);
-                }
-            }
-        }
-    }, [isLoading, comments]);
-
     useEffect(() => {
         const handleClickOutside = () => setActiveDropdown(null);
         window.addEventListener('click', handleClickOutside);
@@ -98,7 +89,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
 
     const handleSend = async () => {
         if (!isAuthenticated) {
-            setShowLoginPrompt(true);
+            setIsAuthModalOpen(true);
             return;
         }
 
@@ -125,10 +116,27 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
 
             const data = await res.json();
             if (data.success) {
+                const newComment = data.data;
                 setComment("");
                 setReplyingTo(null);
-                setIsInputExpanded(false);
-                fetchComments();
+                setIsInputFocused(false);
+
+                // Update state locally to avoid full fetch
+                if (!newComment.parentCommentId) {
+                    setComments(prev => [newComment, ...prev]);
+                } else {
+                    setComments(prev => prev.map(main => {
+                        if (main._id === newComment.parentCommentId) {
+                            return {
+                                ...main,
+                                replies: [...(main.replies || []), newComment]
+                            };
+                        }
+                        return main;
+                    }));
+                    // Expand the replies if they were collapsed
+                    setExpandedReplies(prev => ({ ...prev, [newComment.parentCommentId]: true }));
+                }
             }
         } catch (error) {
             console.error("Post comment error:", error);
@@ -137,82 +145,15 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
         }
     };
 
-    const handleDelete = async (commentId: string) => {
-        if (!confirm("Are you sure you want to delete this comment?")) return;
-
-        try {
-            const res = await fetch(`${API_URL}/comments/${commentId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${user?.token}`
-                }
-            });
-
-            if (res.ok) {
-                fetchComments();
-            }
-        } catch (error) {
-            console.error("Delete comment error:", error);
-        }
-    };
-
     const handleVote = async (commentId: string, type: 'like' | 'dislike', commentAuthorId: string) => {
         if (!isAuthenticated) {
-            setShowLoginPrompt(true);
+            setIsAuthModalOpen(true);
             return;
         }
 
-        if (user?._id === commentAuthorId) {
-            return;
-        }
+        if (user?._id === commentAuthorId) return;
 
         try {
-            const updateVoteInList = (list: CommentType[]): CommentType[] => {
-                return list.map(c => {
-                    if (c._id === commentId) {
-                        const isLiking = type === 'like';
-                        const userId = user?._id || '';
-                        let { likes, dislikes, likedBy, dislikedBy } = c;
-
-                        likedBy = likedBy || [];
-                        dislikedBy = dislikedBy || [];
-
-                        if (isLiking) {
-                            if (likedBy.includes(userId)) {
-                                likedBy = likedBy.filter(id => id !== userId);
-                                likes--;
-                            } else {
-                                likedBy.push(userId);
-                                likes++;
-                                if (dislikedBy.includes(userId)) {
-                                    dislikedBy = dislikedBy.filter(id => id !== userId);
-                                    dislikes--;
-                                }
-                            }
-                        } else {
-                            if (dislikedBy.includes(userId)) {
-                                dislikedBy = dislikedBy.filter(id => id !== userId);
-                                dislikes--;
-                            } else {
-                                dislikedBy.push(userId);
-                                dislikes++;
-                                if (likedBy.includes(userId)) {
-                                    likedBy = likedBy.filter(id => id !== userId);
-                                    likes--;
-                                }
-                            }
-                        }
-                        return { ...c, likes, dislikes, likedBy, dislikedBy };
-                    }
-                    if (c.replies) {
-                        return { ...c, replies: updateVoteInList(c.replies) };
-                    }
-                    return c;
-                });
-            };
-
-            setComments(prev => updateVoteInList(prev));
-
             const res = await fetch(`${API_URL}/comments/${commentId}/vote`, {
                 method: 'POST',
                 headers: {
@@ -223,173 +164,130 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
             });
 
             const data = await res.json();
-            if (!data.success) {
+            if (data.success) {
                 fetchComments();
             }
         } catch (error) {
             console.error("Vote error:", error);
-            fetchComments();
         }
     };
 
-    const handleCopyLink = (commentId: string) => {
-        const url = `${window.location.origin}${window.location.pathname}#comment-${commentId}`;
-        navigator.clipboard.writeText(url);
+    const handleUpdate = async (commentId: string) => {
+        if (!editValue.trim()) return;
+        try {
+            const res = await fetch(`${API_URL}/comments/${commentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
+                },
+                body: JSON.stringify({ text: editValue })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                setEditingId(null);
+                setEditValue("");
+                fetchComments();
+            }
+        } catch (error) {
+            console.error("Update comment error:", error);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!commentToDelete) return;
+        try {
+            const res = await fetch(`${API_URL}/comments/${commentToDelete}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${user?.token}`
+                }
+            });
+            if (res.ok) fetchComments();
+            setIsDeleteModalOpen(false);
+            setCommentToDelete(null);
+        } catch (error) {
+            console.error("Delete comment error:", error);
+        }
     };
 
     const CommentItem = ({ item, isReply = false, mainId }: { item: CommentType, isReply?: boolean, mainId: string }) => {
         const isLiked = user?._id && item.likedBy?.includes(user._id);
         const isDisliked = user?._id && item.dislikedBy?.includes(user._id);
+        const isAuthor = user?._id === item.userId;
 
         return (
-            <div id={`comment-${item._id}`} className={`group flex gap-3 ${isReply ? 'ml-12 mt-6' : 'mt-8'} scroll-mt-32 relative`}>
+            <div id={`comment-${item._id}`} className="group flex gap-4 mt-6">
                 {/* Avatar */}
-                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full bg-card overflow-hidden ${isReply ? 'w-8 h-8' : 'w-10 h-10 md:w-11 md:h-11'}`}>
+                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full overflow-hidden bg-white/5 ${isReply ? 'w-6 h-6' : 'w-10 h-10'}`}>
                     {item.avatar ? (
                         <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                            <User className="w-1/2 h-1/2 text-white/5" />
+                            <User className="w-2/3 h-2/3 text-white/10" />
                         </div>
                     )}
                 </Link>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="flex items-center gap-1">
-                            {(() => {
-                                // Priority 1: Check by Power (XP)
-                                let rank = getRankByXP(item.power ?? 0);
-                                // Priority 2: Fallback to Rank Name
-                                if (!rank && item.rank) {
-                                    rank = getRankByName(item.rank);
-                                }
-                                
-                                const rankIcon = rank?.icon;
-                                let nameColor = rank?.color || '#ffffff';
-                                if (item.role?.toLowerCase() === 'admin') nameColor = '#EF4444';
-                                if (item.role?.toLowerCase() === 'owner') nameColor = '#FFB941';
-
-                                return (
-                                    <>
-                                        {rankIcon && (
-                                            <img
-                                                src={rankIcon}
-                                                width={18}
-                                                height={18}
-                                                alt="rank icon"
-                                                className="object-contain shrink-0"
-                                            />
-                                        )}
-                                        <div className="flex items-center gap-1.5">
-                                            <Link 
-                                                href={`/user/${item.username}`} 
-                                                className="text-[13px] font-bold cursor-pointer hover:no-underline uppercase transition-colors"
-                                                style={{ color: nameColor }}
-                                            >
-                                                {item.username || 'User'}
-                                            </Link>
-                                            {item.rankPosition && (
-                                                <Link href="/leaderboard" className="text-[10px] font-black tracking-tighter text-white/20 hover:text-primary transition-colors cursor-pointer">
-                                                    #{item.rankPosition}
-                                                </Link>
-                                            )}
-                                        </div>
-                                    </>
-                                );
-                            })()}
-                            
-                            {/* Role Title Badge */}
-                            {item.role && item.role.toLowerCase() !== 'user' && (
-                                <span className={`px-1.5 py-0.5 rounded-[4px] text-[7px] uppercase font-black tracking-widest border ${
-                                    item.role.toLowerCase() === 'owner'
-                                        ? 'text-[#FFB941] bg-[#FFB941]/10 border-[#FFB941]/30'
-                                        : item.role.toLowerCase() === 'admin'
-                                        ? 'text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/30'
-                                        : item.role.toLowerCase() === 'moderator'
-                                        ? 'text-primary bg-primary/10 border-primary/30'
-                                        : 'text-white/40 bg-white/5 border-white/10'
-                                }`}>
-                                    {item.role}
-                                </span>
-                            )}
-                        </div>
-                        <span className="text-[11px] text-white/20 font-medium">
-                            {mounted ? timeAgo(item.createdAt) : '...'}
-                        </span>
-                    </div>
-
-                    <p className="text-[14px] text-white/80 leading-relaxed break-words whitespace-pre-wrap mb-2">
-                        {item.text}
-                    </p>
-
-                    {/* Action Bar */}
-                    <div className="flex items-center gap-4">
-                        {!isReply && (
-                            <button
-                                onClick={() => {
-                                    setReplyingTo({ id: item._id, username: item.username || 'User', mainId });
-                                    setIsInputExpanded(true);
-                                    document.getElementById('comment-input-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                }}
-                                className="flex items-center gap-1.5 text-[11px] font-bold text-white/30 hover:text-white transition-colors"
-                            >
-                                <Reply size={12} className="scale-x-[-1]" />
-                                Reply
-                            </button>
+                    <div className="flex items-center gap-2 mb-0.5">
+                        <Link href={`/user/${item.username}`} className="text-[13px] font-bold text-white hover:text-white/80 transition-colors">
+                            @{item.username?.toLowerCase() || 'user'}
+                        </Link>
+                        <span className="text-[12px] text-white/40">{mounted ? timeAgo(item.createdAt) : '...'}</span>
+                        
+                        {item.role && item.role.toLowerCase() !== 'user' && (
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                                item.role.toLowerCase() === 'owner' ? 'bg-[#FFB941] text-black' : 
+                                item.role.toLowerCase() === 'admin' ? 'bg-[#EF4444] text-white' : 'bg-white/10 text-white/60'
+                            }`}>
+                                {item.role}
+                            </span>
                         )}
 
-                        <button
-                            onClick={() => handleVote(item._id, 'like', item.userId)}
-                            disabled={user?._id === item.userId}
-                            className={`flex items-center gap-1.5 transition-colors ${isLiked ? 'text-primary' : 'text-white/30 hover:text-white'} ${user?._id === item.userId ? 'cursor-not-allowed opacity-50' : ''}`}
-                        >
-                            <ThumbsUp size={12} className={isLiked ? 'fill-primary' : ''} />
-                            <span className="text-[11px] font-bold">{item.likes > 0 ? item.likes : ''}</span>
-                        </button>
-
-                        <button
-                            onClick={() => handleVote(item._id, 'dislike', item.userId)}
-                            disabled={user?._id === item.userId}
-                            className={`flex items-center gap-1.5 transition-colors ${isDisliked ? 'text-primary' : 'text-white/30 hover:text-white'} ${user?._id === item.userId ? 'cursor-not-allowed opacity-50' : ''}`}
-                        >
-                            <ThumbsDown size={12} className={isDisliked ? 'fill-primary' : ''} />
-                            <span className="text-[11px] font-bold">{item.dislikes > 0 ? item.dislikes : ''}</span>
-                        </button>
-
-                        <div className="relative">
-                            <button
+                        <div className="ml-auto relative opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setActiveDropdown(activeDropdown === item._id ? null : item._id);
                                 }}
-                                className="flex items-center gap-1 text-[11px] font-bold text-white/30 hover:text-white transition-colors"
+                                className="p-1.5 hover:bg-white/10 rounded-full transition-colors"
                             >
-                                <MoreHorizontal size={13} />
-                                More
+                                <MoreHorizontal size={18} />
                             </button>
 
                             <AnimatePresence>
                                 {activeDropdown === item._id && (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.98, y: 5 }}
+                                    <motion.div 
+                                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                                        exit={{ opacity: 0, scale: 0.98, y: 5 }}
-                                        className="absolute top-full left-0 mt-2 w-40 bg-[#181818] rounded-[4px] z-50 overflow-hidden py-1"
+                                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                        className="absolute right-0 top-full mt-2 w-32 bg-[#181818] rounded-md shadow-2xl z-50 border border-white/5 py-1"
                                     >
-                                        <button
-                                            onClick={() => handleCopyLink(item._id)}
-                                            className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors text-left"
-                                        >
-                                            <Link2 size={13} /> Copy Link
-                                        </button>
-                                        {user?._id === item.userId && (
-                                            <button
-                                                onClick={() => handleDelete(item._id)}
-                                                className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] font-medium text-red-500/80 hover:bg-red-500/10 transition-colors mt-1 text-left"
+                                        {isAuthor && (
+                                            <button 
+                                                onClick={() => {
+                                                    setEditingId(item._id);
+                                                    setEditValue(item.text);
+                                                    setActiveDropdown(null);
+                                                }}
+                                                className="w-full px-4 py-2 text-left text-[13px] flex items-center gap-3 hover:bg-white/5 transition-colors"
                                             >
-                                                <Trash2 size={13} /> Delete
+                                                <Pencil size={14} /> Edit
+                                            </button>
+                                        )}
+                                        {(isAuthor || user?.role === 'admin' || user?.role === 'owner') && (
+                                            <button 
+                                                onClick={() => {
+                                                    setCommentToDelete(item._id);
+                                                    setIsDeleteModalOpen(true);
+                                                    setActiveDropdown(null);
+                                                }}
+                                                className="w-full px-4 py-2 text-left text-[13px] flex items-center gap-3 hover:bg-white/5 text-red-500 transition-colors"
+                                            >
+                                                <Trash2 size={14} /> Delete
                                             </button>
                                         )}
                                     </motion.div>
@@ -397,124 +295,209 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
                             </AnimatePresence>
                         </div>
                     </div>
+
+                    {editingId === item._id ? (
+                        <div className="flex flex-col gap-2 mt-2">
+                            <textarea
+                                value={editValue}
+                                onChange={(e) => setEditValue(e.target.value)}
+                                className="w-full bg-transparent border-b-2 border-primary py-1 text-[14px] text-white outline-none resize-none min-h-[40px]"
+                                autoFocus
+                            />
+                            <div className="flex justify-end gap-2">
+                                <button onClick={() => setEditingId(null)} className="px-3 py-1.5 text-[12px] font-bold hover:bg-white/10 rounded-full transition-colors">Cancel</button>
+                                <button onClick={() => handleUpdate(item._id)} className="px-3 py-1.5 text-[12px] font-bold bg-primary text-black rounded-full transition-all">Save</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-[14px] text-white leading-relaxed mb-2 break-words">
+                            {item.text}
+                        </p>
+                    )}
+
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1">
+                            <button 
+                                onClick={() => handleVote(item._id, 'like', item.userId)}
+                                className={`p-1.5 hover:bg-white/10 rounded-full transition-colors ${isLiked ? 'text-primary' : 'text-white'}`}
+                            >
+                                <ThumbsUp size={16} strokeWidth={isLiked ? 2.5 : 2} className={isLiked ? 'fill-primary' : ''} />
+                            </button>
+                            <span className="text-[12px] text-white/60 font-medium">{item.likes || ''}</span>
+                        </div>
+
+                        <button 
+                            onClick={() => handleVote(item._id, 'dislike', item.userId)}
+                            className={`p-1.5 hover:bg-white/10 rounded-full transition-colors ${isDisliked ? 'text-white' : 'text-white'}`}
+                        >
+                            <ThumbsDown size={16} strokeWidth={isDisliked ? 2.5 : 2} className={isDisliked ? 'fill-white' : ''} />
+                        </button>
+
+                        <button 
+                            onClick={() => {
+                                setReplyingTo({ id: item._id, username: item.username || 'user', mainId });
+                                setIsInputFocused(true);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="text-[12px] font-bold text-white px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors"
+                        >
+                            Reply
+                        </button>
+                    </div>
                 </div>
             </div>
         );
     };
 
     return (
-        <div className="space-y-6 h-full">
-            <div className="bg-sidebar rounded-[6px] overflow-hidden flex flex-col lg:max-h-[1050px]">
-                {/* Header */}
-                <div className="px-6 py-5 flex items-center gap-4">
-                    <h2 className="text-[20px] font-bold text-white tracking-tight">Comments</h2>
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-[4px] bg-card">
-                        <span className="text-[12px] font-black text-primary">
-                            {comments.reduce((acc, curr) => acc + 1 + (curr.replies?.length || 0), 0)}
-                        </span>
-                        <span className="text-[6px] font-bold text-white/20 uppercase tracking-widest">Total</span>
-                    </div>
+        <div className="flex flex-col gap-8 py-6">
+            {/* Input Section */}
+            <div className="flex flex-col gap-6">
+                <div className="flex items-center gap-4">
+                    <span className="text-[20px] font-black">{comments.reduce((acc, curr) => acc + 1 + (curr.replies?.length || 0), 0)} Comments</span>
                 </div>
 
-                {/* Input Area */}
-                <div id="comment-input-area" className="px-6 pb-8">
-                    <div className="flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-card flex items-center justify-center shrink-0 overflow-hidden">
-                            {mounted && user?.avatar ? (
-                                <img src={user.avatar} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                            ) : (
-                                <User className="w-6 h-6 text-white/5" />
-                            )}
-                        </div>
-                        <div className="flex-1 space-y-3">
-                            <div className="relative group">
-                                {replyingTo && (
-                                    <div className="absolute bottom-full left-0 mb-2 flex items-center gap-2 bg-primary/10 px-2.5 py-1 rounded-[4px]">
-                                        <span className="text-[9px] font-black text-primary uppercase tracking-wider">Replying to {replyingTo.username}</span>
-                                        <button onClick={() => setReplyingTo(null)} className="text-white/40 hover:text-white transition-colors">
-                                            <X size={10} />
-                                        </button>
-                                    </div>
-                                )}
-                                <textarea
-                                    value={comment}
-                                    onChange={(e) => setComment(e.target.value)}
-                                    placeholder={mounted ? (isAuthenticated ? "Leave a comment" : "Join the discussion...") : "Loading..."}
-                                    disabled={!mounted || isPosting}
-                                    onFocus={() => setIsInputExpanded(true)}
-                                    className={`w-full bg-card rounded-[4px] px-4 py-2.5 text-[14px] text-white placeholder-white/10 focus:outline-none focus:bg-card/80 transition-all resize-none ${isInputExpanded ? 'min-h-[80px]' : 'min-h-[44px]'}`}
-                                />
-                                {mounted && !isAuthenticated && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-[4px] cursor-pointer" onClick={() => setIsAuthModalOpen(true)}>
-                                        <button className="px-6 py-2 bg-white text-black font-black text-[11px] uppercase tracking-widest rounded-full hover:scale-105 transition-transform active:scale-95">
-                                            Login to comment
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
-                            <AnimatePresence>
-                                {mounted && isAuthenticated && (isInputExpanded || comment.trim().length > 0) && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                                        animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
-                                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                                        className="flex items-center justify-end gap-3 overflow-hidden"
-                                    >
-                                        <button
-                                            onClick={() => {
-                                                setIsInputExpanded(false);
-                                                setComment("");
-                                                setReplyingTo(null);
-                                            }}
-                                            className="px-4 py-2 text-white/30 hover:text-white font-bold text-[11px] uppercase tracking-widest transition-colors"
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            onClick={handleSend}
-                                            disabled={!comment.trim() || isPosting}
-                                            className="px-8 py-2.5 bg-primary text-white font-black text-[11px] tracking-widest uppercase rounded-[4px] flex items-center gap-2 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
-                                        >
-                                            {isPosting ? <Loader2 size={10} className="animate-spin" /> : <Send size={10} />}
-                                            Send
-                                        </button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                <div className="flex gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/5 shrink-0 overflow-hidden">
+                        {mounted && user?.avatar ? (
+                            <img src={user.avatar} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center"><User className="w-1/2 h-1/2 text-white/10" /></div>
+                        )}
                     </div>
-                </div>
-
-                {/* Comments List */}
-                <div className="px-6 py-8 flex-1 overflow-y-auto custom-scrollbar">
-                    {!mounted || isLoading ? (
-                        <div className="flex flex-col items-center justify-center py-16">
-                            <Loader2 className="w-8 h-8 text-primary/40 animate-spin" />
-                        </div>
-                    ) : comments.length > 0 ? (
-                        <div className="space-y-1">
-                            {comments.map((main) => (
-                                <div key={main._id} className="pb-8 last:pb-0">
-                                    <CommentItem item={main} mainId={main._id} />
-                                    {main.replies && main.replies.map(reply => (
-                                        <CommentItem key={reply._id} item={reply} isReply={true} mainId={main._id} />
-                                    ))}
+                    <div className="flex-1 min-w-0">
+                        <div className="relative group">
+                            {replyingTo && (
+                                <div className="absolute -top-7 left-0 flex items-center gap-2 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md mb-2">
+                                    <Reply size={10} className="text-primary" />
+                                    <span className="text-[10px] font-black text-primary uppercase tracking-wider">Replying to @{replyingTo.username}</span>
+                                    <button onClick={() => setReplyingTo(null)} className="text-primary hover:text-primary/70 transition-colors">
+                                        <X size={10} />
+                                    </button>
                                 </div>
-                            ))}
+                            )}
+                            <textarea
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                onFocus={() => setIsInputFocused(true)}
+                                placeholder="Add a comment..."
+                                className="w-full bg-transparent border-b border-white/10 py-2 text-[14px] text-white outline-none resize-none min-h-[40px] transition-all focus:border-primary/50"
+                            />
+                            <motion.div 
+                                initial={false}
+                                animate={{ scaleX: isInputFocused ? 1 : 0 }}
+                                className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary origin-center transition-transform"
+                            />
                         </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-20 text-center opacity-20">
-                            <MessageSquare size={32} className="mb-4" />
-                            <h3 className="text-[14px] font-black uppercase tracking-widest">No comments</h3>
-                        </div>
-                    )}
+
+                        <AnimatePresence>
+                            {isInputFocused && (
+                                <motion.div 
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="flex items-center justify-end gap-2 mt-2 overflow-hidden"
+                                >
+                                    <button 
+                                        onClick={() => {
+                                            setIsInputFocused(false);
+                                            setComment("");
+                                            setReplyingTo(null);
+                                        }}
+                                        className="px-4 py-2 text-[14px] font-bold hover:bg-white/10 rounded-full transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button 
+                                        onClick={handleSend}
+                                        disabled={!comment.trim() || isPosting}
+                                        className="px-4 py-2 bg-primary text-black text-[14px] font-bold rounded-full disabled:bg-white/5 disabled:text-white/20 transition-all"
+                                    >
+                                        {replyingTo ? 'Reply' : 'Comment'}
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
             </div>
-            <AuthModal
-                isOpen={isAuthModalOpen}
-                onClose={() => setIsAuthModalOpen(false)}
-            />
+
+            {/* List Section */}
+            <div className="flex flex-col gap-2">
+                {comments.map((main) => (
+                    <div key={main._id} className="flex flex-col">
+                        <CommentItem item={main} mainId={main._id} />
+                        
+                        {main.replies && main.replies.length > 0 && (
+                            <div className="ml-14">
+                                <button 
+                                    onClick={() => setExpandedReplies(prev => ({ ...prev, [main._id]: !prev[main._id] }))}
+                                    className="flex items-center gap-2 text-[14px] font-bold text-primary hover:bg-primary/10 px-3 py-1.5 rounded-full transition-all mt-1"
+                                >
+                                    {expandedReplies[main._id] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                    {main.replies.length} {main.replies.length === 1 ? 'reply' : 'replies'}
+                                </button>
+
+                                <AnimatePresence>
+                                    {expandedReplies[main._id] && (
+                                        <motion.div 
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="flex flex-col overflow-hidden"
+                                        >
+                                            {main.replies.map(reply => (
+                                                <CommentItem key={reply._id} item={reply} isReply={true} mainId={main._id} />
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+
+            {/* Delete Confirmation Modal */}
+            <AnimatePresence>
+                {isDeleteModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsDeleteModalOpen(false)}
+                            className="absolute inset-0 bg-black/20"
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.98, y: 10 }}
+                            className="relative w-full max-w-[280px] bg-[#212121] rounded-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden"
+                        >
+                            <h3 className="text-[16px] font-bold text-white mb-2">Delete comment</h3>
+                            <p className="text-[13px] text-white/50 mb-6">Delete your comment permanently?</p>
+                            
+                            <div className="flex justify-end gap-5">
+                                <button 
+                                    onClick={() => setIsDeleteModalOpen(false)}
+                                    className="text-[13px] font-bold text-[#3ea6ff] hover:text-[#3ea6ff]/80 transition-all uppercase tracking-wide"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    onClick={handleDelete}
+                                    className="text-[13px] font-bold text-[#3ea6ff] hover:text-[#3ea6ff]/80 transition-all uppercase tracking-wide"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
