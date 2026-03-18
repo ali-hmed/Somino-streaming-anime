@@ -27,9 +27,19 @@ interface LeaderboardUser {
     power: number;
     level: number;
     rank: number;
+    role?: string;
 }
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://api-somino.up.railway.app') + '/api/v1';
+
+// Helper for role-based frames
+const getRoleFrame = (role?: string) => {
+    switch(role?.toLowerCase()) {
+        case 'owner': return '/frames/owner_frame.png';
+        case 'admin': return '/frames/admin_frame.png';
+        default: return null;
+    }
+};
 
 const LeaderboardPage = () => {
     const { user: currentUser } = useAuthStore();
@@ -239,11 +249,21 @@ const LeaderboardPage = () => {
                                             #{u.rank}
                                         </div>
                                         <div className="col-span-6 md:col-span-7 flex items-center gap-4">
-                                            <Link href={`/user/${u.username}`} className="relative shrink-0 w-9 h-9 rounded-full overflow-hidden bg-white/5 transition-transform hover:scale-105 active:scale-95">
-                                                {u.avatar ? (
-                                                    <img src={u.avatar} className="w-full h-full object-cover" alt={u.username} referrerPolicy="no-referrer" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-[10px]">{u.username[0]}</div>
+                                            <Link href={`/user/${u.username}`} className="relative shrink-0 w-9 h-9">
+                                                <div className="absolute inset-0 rounded-full overflow-hidden bg-white/5 transition-transform hover:scale-105 active:scale-95">
+                                                    {u.avatar ? (
+                                                        <img src={u.avatar} className="w-full h-full object-cover" alt={u.username} referrerPolicy="no-referrer" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-[10px]">{u.username[0]}</div>
+                                                    )}
+                                                </div>
+                                                {/* Role Frame Overlay */}
+                                                {getRoleFrame(u.role) && (
+                                                    <img 
+                                                        src={getRoleFrame(u.role)!} 
+                                                        className="absolute inset-[-18.5%] w-[137%] h-[137%] max-w-none pointer-events-none z-10" 
+                                                        alt="frame"
+                                                    />
                                                 )}
                                             </Link>
                                             <div className="min-w-0">
@@ -308,15 +328,26 @@ const LeaderboardPage = () => {
 
 // Helper Component for Top 3
 const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: LeaderboardUser; rank: number; color: string; isMain?: boolean }) => {
-    // Stepped heights: 1st > 2nd > 3rd (Using min-h to maintain layout without boxes)
+    // Stepped heights: 1st > 2nd > 3rd
     const heightClasses =
         rank === 1 ? 'pt-16 pb-12 md:pt-24 md:pb-14 min-h-[210px] md:min-h-[420px] md:z-10' :
             rank === 2 ? 'pt-12 pb-8 md:pt-18 md:pb-12 min-h-[180px] md:min-h-[340px]' :
                 'pt-9 pb-6 md:pt-14 md:pb-10 min-h-[160px] md:min-h-[300px]';
 
+    const avatarSize =
+        rank === 1 ? 'w-20 h-20 md:w-36 lg:w-44 md:h-36 lg:h-44' :
+            rank === 2 ? 'w-16 h-16 md:w-30 md:h-30' :
+                'w-14 h-14 md:w-26 md:h-26';
+
+    const medalSize =
+        rank === 1 ? 'w-8 h-8 md:w-14 md:h-14' :
+            'w-6 h-6 md:w-11 md:h-11';
+
+    const roleFrame = getRoleFrame(user.role);
+
     return (
         <div className={`relative flex flex-col items-center px-2 md:px-5 group transition-all duration-500 ${heightClasses}`}>
-            {/* Rank Badge */}
+            {/* Rank Badge - Top Left/Positioned absolute */}
             <div
                 className={`absolute -top-4 md:-top-6 w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center font-black text-xs md:text-2xl shadow-[0_4px_25px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1 z-20`}
                 style={{ backgroundColor: color, color: '#000' }}
@@ -325,21 +356,31 @@ const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: Leade
             </div>
 
             {/* Huge Avatar Focus */}
-            <Link href={`/user/${user.username}`} className="relative mb-5 md:mb-10">
-                <div className={`w-16 h-16 md:w-36 lg:w-44 md:h-36 lg:h-44 rounded-full p-1.5 transition-all duration-700 group-hover:scale-105`} style={{ background: `linear-gradient(135deg, ${color}, transparent)` }}>
-                    <div className="w-full h-full rounded-full overflow-hidden border-2 border-black bg-black">
-                        {user.avatar ? (
-                            <img src={user.avatar} className="w-full h-full object-cover" alt={user.username} referrerPolicy="no-referrer" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-sm md:text-4xl">{user.username[0]}</div>
-                        )}
+            <Link href={`/user/${user.username}`} className="relative mb-6 md:mb-12 block">
+                <div className="relative">
+                    <div className={`${avatarSize} rounded-full p-1.5 transition-all duration-700 group-hover:scale-105`} style={{ background: roleFrame ? 'transparent' : `linear-gradient(135deg, ${color}, transparent)` }}>
+                        <div className={`w-full h-full rounded-full overflow-hidden bg-black ${!roleFrame && 'border-2 border-black shadow-2xl'}`}>
+                            {user.avatar ? (
+                                <img src={user.avatar} className="w-full h-full object-cover" alt={user.username} referrerPolicy="no-referrer" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-sm md:text-4xl">{user.username[0]}</div>
+                            )}
+                        </div>
                     </div>
+                    {/* Role Frame Overlay */}
+                    {roleFrame && (
+                        <img 
+                            src={roleFrame} 
+                            className="absolute inset-[-18.5%] w-[137%] h-[137%] max-w-none pointer-events-none z-10 select-none drop-shadow-2xl" 
+                            alt="avatar frame"
+                        />
+                    )}
                 </div>
                 {/* Visual Glow */}
                 <div className="absolute inset-0 rounded-full blur-3xl md:blur-[60px] opacity-20 md:opacity-30 -z-10 transition-opacity duration-500 group-hover:opacity-50" style={{ backgroundColor: color }} />
-
+                
                 {rank === 1 && (
-                    <motion.div
+                    <motion.div 
                         animate={{ rotate: 360 }}
                         transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                         className="absolute -inset-3 rounded-full border border-dashed border-primary/20 -z-10"
@@ -349,13 +390,13 @@ const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: Leade
 
             {/* User Info (Smaller to focus on Avatar) */}
             <div className="text-center space-y-1 mb-5 md:mb-10">
-                <Link href={`/user/${user.username}`} className="block text-[10px] md:text-sm font-black hover:text-primary transition-colors truncate max-w-[80px] md:max-w-[170px] tracking-tight">
+                <Link href={`/user/${user.username}`} className="block text-xs md:text-lg font-black hover:text-primary transition-colors truncate max-w-[80px] md:max-w-[170px] tracking-tight">
                     {user.displayName || user.username}
                 </Link>
                 <div className="flex items-center justify-center gap-1.5 grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500">
-                    <p className="hidden md:block text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">@{user.username}</p>
+                    <p className="hidden md:block text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">@{user.username}</p>
                     {getRankIconByXP(user.power) && (
-                        <img src={getRankIconByXP(user.power) || ''} className="h-2 md:h-2.5 object-contain" alt="rank icon" />
+                        <img src={getRankIconByXP(user.power) || ''} className="h-2 md:h-3 object-contain" alt="rank icon" />
                     )}
                 </div>
             </div>
@@ -363,15 +404,15 @@ const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: Leade
             {/* Stats Focus (Smaller) */}
             <div className="w-full mt-auto flex flex-col items-center">
                 <div className="text-center">
-                    <div className="text-[7px] font-black text-white/10 uppercase tracking-[0.4em] mb-1">Points</div>
-                    <div className="text-[9px] md:text-base font-black md:tracking-wider opacity-80" style={{ color: color }}>
+                    <div className="text-[8px] font-black text-white/10 uppercase tracking-[0.4em] mb-1">Points</div>
+                    <div className="text-[10px] md:text-xl font-black md:tracking-wider opacity-90" style={{ color: color }}>
                         {user.power.toLocaleString()}
                     </div>
                 </div>
-
-                <div className="hidden md:flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/[0.02] border border-white/[0.04] mt-3">
-                    <span className="text-[7px] font-black text-white/10 uppercase tracking-widest">Lv</span>
-                    <span className="text-[10px] font-black text-white/40">{user.level}</span>
+                
+                <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] mt-3">
+                    <span className="text-[8px] font-black text-white/10 uppercase tracking-widest">Lv</span>
+                    <span className="text-xs font-black text-white/60">{user.level}</span>
                 </div>
             </div>
         </div>

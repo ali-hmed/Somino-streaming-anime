@@ -272,12 +272,23 @@ const Navbar = ({ className }: NavbarProps) => {
                                     aria-expanded={isProfileOpen}
                                     aria-controls="profile-dropdown"
                                     onClick={() => setIsProfileOpen(v => !v)}
-                                    className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden transition-all focus:outline-none"
+                                    className="relative w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary transition-all focus:outline-none"
                                 >
-                                    {user?.avatar ? (
-                                        <img src={user.avatar} alt={user?.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                                    ) : (
-                                        <span className="text-[13px] font-black uppercase">{user?.username?.[0]}</span>
+                                    <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+                                        {user?.avatar ? (
+                                            <img src={user.avatar} alt={user?.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                        ) : (
+                                            <span className="text-[13px] font-black uppercase">{user?.username?.[0]}</span>
+                                        )}
+                                    </div>
+                                    {/* Frame Overlay */}
+                                    {user?.frame && (
+                                        <img 
+                                            src={user.frame} 
+                                            className="absolute inset-[-18.5%] w-[137%] h-[137%] max-w-none pointer-events-none z-10" 
+                                            alt="Frame"
+                                            referrerPolicy="no-referrer"
+                                        />
                                     )}
                                 </button>
 

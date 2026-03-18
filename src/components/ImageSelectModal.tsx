@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronDown, ChevronUp } from 'lucide-react';
-import { AVATAR_PRESETS, BANNER_PRESETS } from '@/lib/imagePresets';
+import { AVATAR_PRESETS, BANNER_PRESETS, FRAME_PRESETS } from '@/lib/imagePresets';
 
 interface ImageSelectModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSelect: (url: string, type: 'avatar' | 'banner') => void;
-    initialTab?: 'avatar' | 'banner';
+    onSelect: (url: string, type: 'avatar' | 'banner' | 'frame') => void;
+    initialTab?: 'avatar' | 'banner' | 'frame';
 }
 
 export default function ImageSelectModal({
@@ -16,12 +16,17 @@ export default function ImageSelectModal({
     onSelect,
     initialTab = 'avatar'
 }: ImageSelectModalProps) {
-    const [tab, setTab] = useState<'avatar' | 'banner'>(initialTab);
+    const [tab, setTab] = useState<'avatar' | 'banner' | 'frame'>(initialTab);
     const [expandedAccordion, setExpandedAccordion] = useState<string | null>("Attack on Titan");
 
     if (!isOpen) return null;
 
-    const data = tab === 'avatar' ? AVATAR_PRESETS : BANNER_PRESETS;
+    const getData = () => {
+        if (tab === 'avatar') return AVATAR_PRESETS;
+        if (tab === 'banner') return BANNER_PRESETS;
+        return FRAME_PRESETS;
+    };
+    const data = getData();
 
     const toggleAccordion = (anime: string) => {
         setExpandedAccordion(prev => prev === anime ? null : anime);
@@ -57,36 +62,33 @@ export default function ImageSelectModal({
                             >
                                 <X size={20} strokeWidth={2.5} />
                             </button>
-                            <h2 className="text-[22px] font-bold text-white text-center tracking-tight mb-5">Select Image</h2>
+                            <h2 className="text-[22px] font-bold text-white text-center tracking-tight mb-5">Select {tab.charAt(0).toUpperCase() + tab.slice(1)}</h2>
                             
                             {/* Tabs */}
-                            <div className="flex bg-[#1a1b20] p-1 rounded-xl relative z-10">
-                                <button
-                                    onClick={() => setTab('avatar')}
-                                    className={`flex-1 py-2.5 text-[14px] font-bold rounded-lg transition-all ${
-                                        tab === 'avatar' 
-                                        ? 'bg-white text-black shadow-sm' 
-                                        : 'text-white/40 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    Avatar
-                                </button>
-                                <button
-                                    onClick={() => setTab('banner')}
-                                    className={`flex-1 py-2.5 text-[14px] font-bold rounded-lg transition-all ${
-                                        tab === 'banner' 
-                                        ? 'bg-white text-black shadow-sm' 
-                                        : 'text-white/40 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    Banner
-                                </button>
+                            <div className="flex bg-[#1a1b20] p-1 rounded-xl relative z-10 w-full overflow-x-auto no-scrollbar">
+                                {(['avatar', 'banner', 'frame'] as const).map((t) => (
+                                    <button
+                                        key={t}
+                                        onClick={() => {
+                                            setTab(t);
+                                            if (t === 'frame') setExpandedAccordion("Role Frames");
+                                            else setExpandedAccordion("Attack on Titan");
+                                        }}
+                                        className={`flex-1 min-w-[80px] py-2.5 text-[14px] font-bold rounded-lg transition-all ${
+                                            tab === t 
+                                            ? 'bg-white text-black shadow-sm' 
+                                            : 'text-white/40 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 overflow-y-auto px-5 py-5 custom-scrollbar">
-                            {tab === 'avatar' ? (
+                            {tab !== 'banner' ? (
                                 data.map((category) => (
                                     <div key={category.anime} className="border-b border-white/[0.04] last:border-0 pb-1">
                                         <button
@@ -112,25 +114,29 @@ export default function ImageSelectModal({
                                                     transition={{ duration: 0.3, ease: "easeInOut" }}
                                                     className="overflow-hidden"
                                                 >
-                                                    <div className="p-2 pb-6 grid gap-4 grid-cols-4 sm:grid-cols-5">
+                                                    <div className={`p-2 pb-6 grid gap-4 ${tab === 'frame' ? 'grid-cols-3' : 'grid-cols-4 sm:grid-cols-5'}`}>
                                                         {category.images.map((img, idx) => (
                                                             <motion.button
                                                                 whileHover={{ scale: 1.08 }}
                                                                 whileTap={{ scale: 0.95 }}
                                                                 key={idx}
                                                                 onClick={() => {
-                                                                    onSelect(img, tab);
+                                                                    onSelect(img === 'none' ? '' : img, tab);
                                                                     onClose();
                                                                 }}
-                                                                className="relative overflow-hidden group aspect-square rounded-full border border-transparent hover:border-primary/50 transition-colors shadow-lg bg-white/5"
+                                                                className={`relative overflow-hidden group aspect-square rounded-full border border-transparent hover:border-primary/50 transition-colors shadow-lg bg-white/5 flex items-center justify-center`}
                                                             >
-                                                                <img 
-                                                                    src={img} 
-                                                                    alt={`${category.anime} avatar ${idx}`} 
-                                                                    className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
-                                                                    loading="lazy"
-                                                                    referrerPolicy="no-referrer"
-                                                                />
+                                                                {img === 'none' ? (
+                                                                    <span className="text-[10px] font-black uppercase text-white/20">None</span>
+                                                                ) : (
+                                                                    <img 
+                                                                        src={img} 
+                                                                        alt={`${category.anime} ${tab} ${idx}`} 
+                                                                        className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                                                                        loading="lazy"
+                                                                        referrerPolicy="no-referrer"
+                                                                    />
+                                                                )}
                                                             </motion.button>
                                                         ))}
                                                     </div>

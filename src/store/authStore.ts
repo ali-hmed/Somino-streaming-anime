@@ -9,6 +9,7 @@ interface User {
     email: string;
     avatar?: string;
     banner?: string;
+    frame?: string;
     role?: 'user' | 'moderator' | 'admin' | 'owner';
     level?: number;
     power?: number;

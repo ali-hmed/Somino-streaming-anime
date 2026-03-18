@@ -151,3 +151,29 @@ export const BANNER_PRESETS = [
         ]
     }
 ];
+
+export const FRAME_PRESETS = [
+    {
+        "anime": "Role Frames",
+        "images": [
+            "/frames/owner_frame.png",
+            "/frames/admin_frame.png"
+        ]
+    },
+    {
+        "anime": "Collection Frames",
+        "images": [
+            "/frames/frame-4.png",
+            "/frames/frame-5.png",
+            "/frames/frame-6.png",
+            "/frames/frame-7.png",
+            "/frames/frame-8.png"
+        ]
+    },
+    {
+        "anime": "Other",
+        "images": [
+            "none"
+        ]
+    }
+];

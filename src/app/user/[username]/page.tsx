@@ -34,6 +34,7 @@ interface UserData {
     username: string;
     avatar?: string;
     banner?: string;
+    frame?: string;
     role: 'user' | 'moderator' | 'admin' | 'owner';
     createdAt: string;
     level: number;
@@ -246,6 +247,15 @@ const PublicProfilePage = () => {
                                 <div className="w-full h-full flex items-center justify-center bg-zinc-800">
                                     <span className="text-4xl font-black text-white/10 uppercase">{userData.username[0]}</span>
                                 </div>
+                            )}
+                            {/* Frame Overlay */}
+                            {(userData as any).frame && (
+                                <img 
+                                    src={(userData as any).frame} 
+                                    className="absolute inset-[-18.5%] w-[137%] h-[137%] max-w-none pointer-events-none z-10" 
+                                    alt="Frame"
+                                    referrerPolicy="no-referrer"
+                                />
                             )}
                         </div>
                     </div>

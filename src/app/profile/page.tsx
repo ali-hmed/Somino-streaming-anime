@@ -17,6 +17,7 @@ export default function ProfilePage() {
         email: user?.email || "",
         avatar: user?.avatar || "",
         banner: user?.banner || "",
+        frame: user?.frame || "",
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -26,9 +27,10 @@ export default function ProfilePage() {
 
     const [avatarPreview, setAvatarPreview] = useState(user?.avatar || "");
     const [bannerPreview, setBannerPreview] = useState(user?.banner || "");
+    const [framePreview, setFramePreview] = useState(user?.frame || "");
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-    const [imageModalTab, setImageModalTab] = useState<'avatar' | 'banner'>('avatar');
+    const [imageModalTab, setImageModalTab] = useState<'avatar' | 'banner' | 'frame'>('avatar');
 
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [passwordData, setPasswordData] = useState({
@@ -40,14 +42,17 @@ export default function ProfilePage() {
     const [pwError, setPwError] = useState("");
     const [pwSuccess, setPwSuccess] = useState("");
 
-    const handlePresetSelect = (url: string, type: 'avatar' | 'banner') => {
+    const handlePresetSelect = (url: string, type: 'avatar' | 'banner' | 'frame') => {
         isEdited.current = true;
         if (type === 'avatar') {
             setAvatarPreview(url);
             setFormData(prev => ({ ...prev, avatar: url }));
-        } else {
+        } else if (type === 'banner') {
             setBannerPreview(url);
             setFormData(prev => ({ ...prev, banner: url }));
+        } else {
+            setFramePreview(url);
+            setFormData(prev => ({ ...prev, frame: url }));
         }
     };
 
@@ -70,10 +75,12 @@ export default function ProfilePage() {
                 email: user.email || "",
                 avatar: user.avatar || "",
                 banner: user.banner || "",
+                frame: user.frame || "",
             });
             setJoinedAt(user.createdAt || "");
             setAvatarPreview(user.avatar || "");
             setBannerPreview(user.banner || "");
+            setFramePreview(user.frame || "");
         }
 
         if (!user.token) return;
@@ -102,10 +109,12 @@ export default function ProfilePage() {
                             email: fresh.email || "",
                             avatar: fresh.avatar || "",
                             banner: fresh.banner || "",
+                            frame: fresh.frame || "",
                         });
                         setJoinedAt(fresh.createdAt || "");
                         setAvatarPreview(fresh.avatar || "");
                         setBannerPreview(fresh.banner || "");
+                        setFramePreview(fresh.frame || "");
                     }
                 }
             })
@@ -117,6 +126,7 @@ export default function ProfilePage() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (e.target.name === 'avatar') setAvatarPreview(e.target.value);
         if (e.target.name === 'banner') setBannerPreview(e.target.value);
+        if (e.target.name === 'frame') setFramePreview(e.target.value);
     };
 
 
@@ -191,7 +201,8 @@ export default function ProfilePage() {
                     aboutMe: formData.aboutMe,
                     email: formData.email,
                     avatar: formData.avatar,
-                    banner: formData.banner
+                    banner: formData.banner,
+                    frame: formData.frame
                 })
             });
 
@@ -279,28 +290,52 @@ export default function ProfilePage() {
                         {/* Avatar Overlap */}
                         <div className="absolute -bottom-14 left-6 md:left-10 md:-bottom-16">
                             <div
-                                className="relative group/avatar w-[100px] h-[100px] md:w-[140px] md:h-[140px] rounded-full p-1.5 overflow-hidden transition-transform hover:scale-[1.02]"
+                                className="relative group/avatar w-[100px] h-[100px] md:w-[140px] md:h-[140px] rounded-full p-1.5 transition-transform hover:scale-[1.02]"
                                 style={{ background: "var(--surface)" }}
                                 onClick={() => { setImageModalTab('avatar'); setIsImageModalOpen(true); }}
                             >
-                                <div className="w-full h-full rounded-full overflow-hidden relative bg-[#1c1d22]">
-                                    {avatarPreview ? (
-                                        <img
-                                            src={avatarPreview}
-                                            alt="Avatar"
-                                            className="w-full h-full object-cover transition-transform group-hover/avatar:scale-110"
+                                <div className="w-full h-full relative bg-[#1c1d22]">
+                                    <div className="w-full h-full rounded-full overflow-hidden">
+                                        {avatarPreview ? (
+                                            <img
+                                                src={avatarPreview}
+                                                alt="Avatar"
+                                                className="w-full h-full object-cover transition-transform group-hover/avatar:scale-110"
+                                                referrerPolicy="no-referrer"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-4xl font-black text-primary/20 bg-primary/5 uppercase">
+                                                {user.username?.[0]}
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                            <Pencil size={24} className="text-white" strokeWidth={2.5} />
+                                        </div>
+                                    </div>
+                                    {/* Frame Overlay */}
+                                    {framePreview && (
+                                        <img 
+                                            src={framePreview} 
+                                            className="absolute inset-[-18.5%] w-[137%] h-[137%] max-w-none pointer-events-none z-10" 
+                                            alt="Frame"
                                             referrerPolicy="no-referrer"
                                         />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-4xl font-black text-primary/20 bg-primary/5 uppercase">
-                                            {user.username?.[0]}
-                                        </div>
                                     )}
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center">
-                                        <Pencil size={24} className="text-white" strokeWidth={2.5} />
-                                    </div>
                                 </div>
                             </div>
+                            
+                            {/* Change Frame Button */}
+                            <button
+                                type="button"
+                                onClick={() => { setImageModalTab('frame'); setIsImageModalOpen(true); }}
+                                className="absolute -bottom-2 -right-14 md:-right-20 bg-[#1c1d22] border border-white/5 p-2 rounded-lg hover:bg-white/5 transition-all group/frame-btn shadow-xl active:scale-95"
+                                title="Change Frame"
+                            >
+                                <div className="flex items-center gap-2 px-1">
+                                    <div className="w-5 h-5 rounded-md border-2 border-primary/40 flex items-center justify-center text-[10px] font-black text-primary">F</div>
+                                    <span className="hidden md:block text-[10px] font-black uppercase text-white/40 group-hover/frame-btn:text-white transition-colors">Frame</span>
+                                </div>
+                            </button>
                         </div>
                     </div>
 
