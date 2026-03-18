@@ -320,20 +320,79 @@ const PublicProfilePage = () => {
             <div className="max-w-[1280px] mx-auto w-full px-4 md:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
                 <div className="lg:col-span-8 space-y-8">
                     {/* Rank System */}
-                    <div className="bg-[#101010] rounded-[10px] overflow-hidden p-6 flex flex-col items-center">
-                        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4">
-                            {ranks.map((rank, idx) => (
-                                <div key={rank.name} className="flex flex-col items-center min-w-[120px]">
-                                    <span className={`text-[12px] font-bold mb-2 ${idx <= currentRankIndex ? 'text-white' : 'text-white/20'}`}>{rank.name}</span>
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center p-2 mb-2 ${idx === currentRankIndex ? 'bg-yellow-400' : idx < currentRankIndex ? 'bg-zinc-700' : 'bg-zinc-800'}`}>
-                                        <img src={rank.icon} alt={rank.name} className="w-full h-full object-contain" />
-                                    </div>
-                                    <span className="text-[9px] text-white/30">{rank.requirement}</span>
+                    <div className="bg-[#101010] rounded-[10px] relative overflow-hidden flex flex-col items-center">
+                        <div className="role-line w-full overflow-x-auto no-scrollbar">
+                            <div className="role-line-wrap flex w-[720px] h-[138px] mx-auto relative z-20">
+                                {ranks.map((rank, idx) => {
+                                    const isReached = idx <= currentRankIndex;
+                                    const isCurrent = idx === currentRankIndex;
+
+                                    return (
+                                        <div key={rank.name} className="rlw-point w-[144px] h-[148px] flex flex-col items-center justify-center relative group">
+                                            {/* Rank Name */}
+                                            <span className={`text-[13px] font-black mb-1.5 transition-colors duration-500 ${isReached ? 'text-white' : 'text-white/20'}`}>
+                                                {rank.name}
+                                            </span>
+
+                                            {/* Requirement with Z Icon */}
+                                            <div className="flex items-center gap-1.5 mb-4">
+                                                {idx > 0 && (
+                                                    <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black ${isReached ? 'bg-[#717282] text-white' : 'bg-white/5 text-white/5'}`}>
+                                                        Z
+                                                    </div>
+                                                )}
+                                                <span className={`text-[10px] font-bold tracking-tight transition-colors duration-500 ${isReached ? 'text-[#717282]' : 'text-white/10'}`}>
+                                                    {rank.requirement}
+                                                </span>
+                                            </div>
+
+                                            {/* Icon Section */}
+                                            <div className="h-10 flex items-center justify-center">
+                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-700 relative z-30 ${isCurrent ? 'bg-yellow-400' :
+                                                    isReached ? 'bg-gradient-to-b from-[#4a4b5a] to-[#2a2b30]' :
+                                                        'bg-[#1a1b20]'
+                                                    }`}>
+                                                    <img
+                                                        src={rank.icon}
+                                                        width={36}
+                                                        height={36}
+                                                        alt="rank icon"
+                                                        className={`object-contain transition-all duration-500 ${!isReached ? 'opacity-90' : isCurrent ? 'opacity-100' : 'opacity-70'}`}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Vertical Dash Line */}
+                                            <div className="absolute top-[108px] h-10 w-[1px] border-r border-dashed border-white/[0.15]" />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Bottom Progress Bar Section */}
+                            <div className="role-line-load w-[720px] mx-auto relative h-12 z-40 px-[72px] flex items-center">
+                                <div className="h-[2px] w-full bg-white/10 rounded-full relative">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${overallProgress}%` }}
+                                        className="h-full bg-yellow-400"
+                                    />
+
+                                    <motion.div
+                                        initial={{ left: 0 }}
+                                        animate={{ left: `${overallProgress}%` }}
+                                        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-50 transition-all duration-500"
+                                    >
+                                        <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)]">
+                                            {userData.avatar ? (
+                                                <img src={userData.avatar} className="w-full h-full object-cover" alt="Progress" />
+                                            ) : (
+                                                <div className="w-full h-full bg-primary flex items-center justify-center text-xs font-black">{userData.username[0]}</div>
+                                            )}
+                                        </div>
+                                    </motion.div>
                                 </div>
-                            ))}
-                        </div>
-                        <div className="w-full h-1 bg-white/10 rounded-full mt-4 relative">
-                            <motion.div initial={{ width: 0 }} animate={{ width: `${overallProgress}%` }} className="h-full bg-yellow-400 rounded-full" />
+                            </div>
                         </div>
                     </div>
 
