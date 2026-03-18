@@ -435,7 +435,7 @@ const PublicProfilePage = () => {
                                                         width={36}
                                                         height={36}
                                                         alt="rank icon"
-                                                        className={`object-contain transition-all duration-500 ${!isReached ? 'opacity-10 grayscale' : isCurrent ? 'opacity-100' : 'opacity-70'}`}
+                                                        className={`object-contain transition-all duration-500 ${!isReached ? 'opacity-90' : isCurrent ? 'opacity-100' : 'opacity-70'}`}
                                                     />
                                                 </div>
                                             </div>
