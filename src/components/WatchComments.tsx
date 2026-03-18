@@ -18,6 +18,7 @@ interface CommentType {
     avatar?: string;
     rank?: string;
     power?: number;
+    rankPosition?: number;
     role?: string;
     parentCommentId: string | null;
     text: string;
@@ -281,13 +282,20 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
                                                 className="object-contain shrink-0"
                                             />
                                         )}
-                                        <Link 
-                                            href={`/user/${item.username}`} 
-                                            className="text-[13px] font-bold cursor-pointer hover:no-underline uppercase transition-colors"
-                                            style={{ color: nameColor }}
-                                        >
-                                            {item.username || 'User'}
-                                        </Link>
+                                        <div className="flex items-center gap-1.5">
+                                            <Link 
+                                                href={`/user/${item.username}`} 
+                                                className="text-[13px] font-bold cursor-pointer hover:no-underline uppercase transition-colors"
+                                                style={{ color: nameColor }}
+                                            >
+                                                {item.username || 'User'}
+                                            </Link>
+                                            {item.rankPosition && (
+                                                <Link href="/leaderboard" className="text-[10px] font-black tracking-tighter text-white/20 hover:text-primary transition-colors cursor-pointer">
+                                                    #{item.rankPosition}
+                                                </Link>
+                                            )}
+                                        </div>
                                     </>
                                 );
                             })()}
