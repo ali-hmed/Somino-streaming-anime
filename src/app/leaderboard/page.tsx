@@ -114,8 +114,8 @@ const LeaderboardPage = () => {
                         <h1 className="text-4xl md:text-5xl font-black tracking-tight">Community <span className="text-white/40">Leaderboard</span></h1>
                     </div>
 
-                    {/* Search Bar */}
-                    <div className="flex flex-col md:flex-row gap-4 items-center">
+                    {/* Search Bar Hidden as per user request */}
+                    {/* <div className="flex flex-col md:flex-row gap-4 items-center">
                         <form onSubmit={handleSearch} className="relative group w-full md:w-60">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={12} />
                             <input
@@ -149,7 +149,7 @@ const LeaderboardPage = () => {
                                 Jump to My Rank
                             </button>
                         )}
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Top 3 Section */}
@@ -316,73 +316,95 @@ const LeaderboardPage = () => {
 
 // Helper Component for Top 3
 const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: LeaderboardUser; rank: number; color: string; isMain?: boolean }) => {
-    // Stepped heights: 1st > 2nd > 3rd
-    const heightClasses =
-        rank === 1 ? 'pt-16 pb-12 md:pt-24 md:pb-14 min-h-[210px] md:min-h-[420px] md:z-10' :
-            rank === 2 ? 'pt-12 pb-8 md:pt-18 md:pb-12 min-h-[180px] md:min-h-[340px]' :
-                'pt-9 pb-6 md:pt-14 md:pb-10 min-h-[160px] md:min-h-[300px]';
-
-    const avatarSize =
-        rank === 1 ? 'w-20 h-20 md:w-36 lg:w-44 md:h-36 lg:h-44' :
-            rank === 2 ? 'w-16 h-16 md:w-30 md:h-30' :
-                'w-14 h-14 md:w-26 md:h-26';
-
-    const medalSize =
-        rank === 1 ? 'w-8 h-8 md:w-14 md:h-14' :
-            'w-6 h-6 md:w-11 md:h-11';
-
-    const roleFrame = getRoleFrame(user.role);
+    // Determine podium base heights - Slightly smaller
+    const podiumHeight = 
+        rank === 1 ? 'h-32 md:h-44' :
+        rank === 2 ? 'h-24 md:h-32' :
+        'h-20 md:h-28';
 
     return (
-        <div className={`relative flex flex-col items-center px-2 md:px-5 group transition-all duration-500 ${heightClasses}`}>
-            {/* Rank Badge - Top Left/Positioned absolute */}
-            <div
-                className={`absolute -top-4 md:-top-6 w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center font-black text-xs md:text-2xl shadow-[0_4px_25px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-1 z-20`}
-                style={{ backgroundColor: color, color: '#000' }}
+        <div className={`relative flex flex-col items-center group transition-all duration-500 ${rank === 1 ? 'z-10 scale-105 md:scale-115 pt-12' : 'z-0 pt-8'}`}>
+            
+            {/* User Avatar + Floating Effect for Rank 1 */}
+            <motion.div 
+                animate={rank === 1 ? { y: [0, -10, 0] } : {}}
+                transition={rank === 1 ? { duration: 4, repeat: Infinity, ease: "easeInOut" } : {}}
+                className="relative mb-5 md:mb-8"
             >
-                {rank === 1 ? <Crown className="w-5 h-5 md:w-8 md:h-8" /> : `#${rank}`}
-            </div>
-
-            {/* Huge Avatar Focus */}
-            <Link href={`/user/${user.username}`} className="relative mb-6 md:mb-12 block">
-                    <UserAvatar user={user} size="xl" />
-                {/* Visual Glow */}
-                <div className="absolute inset-0 rounded-full blur-3xl md:blur-[60px] opacity-20 md:opacity-30 -z-10 transition-opacity duration-500 group-hover:opacity-50" style={{ backgroundColor: color }} />
-                
+                {/* Crown for Rank 1 */}
                 {rank === 1 && (
                     <motion.div 
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                        className="absolute -inset-3 rounded-full border border-dashed border-primary/20 -z-10"
-                    />
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute left-1/2 -translate-x-1/2 -top-10 md:-top-14 z-20 drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]"
+                    >
+                        <Crown className="w-9 h-9 md:w-12 md:h-12 text-yellow-500 fill-yellow-500/10" />
+                        
+                        {/* Shimmer effect for crown */}
+                        <motion.div
+                            animate={{ opacity: [0, 1, 0], x: [-10, 20] }}
+                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg]"
+                        />
+                    </motion.div>
                 )}
-            </Link>
 
-            {/* User Info (Smaller to focus on Avatar) */}
-            <div className="text-center space-y-1 mb-5 md:mb-10">
-                <Link href={`/user/${user.username}`} className="block text-xs md:text-lg font-black hover:text-primary transition-colors truncate max-w-[80px] md:max-w-[170px] tracking-tight">
+                <Link href={`/user/${user.username}`} className="relative block">
+                    <UserAvatar 
+                        user={user} 
+                        size={rank === 1 ? 'xl' : 'lg'} 
+                        className={`transition-transform duration-500 group-hover:scale-105 ${rank !== 1 ? '!w-16 !h-16 md:!w-28 md:!h-28' : '!w-24 !h-24 md:!w-40 md:!h-40'}`} 
+                    />
+                    
+                    {/* Visual Glow */}
+                    <div className="absolute inset-0 rounded-full blur-2xl md:blur-[40px] opacity-20 md:opacity-40 -z-10 transition-opacity duration-500 group-hover:opacity-70" style={{ backgroundColor: color }} />
+                </Link>
+
+                {/* Rank Badge overlay on Avatar */}
+                <motion.div 
+                    whileHover={{ scale: 1.1 }}
+                    className="absolute -bottom-2 -right-2 w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center font-black text-[10px] md:text-lg border-2 border-[#0a0a0a] shadow-2xl z-20"
+                    style={{ backgroundColor: color, color: '#000' }}
+                >
+                    {rank}
+                </motion.div>
+            </motion.div>
+
+            {/* User Info */}
+            <div className="text-center space-y-0.5 mb-4 z-20 px-2">
+                <Link href={`/user/${user.username}`} className="block text-xs md:text-lg font-black hover:text-primary transition-colors truncate max-w-[100px] md:max-w-[180px] tracking-tight text-white leading-tight">
                     {user.displayName || user.username}
                 </Link>
-                <div className="flex items-center justify-center gap-1.5 grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500">
-                    <p className="hidden md:block text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">@{user.username}</p>
+                <div className="flex items-center justify-center gap-1.5 opacity-50 group-hover:opacity-100 transition-all duration-500">
+                    <p className="text-[8px] md:text-[10px] font-black text-white/60 uppercase tracking-widest leading-none">@{user.username}</p>
                     {getRankIconByXP(user.power) && (
-                        <img src={getRankIconByXP(user.power) || ''} className="h-2 md:h-3 object-contain" alt="rank icon" />
+                        <img src={getRankIconByXP(user.power) || ''} className="h-2 md:h-3 object-contain" alt="rank" />
                     )}
                 </div>
             </div>
 
-            {/* Stats Focus (Smaller) */}
-            <div className="w-full mt-auto flex flex-col items-center">
-                <div className="text-center">
-                    <div className="text-[8px] font-black text-white/10 uppercase tracking-[0.4em] mb-1">Points</div>
-                    <div className="text-[10px] md:text-xl font-black md:tracking-wider opacity-90" style={{ color: color }}>
+            {/* Podium Base */}
+            <div className={`relative w-full ${podiumHeight} flex flex-col items-center justify-start pt-6 md:pt-10 bg-gradient-to-b from-white/[0.08] to-transparent border-t border-white/[0.1] rounded-t-[2rem] md:rounded-t-[3rem] backdrop-blur-xl overflow-hidden group-hover:from-white/[0.12] transition-all duration-700`}>
+                {/* Accent line */}
+                <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                
+                {/* Stats */}
+                <div className="text-center px-2 relative z-10">
+                    <div className="text-[10px] md:text-xl font-black md:tracking-wider leading-none mb-1" style={{ color: color }}>
                         {user.power.toLocaleString()}
                     </div>
+                    <div className="text-[7px] md:text-[9px] font-black text-white/40 uppercase tracking-[0.3em]">Points</div>
                 </div>
-                
-                <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] mt-3">
-                    <span className="text-[8px] font-black text-white/10 uppercase tracking-widest">Lv</span>
-                    <span className="text-xs font-black text-white/60">{user.level}</span>
+
+                {/* Level Tag */}
+                <div className="mt-3 px-2 md:px-4 py-0.5 md:py-1 rounded-full bg-black/50 border border-white/[0.08] shadow-inner">
+                    <span className="text-[8px] md:text-[11px] font-black text-white/40 uppercase tracking-widest mr-1">LV</span>
+                    <span className="text-[9px] md:text-[12px] font-black text-white">{user.level}</span>
+                </div>
+
+                {/* Rank Background Text - Huge and subtle */}
+                <div className="absolute -bottom-5 -right-3 text-6xl md:text-8xl font-black text-white/[0.03] italic tracking-tighter select-none pointer-events-none group-hover:text-white/[0.05] transition-colors duration-700">
+                    #{rank}
                 </div>
             </div>
         </div>
