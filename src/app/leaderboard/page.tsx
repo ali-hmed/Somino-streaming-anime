@@ -222,9 +222,9 @@ const LeaderboardPage = () => {
                 )}
 
                 {/* Table Header */}
-                <div className="grid grid-cols-12 px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/20 border-b border-white/[0.03]">
-                    <div className="col-span-1">Rank</div>
-                    <div className="col-span-6 md:col-span-7">User</div>
+                <div className="grid grid-cols-12 px-2 md:px-8 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/20 border-b border-white/[0.03]">
+                    <div className="col-span-2 md:col-span-1">Rank</div>
+                    <div className="col-span-7 md:col-span-7 px-1 md:px-0">User</div>
                     <div className="col-span-2 hidden md:block text-center">Level</div>
                     <div className="col-span-3 md:col-span-2 text-right">Points</div>
                 </div>
@@ -245,23 +245,23 @@ const LeaderboardPage = () => {
                                         id={`user-rank-${u.rank}`}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        className="grid grid-cols-12 items-center px-8 py-4 group hover:bg-white/[0.02] transition-all rounded-xl"
+                                        className="grid grid-cols-12 items-center px-2 md:px-8 py-4 group hover:bg-white/[0.02] transition-all rounded-xl"
                                     >
-                                        <div className="col-span-1 font-black text-white/20 group-hover:text-white/60 transition-colors">
+                                        <div className="col-span-2 md:col-span-1 font-black text-white/20 group-hover:text-white/60 transition-colors">
                                             #{u.rank}
                                         </div>
-                                        <div className="col-span-6 md:col-span-7 flex items-center gap-4">
+                                        <div className="col-span-7 md:col-span-7 flex items-center gap-2 md:gap-4 px-1 md:px-0">
                                             <Link href={`/user/${u.username}`} className="shrink-0 transition-transform hover:scale-105 active:scale-95">
-                                                <UserAvatar user={u} size="md" />
+                                                <UserAvatar user={u} size="md" className="!w-8 !h-8 md:!w-9 md:!h-9" />
                                             </Link>
                                             <div className="min-w-0">
-                                                <Link href={`/user/${u.username}`} className="block font-black text-[14px] hover:text-primary transition-colors truncate">
+                                                <Link href={`/user/${u.username}`} className="block font-black text-[13px] md:text-[14px] hover:text-primary transition-colors truncate">
                                                     {u.displayName || u.username}
                                                 </Link>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-wider">@{u.username}</span>
+                                                <div className="flex items-center gap-1.5 md:gap-2">
+                                                    <span className="text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-wider">@{u.username}</span>
                                                     {getRankIconByXP(u.power) && (
-                                                        <img src={getRankIconByXP(u.power) || ''} className="w-3.5 h-3.5 object-contain opacity-50" alt="rank" />
+                                                        <img src={getRankIconByXP(u.power) || ''} className="w-3 h-3 md:w-3.5 md:h-3.5 object-contain opacity-50" alt="rank" />
                                                     )}
                                                 </div>
                                             </div>
@@ -272,8 +272,8 @@ const LeaderboardPage = () => {
                                             </div>
                                         </div>
                                         <div className="col-span-3 md:col-span-2 text-right">
-                                            <div className="font-black text-[14px] text-primary">{u.power.toLocaleString()}</div>
-                                            <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Total Points</div>
+                                            <div className="font-black text-[13px] md:text-[14px] text-primary">{u.power.toLocaleString()}</div>
+                                            <div className="text-[8px] md:text-[9px] font-bold text-white/20 uppercase tracking-widest whitespace-nowrap">Total Points</div>
                                         </div>
                                     </motion.div>
                                 ))
