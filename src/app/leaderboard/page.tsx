@@ -402,9 +402,9 @@ const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: Leade
                     <span className="text-[9px] md:text-[12px] font-black text-white">{user.level}</span>
                 </div>
 
-                {/* Rank Background Text - Huge and subtle */}
-                <div className="absolute -bottom-5 -right-3 text-6xl md:text-8xl font-black text-white/[0.03] italic tracking-tighter select-none pointer-events-none group-hover:text-white/[0.05] transition-colors duration-700">
-                    #{rank}
+                {/* Rank Number on Front of Podium - Clearly Visible */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/[0.05] font-black text-8xl md:text-[10rem] tracking-tighter select-none pointer-events-none group-hover:text-white/[0.08] transition-all duration-700">
+                    {rank}
                 </div>
             </div>
         </div>
