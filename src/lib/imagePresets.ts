@@ -167,13 +167,14 @@ export const FRAME_PRESETS = [
             "/frames/frame-4.png",
             "/frames/frame-5.png",
             "/frames/frame-6.png",
-            "/frames/frame-7.png",
-            "/frames/frame-8.png",
             "/frames/black-clover-4.png",
             "/frames/onepiece-1.png",
             "/frames/naruto-2.png",
             "/frames/bleach-3.png",
-            "/frames/solo-leveling-5.png"
+            "/frames/solo-leveling-5.png",
+            "/frames/bluelock.png",
+            "/frames/ATO.png",
+            "/frames/demonslayer.png"
         ]
     },
     {
