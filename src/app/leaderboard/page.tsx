@@ -18,12 +18,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import { getRankIconByXP } from '@/utils/rankUtils';
 import { useAuthStore } from '@/store/authStore';
+import UserAvatar from '@/components/UserAvatar';
 
 interface LeaderboardUser {
     _id: string;
     username: string;
     displayName?: string;
     avatar?: string;
+    frame?: string;
     power: number;
     level: number;
     rank: number;
@@ -249,22 +251,8 @@ const LeaderboardPage = () => {
                                             #{u.rank}
                                         </div>
                                         <div className="col-span-6 md:col-span-7 flex items-center gap-4">
-                                            <Link href={`/user/${u.username}`} className="relative shrink-0 w-9 h-9">
-                                                <div className="absolute inset-0 rounded-full overflow-hidden bg-white/5 transition-transform hover:scale-105 active:scale-95">
-                                                    {u.avatar ? (
-                                                        <img src={u.avatar} className="w-full h-full object-cover" alt={u.username} referrerPolicy="no-referrer" />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-[10px]">{u.username[0]}</div>
-                                                    )}
-                                                </div>
-                                                {/* Role Frame Overlay */}
-                                                {getRoleFrame(u.role) && (
-                                                    <img 
-                                                        src={getRoleFrame(u.role)!} 
-                                                        className="absolute inset-[-18.5%] w-[137%] h-[137%] max-w-none pointer-events-none z-10" 
-                                                        alt="frame"
-                                                    />
-                                                )}
+                                            <Link href={`/user/${u.username}`} className="shrink-0 transition-transform hover:scale-105 active:scale-95">
+                                                <UserAvatar user={u} size="md" />
                                             </Link>
                                             <div className="min-w-0">
                                                 <Link href={`/user/${u.username}`} className="block font-black text-[14px] hover:text-primary transition-colors truncate">
@@ -357,25 +345,7 @@ const LeaderboardTopCard = ({ user, rank, color, isMain = false }: { user: Leade
 
             {/* Huge Avatar Focus */}
             <Link href={`/user/${user.username}`} className="relative mb-6 md:mb-12 block">
-                <div className="relative">
-                    <div className={`${avatarSize} rounded-full p-1.5 transition-all duration-700 group-hover:scale-105`} style={{ background: roleFrame ? 'transparent' : `linear-gradient(135deg, ${color}, transparent)` }}>
-                        <div className={`w-full h-full rounded-full overflow-hidden bg-black ${!roleFrame && 'border-2 border-black shadow-2xl'}`}>
-                            {user.avatar ? (
-                                <img src={user.avatar} className="w-full h-full object-cover" alt={user.username} referrerPolicy="no-referrer" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center font-black text-white/20 uppercase text-sm md:text-4xl">{user.username[0]}</div>
-                            )}
-                        </div>
-                    </div>
-                    {/* Role Frame Overlay */}
-                    {roleFrame && (
-                        <img 
-                            src={roleFrame} 
-                            className="absolute inset-[-18.5%] w-[137%] h-[137%] max-w-none pointer-events-none z-10 select-none drop-shadow-2xl" 
-                            alt="avatar frame"
-                        />
-                    )}
-                </div>
+                    <UserAvatar user={user} size="xl" />
                 {/* Visual Glow */}
                 <div className="absolute inset-0 rounded-full blur-3xl md:blur-[60px] opacity-20 md:opacity-30 -z-10 transition-opacity duration-500 group-hover:opacity-50" style={{ backgroundColor: color }} />
                 

@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/authStore';
 import AuthModal from './AuthModal';
 import { timeAgo } from '@/utils/dateUtils';
 import { getRankByXP, getRankByName } from '@/utils/rankUtils';
+import UserAvatar from './UserAvatar';
 import { API_URL } from '@/lib/api';
 
 interface CommentType {
@@ -20,6 +21,7 @@ interface CommentType {
     userId: string;
     username?: string;
     avatar?: string;
+    frame?: string;
     rank?: string;
     power?: number;
     rankPosition?: number;
@@ -220,14 +222,8 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
         return (
             <div id={`comment-${item._id}`} className="group flex gap-4 mt-6">
                 {/* Avatar */}
-                <Link href={`/user/${item.username}`} className={`shrink-0 rounded-full overflow-hidden bg-white/5 ${isReply ? 'w-6 h-6' : 'w-10 h-10'}`}>
-                    {item.avatar ? (
-                        <img src={item.avatar} alt={item.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                            <User className="w-2/3 h-2/3 text-white/10" />
-                        </div>
-                    )}
+                <Link href={`/user/${item.username}`} className="shrink-0 transition-transform active:scale-95">
+                    <UserAvatar user={item} size={isReply ? 'sm' : 'lg'} />
                 </Link>
 
                 {/* Content */}
@@ -358,13 +354,7 @@ const WatchComments = ({ episodeId, animeId, animeTitle, animeImage, episodeNumb
                 </div>
 
                 <div className="flex gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white/5 shrink-0 overflow-hidden">
-                        {mounted && user?.avatar ? (
-                            <img src={user.avatar} className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center"><User className="w-1/2 h-1/2 text-white/10" /></div>
-                        )}
-                    </div>
+                    <UserAvatar user={user} size="lg" />
                     <div className="flex-1 min-w-0">
                         <div className="relative group">
                             {replyingTo && (

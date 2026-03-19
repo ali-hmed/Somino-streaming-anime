@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { AVATAR_PRESETS, BANNER_PRESETS, FRAME_PRESETS } from '@/lib/imagePresets';
+import { useAuthStore } from '@/store/authStore';
 
 interface ImageSelectModalProps {
     isOpen: boolean;
@@ -16,6 +17,7 @@ export default function ImageSelectModal({
     onSelect,
     initialTab = 'avatar'
 }: ImageSelectModalProps) {
+    const { user } = useAuthStore();
     const [tab, setTab] = useState<'avatar' | 'banner' | 'frame'>(initialTab);
     const [expandedAccordion, setExpandedAccordion] = useState<string | null>("Attack on Titan");
 
@@ -24,7 +26,12 @@ export default function ImageSelectModal({
     const getData = () => {
         if (tab === 'avatar') return AVATAR_PRESETS;
         if (tab === 'banner') return BANNER_PRESETS;
-        return FRAME_PRESETS;
+        
+        // Filter frames based on user role
+        const isStaff = user?.role === 'admin' || user?.role === 'owner';
+        if (isStaff) return FRAME_PRESETS;
+        
+        return FRAME_PRESETS.filter(category => category.anime !== "Role Frames");
     };
     const data = getData();
 
@@ -71,7 +78,10 @@ export default function ImageSelectModal({
                                         key={t}
                                         onClick={() => {
                                             setTab(t);
-                                            if (t === 'frame') setExpandedAccordion("Role Frames");
+                                            if (t === 'frame') {
+                                                const isStaff = user?.role === 'admin' || user?.role === 'owner';
+                                                setExpandedAccordion(isStaff ? "Role Frames" : "Collection Frames");
+                                            }
                                             else setExpandedAccordion("Attack on Titan");
                                         }}
                                         className={`flex-1 min-w-[80px] py-2.5 text-[14px] font-bold rounded-lg transition-all ${
