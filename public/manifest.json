@@ -1,24 +1,53 @@
 {
-  "name": "Somino - High Quality Anime Streaming",
+  "name": "Somino - Anime Streaming",
   "short_name": "Somino",
   "description": "Watch the latest anime episodes in high quality with SUB and DUB. Stay updated with your favorite series on Somino.",
   "start_url": "/",
+  "scope": "/",
+  "id": "/",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
   "background_color": "#0A0A0A",
   "theme_color": "#0A0A0A",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "categories": ["entertainment"],
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/favicon.png",
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Browse Anime",
+      "short_name": "Browse",
+      "description": "Browse all anime",
+      "url": "/animes/top-airing",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Trending Now",
+      "short_name": "Trending",
+      "description": "See what's trending",
+      "url": "/trending",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
