@@ -20,10 +20,7 @@ export const metadata: Metadata = {
   title: "Somino - High Quality Anime Streaming",
   description: "Watch the latest anime episodes in high quality with SUB and DUB. Stay updated with your favorite series on Somino.",
   icons: {
-    icon: [
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-    ],
+    icon: "/favicon.png",
     apple: "/icon-512.png",
   },
   manifest: "/manifest.json",
