@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -20,7 +21,25 @@ export const metadata: Metadata = {
   description: "Watch the latest anime episodes in high quality with SUB and DUB. Stay updated with your favorite series on Somino.",
   icons: {
     icon: "/favicon.png",
+    apple: "/Somino-lg.png",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Somino",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#0A0A0A",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -38,6 +57,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <PWAInstallPrompt />
       </body>
     </html>
   );
