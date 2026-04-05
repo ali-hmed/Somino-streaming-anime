@@ -70,7 +70,7 @@ All content is sourced from third-party providers.
 ## 🏷 Version
 
 **Current Version:** v0.1.0 (Beta)  
-**Status:** In Active Development
+**Status:** Mashruuca si ku meel gaar ah ayaa loo hakiyey (Development is paused)
 
 ## 🌐 Live Site
 
